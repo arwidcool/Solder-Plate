@@ -97,7 +97,6 @@ void setup()
 
   analogWriteFrequency(64);
 
-  Serial.println("Starting I2C scanner");
 
   display.setRotation(3);
   pinMode(yellowLED, OUTPUT);
