@@ -76,6 +76,8 @@ ArduPID PID;
 Button getPressedButton();
 Button handleButtons();
 
+
+
 void upButtonISR();
 void downButtonISR();
 void backButtonISR();
@@ -94,6 +96,8 @@ void setup()
   }
 
   analogWriteFrequency(64);
+
+  Serial.println("Starting I2C scanner");
 
   display.setRotation(3);
   pinMode(yellowLED, OUTPUT);
