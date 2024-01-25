@@ -13,6 +13,15 @@ Thermistor::Thermistor(uint8_t pin, float resistance, TempCalibration calibratio
     calculateCoefficents(resistance, calibration);
 }
 
+Thermistor::Thermistor(uint8_t pin, float resistance)
+{
+
+    thermistorPin = pin;
+    setRes = resistance;
+
+    calculateCoefficents(resistance, calibration_100K_3950);
+}
+
 Thermistor::~Thermistor()
 {
 }
@@ -31,7 +40,6 @@ int Thermistor::getTemperature()
     }
 
     temp = temp / samples;
-
 
     return temp;
 }

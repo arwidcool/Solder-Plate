@@ -6,50 +6,18 @@
 #include <Adafruit_SSD1306.h>
 #include <Wire.h>
 #include <Tools/Thermistor.h>
-
-enum Button
-{
-  UP,
-  DOWN,
-  BACK,
-  SELECT,
-  NONE
-};
+#include "Buttons.h"
 
 AnalogRef analogRef(5.0);
+
+// Calibration data for 100K thermistor
+TempCalibration calibration_100K_3950 = {25, 100000, 86, 10000, 170, 1000};
 
 // LED pins
 #define yellowLED 18
 #define greenLED 19
 #define redLED 20
 
-// Button pins
-#define upButton 21
-#define downButton 22
-#define backButton 23
-#define selectButton 24
-
-volatile bool upButtonPressed = false;
-volatile bool downButtonPressed = false;
-volatile bool backButtonPressed = false;
-volatile bool selectButtonPressed = false;
-
-volatile bool upButtonReleased = false;
-volatile bool downButtonReleased = false;
-volatile bool backButtonReleased = false;
-volatile bool selectButtonReleased = false;
-
-enum ButtonState
-{
-  IDLE,
-  PRESSED,
-  RELEASED
-};
-
-ButtonState upButtonState = IDLE;
-ButtonState downButtonState = IDLE;
-ButtonState backButtonState = IDLE;
-ButtonState selectButtonState = IDLE;
 
 // LCD display pins
 #define TFT_CS 7
@@ -64,24 +32,15 @@ Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, MOSI, SCK, TFT_RST);
 // OLED display width and height, for a typical 128x64 display
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
-
 #define OLED_RESET -1 // Reset pin # (or -1 if sharing Arduino reset pin)
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-// Initalize a 3950 100K thermistor with 2.5k reference resistor
-Thermistor thermistor1(THERMISTOR1_PIN, 2500, {25, 100000, 86, 10000, 170, 1000});
+// Initalize a 3950 100K thermistor with 2.5k reference resistor using the default calibration data for 100K thermistor
+Thermistor thermistor1(THERMISTOR1_PIN, 2500);
+
+Buttons buttons;
 
 ArduPID PID;
-
-Button getPressedButton();
-Button handleButtons();
-
-
-
-void upButtonISR();
-void downButtonISR();
-void backButtonISR();
-void selectButtonISR();
 
 void i2cScanner();
 
@@ -97,21 +56,10 @@ void setup()
 
   analogWriteFrequency(64);
 
-
   display.setRotation(3);
   pinMode(yellowLED, OUTPUT);
   pinMode(greenLED, OUTPUT);
   pinMode(redLED, OUTPUT);
-
-  pinMode(upButton, INPUT_PULLUP);
-  pinMode(downButton, INPUT_PULLUP);
-  pinMode(backButton, INPUT_PULLUP);
-  pinMode(selectButton, INPUT_PULLUP);
-
-  attachInterrupt(digitalPinToInterrupt(upButton), upButtonISR, FALLING);
-  attachInterrupt(digitalPinToInterrupt(downButton), downButtonISR, FALLING);
-  attachInterrupt(digitalPinToInterrupt(backButton), backButtonISR, FALLING);
-  attachInterrupt(digitalPinToInterrupt(selectButton), selectButtonISR, FALLING);
 
   Serial.begin(9600);
 
@@ -146,7 +94,7 @@ void setup()
 void loop()
 {
 
-  handleButtons();
+  buttons.handleButtons();
 
   analogRef.calculate();
 
@@ -189,99 +137,6 @@ void loop()
 
   // Serial.print("Input voltage: ");
   // Serial.println(analogRef.calculateInputVoltage());
-}
-
-Button getPressedButton()
-{
-  if (upButtonPressed)
-  {
-    upButtonPressed = false;
-
-    return UP;
-  }
-  else if (downButtonPressed)
-  {
-    downButtonPressed = false;
-
-    return DOWN;
-  }
-  else if (backButtonPressed)
-  {
-    backButtonPressed = false;
-
-    return BACK;
-  }
-  else if (selectButtonPressed)
-  {
-    selectButtonPressed = false;
-
-    return SELECT;
-  }
-
-  return NONE;
-}
-
-Button handleButtons()
-{
-
-  Button pressedButton = getPressedButton();
-
-  if (pressedButton != NONE)
-  {
-    Serial.print("Button pressed: ");
-    switch (pressedButton)
-    {
-    case UP:
-      Serial.println("UP");
-      digitalWrite(yellowLED, HIGH);
-      delay(100);
-      digitalWrite(yellowLED, LOW);
-      break;
-    case DOWN:
-      Serial.println("DOWN");
-      digitalWrite(yellowLED, HIGH);
-      delay(100);
-      digitalWrite(yellowLED, LOW);
-      break;
-    case BACK:
-      Serial.println("BACK");
-      digitalWrite(redLED, HIGH);
-      delay(100);
-      digitalWrite(redLED, LOW);
-      break;
-    case SELECT:
-      Serial.println("SELECT");
-      analogWrite(greenLED, 20);
-      delay(100);
-      analogWrite(greenLED, 0);
-
-      break;
-    default:
-      break;
-    }
-  }
-
-  return pressedButton;
-}
-
-void upButtonISR()
-{
-  upButtonPressed = true;
-}
-
-void downButtonISR()
-{
-  downButtonPressed = true;
-}
-
-void backButtonISR()
-{
-  backButtonPressed = true;
-}
-
-void selectButtonISR()
-{
-  selectButtonPressed = true;
 }
 
 void i2cScanner()
