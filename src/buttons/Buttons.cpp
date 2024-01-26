@@ -12,17 +12,17 @@ void Buttons::setup()
 /**
  * Handle buttons state changes and return first button state change that occurred.
  */
-StateChangeEvent<ButtonKind, ButtonState> *Buttons::handleButtons()
+Pair<ButtonKind, StateChangeEvent<ButtonState>>* Buttons::handleButtons()
 {
   for (int i = 0; i < 4; i++)
   {
     // If a state change occurred, print it out and return the button that changed
     if (__buttons[i]->loop())
     {
-      StateChangeEvent<ButtonKind, ButtonState> *change = __buttons[i]->lastChange();
+      StateChangeEvent<ButtonState> *change = __buttons[i]->lastChange();
 
       Serial.println(STATECHANGE_STR((*change)));
-      return change;
+      return new Pair<ButtonKind, StateChangeEvent<ButtonState>>(__buttons[i]->kind, *change);
     }
   }
   return NULL;

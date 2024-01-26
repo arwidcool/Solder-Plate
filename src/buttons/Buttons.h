@@ -5,7 +5,7 @@
 #include <Arduino.h>
 #include "Button.h"
 #include "leds/leds.h"
-#include "../statechangeevent.h"
+#include "../common.h"
 // Button pins
 #define upButton 21
 #define downButton 22
@@ -18,7 +18,7 @@ public:
   // Constructor
   Buttons(){};
 
-  StateChangeEvent<ButtonKind, ButtonState> *handleButtons();
+  Pair<ButtonKind, StateChangeEvent<ButtonState>> *handleButtons();
   void setup();
 };
 

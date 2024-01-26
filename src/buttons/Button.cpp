@@ -2,7 +2,7 @@
 #include <Arduino.h>
 
 // Constructor
-Button::Button(ButtonKind kind, uint8_t pin) : kind(kind), pin(pin), state(WrappedState<ButtonKind, ButtonState>(kind, ButtonState::IDLE))
+Button::Button(ButtonKind kind, uint8_t pin) : kind(kind), pin(pin), state(WrappedState<ButtonState>(ButtonState::IDLE))
 {
     pinMode(pin, INPUT_PULLUP);
 }
@@ -17,14 +17,14 @@ uint8_t Button::getPin()
     return this->pin;
 }
 
-StateChangeEvent<ButtonKind, ButtonState> *Button::lastChange()
+StateChangeEvent<ButtonState> *Button::lastChange()
 {
     return this->state.lastChangeEvent;
 }
 
 bool Button::loop()
 {
-    StateChangeEvent<ButtonKind, ButtonState> *evt = NULL;
+    StateChangeEvent<ButtonState> *evt = NULL;
 
     if (digitalRead(this->pin) == LOW)
     {

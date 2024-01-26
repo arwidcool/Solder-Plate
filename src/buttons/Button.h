@@ -1,6 +1,6 @@
-#include "base.h"
+#include "./base.h"
 #include <Arduino.h>
-#include "../statechangeevent.h"
+#include "../common.h"
 
 class Button
 {
@@ -10,13 +10,13 @@ public:
 
   ButtonKind getKind();
   uint8_t getPin();
-  StateChangeEvent<ButtonKind, ButtonState> *lastChange();
+  StateChangeEvent<ButtonState> *lastChange();
   /// @brief  Call this method in the main loop to update the button state.
   /// @return true if the button state changed, false otherwise.
   bool loop();
 
-private:
   ButtonKind kind;
+private:
   uint8_t pin;
-  WrappedState<ButtonKind, ButtonState> state;
+  WrappedState<ButtonState> state;
 };

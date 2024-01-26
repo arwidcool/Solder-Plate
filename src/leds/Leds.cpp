@@ -14,38 +14,38 @@ void LEDS::setup()
     pinMode(greenLED, OUTPUT);
     pinMode(redLED, OUTPUT);
 }
-void LEDS::handleButtonStateChange(StateChangeEvent<ButtonKind, ButtonState> change)
+void LEDS::handleButtonStateChange(Pair<ButtonKind, StateChangeEvent<ButtonState>> change)
 {
-    switch (change.kind) {
+    switch (change.first) {
         case ButtonKind::UP:
-            if (change.to == ButtonState::PRESSED) {
+            if (change.second.to == ButtonState::PRESSED) {
                 digitalWrite(yellowLED, HIGH);
             } else if (!yellowLEDSeleOn) {
                 digitalWrite(yellowLED, LOW);
             }
-            yellowLEDUPOn = change.to == ButtonState::PRESSED;
+            yellowLEDUPOn = change.second.to == ButtonState::PRESSED;
             break;
         case ButtonKind::DOWN:
-            if (change.to == ButtonState::PRESSED) {
+            if (change.second.to == ButtonState::PRESSED) {
                 digitalWrite(greenLED, HIGH);
             } else {
                 digitalWrite(greenLED, LOW);
             }
             break;
         case ButtonKind::BACK:
-            if (change.to == ButtonState::PRESSED) {
+            if (change.second.to == ButtonState::PRESSED) {
                 digitalWrite(redLED, HIGH);
             } else {
                 digitalWrite(redLED, LOW);
             }
             break;
         case ButtonKind::SELECT:
-            if (change.to == ButtonState::PRESSED) {
+            if (change.second.to == ButtonState::PRESSED) {
                 digitalWrite(yellowLED, HIGH);
             } else if (!yellowLEDUPOn) {
                 digitalWrite(yellowLED, LOW);
             }
-            yellowLEDSeleOn = change.to == ButtonState::PRESSED;
+            yellowLEDSeleOn = change.second.to == ButtonState::PRESSED;
 
             break;
         default:

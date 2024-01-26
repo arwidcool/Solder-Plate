@@ -9,7 +9,7 @@
 #include "leds/leds.h"
 #include "reflow.h"
 #include "displays/oled.h"
-#include "statechangeevent.h" 
+#include "common.h" 
 
 ReflowProcessState reflowProcessState = INITIALIZING;
 
@@ -90,7 +90,7 @@ void loop()
 {
 
   // Return the button that was pressed
-  StateChangeEvent<ButtonKind, ButtonState>* k = buttons.handleButtons();
+  Pair<ButtonKind, StateChangeEvent<ButtonState>> *k = buttons.handleButtons();
 
   if (k != NULL) {
     leds.handleButtonStateChange(*k);
