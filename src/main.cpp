@@ -6,17 +6,13 @@
 #include <Adafruit_SSD1306.h>
 #include <Wire.h>
 #include <Tools/Thermistor.h>
-#include "Buttons.h"
+#include "buttons/Buttons.h"
+#include "leds/leds.h"
 
 AnalogRef analogRef(5.0);
 
 // Calibration data for 100K thermistor
 TempCalibration calibration_100K_3950 = {25, 100000, 86, 10000, 170, 1000};
-
-// LED pins
-#define yellowLED 18
-#define greenLED 19
-#define redLED 20
 
 
 // LCD display pins
@@ -38,8 +34,7 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 // Initalize a 3950 100K thermistor with 2.5k reference resistor using the default calibration data for 100K thermistor
 Thermistor thermistor1(THERMISTOR1_PIN, 2500);
 
-Buttons buttons;
-
+Buttons buttons = Buttons();
 ArduPID PID;
 
 void i2cScanner();
@@ -94,8 +89,25 @@ void setup()
 void loop()
 {
 
-  buttons.handleButtons();
+  digitalWrite(yellowLED, LOW);
+  digitalWrite(greenLED, LOW);
+  digitalWrite(redLED, LOW);
 
+  ButtonKind k = buttons.handleButtons();
+  if (k == ButtonKind::UP) {
+    Serial.println("UP");
+    digitalWrite(yellowLED, HIGH);
+  } else if (k == ButtonKind::DOWN) {
+    Serial.println("DOWN");
+    digitalWrite(yellowLED, HIGH);
+  } else if (k == ButtonKind::BACK) {
+    Serial.println("BACK");
+    digitalWrite(redLED, HIGH);
+  } else if (k == ButtonKind::SELECT) {
+    Serial.println("SELECT");
+    digitalWrite(greenLED, HIGH);
+  }
+/*
   analogRef.calculate();
 
   float sysVoltage = analogRef.sysVoltage;
@@ -137,7 +149,9 @@ void loop()
 
   // Serial.print("Input voltage: ");
   // Serial.println(analogRef.calculateInputVoltage());
-}
+  
+  */
+  }
 
 void i2cScanner()
 {
