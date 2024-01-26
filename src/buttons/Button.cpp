@@ -5,6 +5,7 @@
 // Constructor
 Button::Button(ButtonKind kind, uint8_t pin) : kind(kind), pin(pin), state(ButtonState::IDLE) {
     pinMode(pin, INPUT_PULLUP);
+    this->change = new ButtonStateChange(this->kind, ButtonState::IDLE, ButtonState::IDLE);
     lastStateChangeTime = 0;
 }
 
@@ -20,13 +21,21 @@ ButtonState Button::getState() {
     return this->state;
 }
 
-ButtonState Button::setState(ButtonState state) {
-    lastStateChangeTime = millis();
-    this->state = state;
-    return this->state;
+ButtonStateChange* Button::lastChange() {
+    return this->change;
 }
 
-void Button::loop() {
+void Button::setState(ButtonState state) {
+    if (this->state != state) {
+        delete this->change; // clear memory
+        this->change = new ButtonStateChange(this->kind, this->state, state);
+        lastStateChangeTime = millis();
+        this->state = state;
+    }
+}
+
+bool Button::loop() {
+    ButtonState prev = this->state;
     if (digitalRead(this->pin) == LOW) {
         if (this->state == ButtonState::IDLE && millis() - lastStateChangeTime > 50) {
             this->setState(ButtonState::PRESSED);
@@ -37,4 +46,7 @@ void Button::loop() {
     if (this->state == ButtonState::RELEASED && millis() - lastStateChangeTime > 50) {
         this->setState(ButtonState::IDLE);
     }
+
+    // Return true if the state changed
+    return prev != this->state;
 }

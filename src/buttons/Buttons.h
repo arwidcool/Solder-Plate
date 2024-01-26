@@ -17,15 +17,10 @@ class Buttons
 {
 public:
   // Constructor
-  Buttons();
+  Buttons() {};
 
-  ButtonKind handleButtons();
-  ButtonKind getPressedButton();
-  void static initializeButtons();
-  Button** getAllButtons();
-
-
-  void handleButtonLEDs();
+  ButtonStateChange* handleButtons();
+  void setup();
 
 };
 

@@ -40,10 +40,7 @@ Thermistor thermistor6(THERMISTOR6_PIN, 9000);
 
 // Initialize the buttons
 Buttons buttons = Buttons();
-
-// Define global for the Yellow LED because both up and down buttons use it
-bool yellowLedON = false;
-
+LEDS leds = LEDS();
 // Declare the PID
 ArduPID PID;
 
@@ -58,10 +55,9 @@ void setup()
 
   // Set PWM frequency to 64 kHz
   analogWriteFrequency(64);
-
-  pinMode(yellowLED, OUTPUT);
-  pinMode(greenLED, OUTPUT);
-  pinMode(redLED, OUTPUT);
+  buttons.setup();
+  leds.setup();
+  
 
   Serial.println("Starting LCD");
 
@@ -95,17 +91,19 @@ void loop()
 {
 
   // Return the button that was pressed
-  ButtonKind k = buttons.handleButtons();
+  ButtonStateChange* k = buttons.handleButtons();
 
-  // Handle the buttons outside the main loop, only put functions in here for sanity and flow purposes
-  buttons.handleButtonLEDs();
-
+  if (k != NULL) {
+    leds.handleButtonStateChange(*k);
+  }
+  
   float sysVoltage = analogRef.calculateSystemVoltage();
   float inputVoltage = analogRef.calculateInputVoltage();
   int thermistor1Temp = thermistor1.getTemperature();
 
   // Print the system voltage on the tft
 
+return;
   display.clearDisplay();
   Serial.print("Thermistor 1: ");
   Serial.println(thermistor1Temp);

@@ -1,4 +1,4 @@
-#include "__enums.h"
+#include "base.h"
 #include <Arduino.h>
 
 class Button
@@ -10,8 +10,11 @@ public:
   ButtonKind getKind();
   uint8_t getPin();
   ButtonState getState();
-  ButtonState setState(ButtonState state);
-  void loop();
+  ButtonStateChange* lastChange();
+  void setState(ButtonState state);
+  /// @brief  Call this method in the main loop to update the button state.
+  /// @return true if the button state changed, false otherwise.
+  bool loop();
   
 
   private :
@@ -19,4 +22,5 @@ public:
     ButtonKind kind;
     uint8_t pin;
     ButtonState state;
+    ButtonStateChange* change;
 };
