@@ -1,8 +1,6 @@
 #include "Buttons.h"
 
-
 Button *__buttons[4];
-
 
 void Buttons::setup()
 {
@@ -13,15 +11,16 @@ void Buttons::setup()
 }
 /**
  * Handle buttons state changes and return first button state change that occurred.
-*/
-ButtonStateChange* Buttons::handleButtons()
+ */
+StateChangeEvent<ButtonKind, ButtonState> *Buttons::handleButtons()
 {
   for (int i = 0; i < 4; i++)
   {
     // If a state change occurred, print it out and return the button that changed
-    if ( __buttons[i]->loop())
+    if (__buttons[i]->loop())
     {
-      ButtonStateChange *change = __buttons[i]->lastChange();
+      StateChangeEvent<ButtonKind, ButtonState> *change = __buttons[i]->lastChange();
+
       Serial.println(STATECHANGE_STR((*change)));
       return change;
     }

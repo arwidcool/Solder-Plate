@@ -1,52 +1,46 @@
 #include "Button.h"
 #include <Arduino.h>
 
-
 // Constructor
-Button::Button(ButtonKind kind, uint8_t pin) : kind(kind), pin(pin), state(ButtonState::IDLE) {
+Button::Button(ButtonKind kind, uint8_t pin) : kind(kind), pin(pin), state(WrappedState<ButtonKind, ButtonState>(kind, ButtonState::IDLE))
+{
     pinMode(pin, INPUT_PULLUP);
-    this->change = new ButtonStateChange(this->kind, ButtonState::IDLE, ButtonState::IDLE);
-    lastStateChangeTime = 0;
 }
 
-ButtonKind Button::getKind() {
+ButtonKind Button::getKind()
+{
     return this->kind;
 }
 
-uint8_t Button::getPin() {
+uint8_t Button::getPin()
+{
     return this->pin;
 }
 
-ButtonState Button::getState() {
-    return this->state;
+StateChangeEvent<ButtonKind, ButtonState> *Button::lastChange()
+{
+    return this->state.lastChangeEvent;
 }
 
-ButtonStateChange* Button::lastChange() {
-    return this->change;
-}
+bool Button::loop()
+{
+    StateChangeEvent<ButtonKind, ButtonState> *evt = NULL;
 
-void Button::setState(ButtonState state) {
-    if (this->state != state) {
-        delete this->change; // clear memory
-        this->change = new ButtonStateChange(this->kind, this->state, state);
-        lastStateChangeTime = millis();
-        this->state = state;
-    }
-}
-
-bool Button::loop() {
-    ButtonState prev = this->state;
-    if (digitalRead(this->pin) == LOW) {
-        if (this->state == ButtonState::IDLE && millis() - lastStateChangeTime > 50) {
-            this->setState(ButtonState::PRESSED);
+    if (digitalRead(this->pin) == LOW)
+    {
+        if (this->state.get() == ButtonState::IDLE && millis() - this->state.lastStateChangeTime > 50)
+        {
+            evt = this->state.set(ButtonState::PRESSED);
         }
-    } else if (this->state == ButtonState::PRESSED) {
-        this->setState(ButtonState::RELEASED);
     }
-    if (this->state == ButtonState::RELEASED && millis() - lastStateChangeTime > 50) {
-        this->setState(ButtonState::IDLE);
+    else if (this->state.get() == ButtonState::PRESSED)
+    {
+        evt = this->state.set(ButtonState::RELEASED);
     }
-
+    if (this->state.get() == ButtonState::RELEASED && millis() - this->state.lastStateChangeTime > 50)
+    {
+        evt = this->state.set(ButtonState::IDLE);
+    }
     // Return true if the state changed
-    return prev != this->state;
+    return evt != NULL;
 }

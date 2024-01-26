@@ -14,7 +14,7 @@ void LEDS::setup()
     pinMode(greenLED, OUTPUT);
     pinMode(redLED, OUTPUT);
 }
-void LEDS::handleButtonStateChange(ButtonStateChange change)
+void LEDS::handleButtonStateChange(StateChangeEvent<ButtonKind, ButtonState> change)
 {
     switch (change.kind) {
         case ButtonKind::UP:

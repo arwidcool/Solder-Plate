@@ -22,13 +22,4 @@ enum ButtonKind
 #define STATE_STR(state) (state == ButtonState::IDLE ? "IDLE" : state == ButtonState::PRESSED ? "PRESSED" : "RELEASED")
 #define STATECHANGE_STR(change) (String("ButtonStateChange: kind=") + KIND_STR(change.kind) + ", " + STATE_STR(change.from) + " -> " + STATE_STR(change.to))
 
-
-class ButtonStateChange {
-  public:
-    ButtonStateChange(ButtonKind kind, ButtonState from, ButtonState to) : kind(kind), from(from), to(to) {}
-    ButtonKind kind;
-    ButtonState from;
-    ButtonState to;
-
-};
 #endif
