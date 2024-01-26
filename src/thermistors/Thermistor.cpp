@@ -33,6 +33,7 @@ int Thermistor::getTemperature()
     int temp = 0;
 
     uint8_t samples = 5;
+    
     for (int i = 0; i < samples; i++)
     {
         getResistance();

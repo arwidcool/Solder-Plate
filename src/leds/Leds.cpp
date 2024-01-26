@@ -28,9 +28,9 @@ void LEDS::handleButtonStateChange(Pair<ButtonKind, StateChangeEvent<ButtonState
             break;
         case ButtonKind::DOWN:
             if (change.second.to == ButtonState::PRESSED) {
-                digitalWrite(greenLED, HIGH);
-            } else {
-                digitalWrite(greenLED, LOW);
+                digitalWrite(yellowLED, HIGH);
+            } else if (!yellowLEDUPOn) {
+                digitalWrite(yellowLED, LOW);
             }
             break;
         case ButtonKind::BACK:
@@ -42,9 +42,9 @@ void LEDS::handleButtonStateChange(Pair<ButtonKind, StateChangeEvent<ButtonState
             break;
         case ButtonKind::SELECT:
             if (change.second.to == ButtonState::PRESSED) {
-                digitalWrite(yellowLED, HIGH);
-            } else if (!yellowLEDUPOn) {
-                digitalWrite(yellowLED, LOW);
+                analogWrite(greenLED, 30);
+            } else {
+                digitalWrite(greenLED, LOW);
             }
             yellowLEDSeleOn = change.second.to == ButtonState::PRESSED;
 
