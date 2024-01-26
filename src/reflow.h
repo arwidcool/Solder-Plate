@@ -1,5 +1,6 @@
 #ifndef __reflow_h__
 #define __reflow_h__
+#include "./common.h"
 
 // STATE MACHINE
 enum ReflowProcessState {
@@ -11,9 +12,5 @@ enum ReflowProcessState {
     COOL, // The oven/PCB is cooling down to the cool temperature
     DONE // The reflow process is complete
 };
-
-// Holds current reflow process state to be used by other classes 
-// Such as the menu class to display the current state
-extern ReflowProcessState reflowProcessState;
 
 #endif

@@ -1,5 +1,6 @@
 #include "Leds.h"
 #include <Arduino.h>
+#include "../globals.h"
 
 bool yellowLEDUPOn = false;
 bool yellowLEDSeleOn = false;

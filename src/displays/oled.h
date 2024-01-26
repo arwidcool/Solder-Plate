@@ -11,6 +11,13 @@ class OledDisplay {
 
     private:
         Adafruit_SSD1306 display;
+        void drawDebug();
+        void handleUserInputState();
+        void handlePreheatState();
+        void handleSoakState();
+        void handleReflowState();
+        void handleCoolingState();
+        void handleFinishedState();
 };
 
 

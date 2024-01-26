@@ -21,5 +21,5 @@ public:
   Pair<ButtonKind, StateChangeEvent<ButtonState>> *handleButtons();
   void setup();
 };
-
+#define ISBUTTONMIGRATEDTOSTATE(pair, kind, state) (((pair).first == kind) && ((pair).second.to == state))
 #endif // BUTTONS_H

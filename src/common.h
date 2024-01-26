@@ -6,6 +6,7 @@ class StateChangeEvent
 {
 public:
     StateChangeEvent(State from, State to) : from(from), to(to) {}
+    StateChangeEvent(State from) : from(from), to(from) {}
     State from;
     State to;
 };
@@ -14,7 +15,7 @@ template <typename State>
 class WrappedState
 {
 public:
-    WrappedState(State defaultState) : state(defaultState), lastChangeEvent(new StateChangeEvent<State>(defaultState, defaultState)) {}
+    WrappedState(State defaultState) : state(defaultState), lastChangeEvent(new StateChangeEvent<State>(defaultState)) {}
     StateChangeEvent<State> *set(State state)
     {
         if (this->state == state)
@@ -27,9 +28,18 @@ public:
         this->lastStateChangeTime = millis();
         return lastChangeEvent;
     }
-    State get()
+    State get() const
     {
         return this->state;
+    }
+
+    StateChangeEvent<State>* getSince(unsigned long time) const
+    {
+        if (this->lastStateChangeTime < time)
+        {
+            return NULL;
+        }
+        return lastChangeEvent;
     }
     State state;
     unsigned long lastStateChangeTime = 0;

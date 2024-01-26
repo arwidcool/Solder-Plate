@@ -9,9 +9,9 @@
 #include "leds/leds.h"
 #include "reflow.h"
 #include "displays/oled.h"
-#include "common.h" 
+#include "globals.h" 
 
-ReflowProcessState reflowProcessState = INITIALIZING;
+WrappedState<ReflowProcessState> reflowProcessState = WrappedState<ReflowProcessState>(INITIALIZING);
 
 // Define the analog ref used for the system voltage
 AnalogRef analogRef(5.0);
@@ -89,22 +89,21 @@ void setup()
 void loop()
 {
 
-  // Return the button that was pressed
+  // Return the button that changed state
   Pair<ButtonKind, StateChangeEvent<ButtonState>> *k = buttons.handleButtons();
 
   if (k != NULL) {
     leds.handleButtonStateChange(*k);
+    if (ISBUTTONMIGRATEDTOSTATE(*k, ButtonKind::SELECT, ButtonState::PRESSED)) {
+      reflowProcessState.set(ReflowProcessState::PREHEAT);
+    } else if (ISBUTTONMIGRATEDTOSTATE(*k, ButtonKind::BACK, ButtonState::PRESSED)) {
+      reflowProcessState.set(ReflowProcessState::USER_INPUT);
+    } else if (ISBUTTONMIGRATEDTOSTATE(*k, ButtonKind::UP, ButtonState::PRESSED)) {
+      reflowProcessState.set(ReflowProcessState::COOL);
+    } else if (ISBUTTONMIGRATEDTOSTATE(*k, ButtonKind::DOWN, ButtonState::PRESSED)) {
+      reflowProcessState.set(ReflowProcessState::REFLOW);
+    }
   }
   
-  float sysVoltage = analogRef.calculateSystemVoltage();
-  float inputVoltage = analogRef.calculateInputVoltage();
-  int thermistor1Temp = thermistor1.getTemperature();
   oled.loop();
-  // Print the system voltage on the tft
-
-  // Serial.print("Output voltage: ");
-  // Serial.println(sysVoltage);
-
-  // Serial.print("Input voltage: ");
-  // Serial.println(analogRef.calculateInputVoltage());
 }
