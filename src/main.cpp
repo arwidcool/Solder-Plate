@@ -43,7 +43,13 @@ LEDS leds = LEDS();
 // Declare the PID
 ArduPID PID;
 OledDisplay oled = OledDisplay();
-
+ReflowProfile profile = ReflowProfile(new ReflowStep[5] {
+    ReflowStep(ReflowProcessState::PREHEAT, 2, 150),
+    ReflowStep(ReflowProcessState::SOAK, 3, 180),
+    ReflowStep(ReflowProcessState::REFLOW, 3, 220, EASE_IN_OUT),
+    ReflowStep(ReflowProcessState::COOL, 3, 100),
+    ReflowStep(ReflowProcessState::DONE, 0, 0)
+  }, "meow\0");
 void setup()
 {
 
@@ -56,34 +62,26 @@ void setup()
   leds.setup();
   oled.setup();
   
+  char name[20] = "meow\0";
+  // ReflowProfile profile = ReflowProfile::fromEEPROM(0);
+  
+  // ReflowProfile profile = ReflowProfile(new ReflowStep[5] {
+  //   ReflowStep(ReflowProcessState::PREHEAT, 30, 150),
+  //   ReflowStep(ReflowProcessState::SOAK, 30, 180),
+  //   ReflowStep(ReflowProcessState::REFLOW, 30, 220),
+  //   ReflowStep(ReflowProcessState::COOL, 30, 100),
+  //   ReflowStep(ReflowProcessState::DONE, 0, 0)
+  // }, name);
+  // profile.toEEPROM(0);
 
-  Serial.println("Starting LCD");
-
-  // tft.init(240, 320); // The dimensions (width and height) of your display
-
-  // // Set the rotation of the display if needed (0, 1, 2, or 3)
-  // tft.setRotation(1);
-
-  // // Fill the screen with a background color
-  // tft.fillScreen(ST77XX_BLACK);
-
-  // // Draw the lines of the gaph with 20 pixels from left side and 20 pixels from bottom just left side and bottom line using draw fast line
-  // tft.drawLine(30, 30, 30, 210, ST77XX_WHITE);
-  // tft.drawLine(30, 210, 300, 210, ST77XX_WHITE);
-
-  // Set cursor to middle of screen and calculate center line from text vairable;
-  // char *text = "Reflow quickchip 138c";
-  // int16_t x1, y1;
-  // uint16_t w, h;
-
-  // tft.setTextSize(2);
-  // tft.getTextBounds(text, 0, 0, &x1, &y1, &w, &h);
-  // tft.setCursor(160 - (w / 2), 0 + (h / 2));
-
-  // // // Print text to screen
-  //  tft.print(text);
-  Serial.println("Ready!");
+  Serial.println(profile.name);
+  for (int i=0; i<5; i++) {
+    Serial.print(profile.steps[i].duration);
+    Serial.print(" ");
+    Serial.println(profile.steps[i].targetTempAtEnd);
+  }
   reflowProcessState = USER_INPUT;
+  profile.start();
 }
 
 void loop()
@@ -94,6 +92,7 @@ void loop()
 
   if (k != NULL) {
     leds.handleButtonStateChange(*k);
+
     if (ISBUTTONMIGRATEDTOSTATE(*k, ButtonKind::SELECT, ButtonState::PRESSED)) {
       reflowProcessState.set(ReflowProcessState::PREHEAT);
     } else if (ISBUTTONMIGRATEDTOSTATE(*k, ButtonKind::BACK, ButtonState::PRESSED)) {
@@ -104,6 +103,18 @@ void loop()
       reflowProcessState.set(ReflowProcessState::REFLOW);
     }
   }
-  
+
+  ReflowStep step = profile.curReflowStep();
+  if (step.state != reflowProcessState.get()) {
+    reflowProcessState.set(step.state);
+  }
+
   oled.loop();
+  if (step.state == ReflowProcessState::DONE) {
+    profile.start();
+    return;
+  }
+  Serial.print(String(STATE_STR(step.state)) + " " + String(step.duration) + " " + String(step.targetTempAtEnd) + " " + String(profile.getTargetTemp())+"\r");
+  
 }
+
