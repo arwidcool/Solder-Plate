@@ -25,7 +25,7 @@ public:
   Button** getAllButtons();
 
 
-  void handleButtonLeds();
+  void handleButtonLEDs();
 
 };
 

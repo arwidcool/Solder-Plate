@@ -2,13 +2,14 @@
 #include "ArduPID.h"
 #include <Adafruit_ST7789.h> // Include the ST7789 library
 #include <Adafruit_GFX.h>
-#include <Tools/AnalogRef.h>
+#include <voltageReference/AnalogRef.h>
 #include <Adafruit_SSD1306.h>
 #include <Wire.h>
-#include <Tools/Thermistor.h>
+#include <thermistors/Thermistor.h>
 #include "buttons/Buttons.h"
 #include "leds/leds.h"
 
+// Define the analog ref used for the system voltage
 AnalogRef analogRef(5.0);
 
 // Calibration data for 100K thermistor
@@ -29,7 +30,7 @@ Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, MOSI, SCK, TFT_RST);
 #define OLED_RESET -1 // Reset pin # (or -1 if sharing Arduino reset pin)
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-// Initalize a 3950 100K thermistor with 2.5k reference resistor using the default calibration data for 100K thermistor
+// Initalize the 3950 100K thermistors with ACTUAL reference resistor measurnment(Measured between Left pin and GND when the board is powered off) using the default calibration data for 100K thermistor
 Thermistor thermistor1(THERMISTOR1_PIN, 2500);
 Thermistor thermistor2(THERMISTOR2_PIN, 2500);
 Thermistor thermistor3(THERMISTOR3_PIN, 2500);
@@ -37,11 +38,13 @@ Thermistor thermistor4(THERMISTOR4_PIN, 2500);
 Thermistor thermistor5(THERMISTOR5_PIN, 2500);
 Thermistor thermistor6(THERMISTOR6_PIN, 9000);
 
+// Initialize the buttons
 Buttons buttons = Buttons();
 
+// Define global for the Yellow LED because both up and down buttons use it
 bool yellowLedON = false;
 
-Button *__buttons[4] = {nullptr};
+// Declare the PID
 ArduPID PID;
 
 void setup()
@@ -51,11 +54,11 @@ void setup()
 
   Serial.println("Starting OLED");
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  display.setRotation(3);
 
-  //Set PWM frequency to 64 kHz
+  // Set PWM frequency to 64 kHz
   analogWriteFrequency(64);
 
-  display.setRotation(3);
   pinMode(yellowLED, OUTPUT);
   pinMode(greenLED, OUTPUT);
   pinMode(redLED, OUTPUT);
@@ -95,7 +98,7 @@ void loop()
   ButtonKind k = buttons.handleButtons();
 
   // Handle the buttons outside the main loop, only put functions in here for sanity and flow purposes
-  buttons.handleButtonLeds();
+  buttons.handleButtonLEDs();
 
   float sysVoltage = analogRef.calculateSystemVoltage();
   float inputVoltage = analogRef.calculateInputVoltage();

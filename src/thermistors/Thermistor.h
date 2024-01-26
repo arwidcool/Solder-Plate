@@ -2,7 +2,7 @@
 #define THERMISTOR_H
 
 #include <Arduino.h>
-#include <Tools/AnalogRef.h>
+#include <voltageReference/AnalogRef.h>
 
 struct Coefficents
 {

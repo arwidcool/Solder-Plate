@@ -2,7 +2,7 @@
 
 extern bool yellowLedON;
 
-extern Button *__buttons[4];
+ Button *__buttons[4];
 
 ButtonKind Buttons::getPressedButton()
 {
@@ -36,16 +36,15 @@ Button** Buttons::getAllButtons()
   return __buttons;
 }
 
-void Buttons::handleButtonLeds()
+void Buttons::handleButtonLEDs()
 {
-  Button **allButtons =  __buttons;
 
   for (int i = 0; i < 4; i++)
   {
-    if (allButtons[i]->getState() == ButtonState::PRESSED)
+    if (__buttons[i]->getState() == ButtonState::PRESSED)
     {
 
-      switch (allButtons[i]->getKind())
+      switch (__buttons[i]->getKind())
       {
       case ButtonKind::UP:
         Serial.println("UP");
@@ -74,7 +73,6 @@ void Buttons::handleButtonLeds()
       case ButtonKind::SELECT:
 
         Serial.println("SELECT");
-
         analogWrite(greenLED, 20);
 
         break;
@@ -84,9 +82,9 @@ void Buttons::handleButtonLeds()
         break;
       }
     }
-    else if (allButtons[i]->getState() == ButtonState::RELEASED)
+    else if (__buttons[i]->getState() == ButtonState::RELEASED)
     {
-      switch (allButtons[i]->getKind())
+      switch (__buttons[i]->getKind())
       {
       case ButtonKind::BACK:
 
