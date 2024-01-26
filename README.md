@@ -8,8 +8,9 @@ This repository contains the source code and design files for a Solder Reflux Ho
 - Custom PCB design tailored for efficient heat distribution.
 - User-friendly interface for easy operation.
 - usb programming
-- wifi via esp32-12f (with wifi version).
+- wifi via esp8266-12f module (with wifi version).
 - PlatformIO integration for streamlined development.
+- Based on Reflow Hotplate by DerSpatz with some improvements
 
 ## Getting Started
 
@@ -32,11 +33,9 @@ Before programming the ATmega4809, it needs to be flashed with a default bootloa
 
 1. **Bootloader Flashing:**
    - U can use a spare arduino for the initial updi bootloader flash
-   
 
 2. **MicroUSB Programming:**
    - After flashing the bootloader, the ATmega4809 can be programmed via the microUSB connection.
-   - Ensure the microUSB is connected to the appropriate pins on the ATmega4809.
 
 ### Software Installation
 

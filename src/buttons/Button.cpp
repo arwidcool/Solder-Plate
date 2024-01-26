@@ -28,13 +28,13 @@ ButtonState Button::setState(ButtonState state) {
 
 void Button::loop() {
     if (digitalRead(this->pin) == LOW) {
-        if (this->state == ButtonState::IDLE && millis() - lastStateChangeTime > 50) {
+        if (this->state == ButtonState::IDLE && millis() - lastStateChangeTime > 100) {
             this->setState(ButtonState::PRESSED);
         }
     } else if (this->state == ButtonState::PRESSED) {
         this->setState(ButtonState::RELEASED);
     }
-    if (this->state == ButtonState::RELEASED && millis() - lastStateChangeTime > 50) {
+    if (this->state == ButtonState::RELEASED && millis() - lastStateChangeTime > 100) {
         this->setState(ButtonState::IDLE);
     }
 }

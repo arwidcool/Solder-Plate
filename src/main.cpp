@@ -14,7 +14,6 @@ AnalogRef analogRef(5.0);
 // Calibration data for 100K thermistor
 TempCalibration calibration_100K_3950 = {25, 100000, 86, 10000, 170, 1000};
 
-
 // LCD display pins
 #define TFT_CS 7
 #define TFT_RST 12
@@ -35,6 +34,10 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 Thermistor thermistor1(THERMISTOR1_PIN, 2500);
 
 Buttons buttons = Buttons();
+
+bool yellowLedON = false;
+
+Button *__buttons[4] = {nullptr};
 ArduPID PID;
 
 void i2cScanner();
@@ -89,69 +92,59 @@ void setup()
 void loop()
 {
 
-  digitalWrite(yellowLED, LOW);
-  digitalWrite(greenLED, LOW);
-  digitalWrite(redLED, LOW);
-
+  //Return the button that was pressed
   ButtonKind k = buttons.handleButtons();
-  if (k == ButtonKind::UP) {
-    Serial.println("UP");
-    digitalWrite(yellowLED, HIGH);
-  } else if (k == ButtonKind::DOWN) {
-    Serial.println("DOWN");
-    digitalWrite(yellowLED, HIGH);
-  } else if (k == ButtonKind::BACK) {
-    Serial.println("BACK");
-    digitalWrite(redLED, HIGH);
-  } else if (k == ButtonKind::SELECT) {
-    Serial.println("SELECT");
-    digitalWrite(greenLED, HIGH);
-  }
-/*
-  analogRef.calculate();
 
-  float sysVoltage = analogRef.sysVoltage;
-  float inputVoltage = analogRef.calculateInputVoltage();
+  //Handle the buttons outside the main loop, only put functions in here for sanity and flow purposes
+  buttons.handleButtonLeds();
 
-  // Print the system voltage on the tft
 
-  display.clearDisplay();
-  Serial.print("Thermistor 1: ");
-  Serial.println(thermistor1.getTemperature());
-  char *text = "Sys V: ";
-  display.setTextSize(2);
-  display.setTextColor(SSD1306_WHITE);
-  display.setCursor(0, 20);
-  display.println(text);
-  display.setCursor(0, 40);
-  display.println(sysVoltage);
-  char *text2 = "In V: ";
-  display.setTextSize(2);
-  display.setTextColor(SSD1306_WHITE);
-  display.setCursor(0, 60);
-  display.println(text2);
-  display.setCursor(0, 80);
-  display.println(inputVoltage);
-  char *text3 = "C:";
-  display.setTextSize(2);
-  display.setTextColor(SSD1306_WHITE);
-  display.setCursor(0, 100);
-  display.println(text3);
-  display.setCursor(25, 100);
-  display.println(thermistor1.getTemperature());
 
-  display.display();
+    /*
+    analogRef.calculate();
 
-  // Serial.println("System voltage: ");
+    float sysVoltage = analogRef.sysVoltage;
+    float inputVoltage = analogRef.calculateInputVoltage();
 
-  // Serial.print("Output voltage: ");
-  // Serial.println(sysVoltage);
+    // Print the system voltage on the tft
 
-  // Serial.print("Input voltage: ");
-  // Serial.println(analogRef.calculateInputVoltage());
-  
-  */
-  }
+    display.clearDisplay();
+    Serial.print("Thermistor 1: ");
+    Serial.println(thermistor1.getTemperature());
+    char *text = "Sys V: ";
+    display.setTextSize(2);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(0, 20);
+    display.println(text);
+    display.setCursor(0, 40);
+    display.println(sysVoltage);
+    char *text2 = "In V: ";
+    display.setTextSize(2);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(0, 60);
+    display.println(text2);
+    display.setCursor(0, 80);
+    display.println(inputVoltage);
+    char *text3 = "C:";
+    display.setTextSize(2);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(0, 100);
+    display.println(text3);
+    display.setCursor(25, 100);
+    display.println(thermistor1.getTemperature());
+
+    display.display();
+
+    // Serial.println("System voltage: ");
+
+    // Serial.print("Output voltage: ");
+    // Serial.println(sysVoltage);
+
+    // Serial.print("Input voltage: ");
+    // Serial.println(analogRef.calculateInputVoltage());
+
+    */
+}
 
 void i2cScanner()
 {
