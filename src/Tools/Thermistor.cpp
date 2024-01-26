@@ -72,9 +72,7 @@ void Thermistor::calculateCoefficents(float resistance, TempCalibration calibrat
 float Thermistor::getResistance()
 {
 
-    analogRef.calculate();
-
-    float systemVoltage = analogRef.sysVoltage;
+    float systemVoltage = analogRef.calculateSystemVoltage();
 
     int raw = analogRead(thermistorPin);
 
@@ -83,10 +81,8 @@ float Thermistor::getResistance()
     float vOut = (buffer) / 1023;
     // Serial.println(vOut);
     buffer = (systemVoltage / vOut) - 1;
-
-    // Serial.println(R2);
+    
     // return the resistence
-
     sensorResistance = setRes * buffer;
 
     return sensorResistance;

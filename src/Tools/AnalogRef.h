@@ -9,43 +9,40 @@ class AnalogRef
 private:
   float systemVoltage; // Reference voltage in volts
 
-  boolean systemVolatgeBelow4_5V = false;
   uint8_t voltageRefPin = 27;
-
   uint8_t voltageInPin = 28;
 
 public:
   float sysVoltage;
   float sysMultiplyer;
-  float outputVoltage;
-  float outputVoltageMultiplyer;
-  float differenceMultiplyer;
+  float inputVoltage;
+
+  //Set what the system voltage SHOULD be
   AnalogRef(float systemVoltage)
   {
     this->systemVoltage = systemVoltage;
   }
 
+
+  //Calculate the system voltage
   float calculateSystemVoltage()
   {
-    const uint8_t sampleCount = 1;
-
+    const uint8_t SAMPLE_COUNT = 1;
+    const float VOLTAGE_REF = 1023.0;
     uint16_t rawValue = 0;
-
-    for (size_t i = 0; i < sampleCount; ++i)
+    for (size_t i = 0; i < SAMPLE_COUNT; ++i)
     {
       rawValue += analogRead(voltageRefPin);
     }
 
-    const float voltageRef = 1023.0;
-    const float systemVoltage = 5.0;
-    const float systemVoltageOut = rawValue / sampleCount * systemVoltage / voltageRef;
-    const float voltage5V = 2.5 / systemVoltageOut * systemVoltage;
-
-    systemVolatgeBelow4_5V = voltage5V < 4.5;
+    float meanRawValue = (float)rawValue / SAMPLE_COUNT;
+    float outputVoltage = meanRawValue / VOLTAGE_REF * systemVoltage;
+    float voltage5V = 2.5 / outputVoltage * systemVoltage;
 
     return voltage5V;
   }
 
+  //Used for external voltage readings not powered by the 5V system
   float calculateSystemVoltageMultyplyer()
   {
 
@@ -58,6 +55,8 @@ public:
     return voltage_5V_multiplyer;
   }
 
+
+  //Calculate the input voltage of the power supply
   float calculateInputVoltage()
   {
 
@@ -80,12 +79,7 @@ public:
     return vOut * 5.8;
   }
 
-  void calculate()
-  {
 
-    sysVoltage = calculateSystemVoltage();
-    sysMultiplyer = 5 / sysVoltage;
-  }
 };
 
 #endif // ANALOGREF_H
