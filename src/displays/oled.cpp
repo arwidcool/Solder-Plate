@@ -254,6 +254,11 @@ void OledDisplay::handleUserInputState()
     else
     {
         // Default menu handling. Just display the title and the indicators to go back and forth
+        if (strlen(menuItem.title) > 8) {
+            display.setTextSize(1, 2);
+        } else {
+            display.setTextSize(2);
+        }
         centerText(menuItem.title);
         displayIndicators();
         display.display();
