@@ -33,7 +33,8 @@ void PidController::debug()
                                        PRINT_SETPOINT | PRINT_BIAS | PRINT_P | PRINT_I | PRINT_D);
 }
 
-void PidController::loop() {
+void PidController::loop()
+{
     data->targetTemp = chosenReflowProfile.getTargetTemp();
     data->currentTemp = thermistor1.getTemperature();
     compute();
@@ -42,11 +43,12 @@ void PidController::loop() {
 
 void PidController::stop()
 {
-    data->targetTemp = 0; // should not be needed but why not?
-    // STOP
-    digitalWrite(MOSTFET_PIN, LOW);
-    controller.stop();
+    data->targetTemp = 0; // should not be needed but why not? --- Its needed it randomly starts again and sometimes goes to heat the plate
+                          // STOP --> Always use analog write for sanity- Keep PWM pins labled analogWrite -- Writing it LOW will KEEP IT ON
+
+    analogWrite(MOSTFET_PIN, 255); // VERY IMPORTANT, DONT CHANGE!
     controller.reset();
+    controller.stop();
 }
 
 void PidController::start()
