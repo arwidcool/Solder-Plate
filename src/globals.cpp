@@ -8,6 +8,14 @@ AnalogRef analogRef(5.0);
 TempCalibration calibration_100K_3950 = {25, 100000, 86, 10324, 169, 1148};
 // Initalize the 3950 100K thermistors with ACTUAL reference resistor measurnment(Measured between Left pin and GND when the board is powered off) using the default calibration data for 100K thermistor
 
+
+//--------------------------------------------------------------------------------------------------------------------------------------
+
+//This is where you set your potentiometer values for the 6 thermistors
+
+//You can tweak them from the datasheet to best fit your thermistor but we reccoemnd using the default values and setting the potentiometer to these values
+// Does not have to be perfect just set it close to this value and record the measured value and put it for the thermistors
+
 //2.5k reference = Best accuracy around 138C
 Thermistor thermistor1(THERMISTOR1_PIN, 2500);
 Thermistor thermistor2(THERMISTOR2_PIN, 2500);
@@ -16,10 +24,26 @@ Thermistor thermistor3(THERMISTOR3_PIN, 2500);
 Thermistor thermistor4(THERMISTOR4_PIN, 1000);
 //515R reference = Best accuracy around 210C
 Thermistor thermistor5(THERMISTOR5_PIN, 515);
-//9k reference = Best accuracy around 90C
+//9k reference = Best accuracy around 90C -> This thermistor is used for the preheat phase if attached
 Thermistor thermistor6(THERMISTOR6_PIN, 9000);
+
+//---------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
 //Put all thermistors in an array
 Thermistor thermistors[6] = {thermistor1, thermistor2, thermistor3, thermistor4, thermistor5, thermistor6};
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------------------------
+
+// These are the reflow profiles that you can choose from, you can add more if you want (up to 5) but you will have to change the nReflowProfiles variable to the number of profiles you have
+
+int nReflowProfiles = 2;
 
 ReflowProfile reflowProfiles[] = {
     // 138c profile Sn42Bi58
@@ -40,12 +64,12 @@ ReflowProfile reflowProfiles[] = {
                     "183C Sn63 Pb37 \0"),
 
  
-
 };
+//---------------------------------------------------------------------------------------------------------------------------------------
 
 ReflowProfile chosenReflowProfile = reflowProfiles[0];
 
-int nReflowProfiles = 2;
+
 
 uint16_t plateResistanceOhm = 0;
 EEPROMDataManager eepromDataManager = EEPROMDataManager();
