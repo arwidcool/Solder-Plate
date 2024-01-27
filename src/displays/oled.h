@@ -21,6 +21,7 @@ class OledDisplay {
 
         void centerText(const char * text);
         void displayIndicators();
+        void handleDrawThermistorMenu(OledMenuItem item);
 };
 
 

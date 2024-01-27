@@ -5,7 +5,7 @@
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
 #define OLED_RESET -1 // Reset pin # (or -1 if sharing Arduino reset pin)
-#define MENUID_PLATERES 2
+#define MENUID_DEBUG 2
 #define MENUITEM_THERMISTOR_START 150
 
 unsigned long lastProcessedReflowState = 0;
@@ -17,41 +17,82 @@ OledDisplay::OledDisplay()
 
 void OledDisplay::handleButtonStateChange(Pair<ButtonKind, StateChangeEvent<ButtonState>> change)
 {
-    if (change.second.to == ButtonState::PRESSED)
+    ReflowProcessState state = reflowProcessState.get();
+    if (state == USER_INPUT)
     {
-        if (change.first == ButtonKind::SELECT)
+        if (change.second.to == ButtonState::PRESSED)
         {
-            OledMenu *selectedMenu = curMenu->getNextMenu();
-            if (selectedMenu != NULL)
+            if (change.first == ButtonKind::SELECT)
             {
-                curMenu = selectedMenu;
+                OledMenu *selectedMenu = curMenu->getNextMenu();
+                if (selectedMenu != NULL)
+                {
+                    curMenu = selectedMenu;
+                }
             }
-        }
-        else if (change.first == ButtonKind::BACK)
-        {
-            OledMenu *selectedMenu = curMenu->parent;
-            if (selectedMenu != NULL)
+            else if (change.first == ButtonKind::BACK)
             {
-                curMenu = selectedMenu;
+                OledMenu *selectedMenu = curMenu->parent;
+                if (selectedMenu != NULL)
+                {
+                    curMenu = selectedMenu;
+                }
             }
-        }
-        else if (change.first == ButtonKind::UP)
-        {
-            curMenu->goNextItem();
-        }
-        else if (change.first == ButtonKind::DOWN)
-        {
-            curMenu->goPrevItem();
+            else if (change.first == ButtonKind::UP)
+            {
+                curMenu->goPrevItem();
+            }
+            else if (change.first == ButtonKind::DOWN)
+            {
+                curMenu->goNextItem();
+            }
         }
     }
 }
+
+void OledDisplay::handleDrawThermistorMenu(OledMenuItem menuItem)
+{
+    int thermistorIndex = menuItem.identifier - MENUITEM_THERMISTOR_START;
+    if (thermistorIndex == 6)
+    {
+        // Showing all thermistors values in a row
+        display.setTextSize(1, 2);
+        for (int i = 0; i < 6; i++)
+        {
+            int thermistorTemp = thermistors[i].getTemperature();
+            display.setCursor(i < 3 ? 0 : (SCREEN_WIDTH / 2 + 20), 20 * (i % 3));
+            display.println(String(i + 1) + " " + String(thermistorTemp));
+        }
+        centerText(menuItem.title);
+        displayIndicators();
+    }
+    else if (thermistorIndex == 7)
+    {
+        display.setTextSize(1, 2);
+        for (int i = 0; i < 6; i++)
+        {
+            float thermR = thermistors[i].getResistance();
+            display.setCursor(i < 3 ? 0 : (SCREEN_WIDTH / 2 + 20), 20 * (i % 3));
+            display.println(String(i + 1) + " " + String((int)(thermR)));
+        }
+        centerText(menuItem.title);
+        displayIndicators();
+    }
+    else
+    {
+        int thermistorTemp = thermistors[thermistorIndex].getTemperature();
+        centerText((String(menuItem.title) + ": " + String(thermistorTemp)).c_str());
+        displayIndicators();
+    }
+}
+
 void OledDisplay::setup()
 {
     curMenu = new OledMenu();
     curMenu->setElements(new OledMenuItem[3]{
                              OledMenuItem("Reflow\0"),
-                             OledMenuItem("PlateR\0"),
                              OledMenuItem("Temps\0"),
+                             OledMenuItem("Debug\0"),
                          },
                          3);
 
@@ -63,10 +104,11 @@ void OledDisplay::setup()
     }
     pickProfilesMenu->setElements(pickProfilesMenuItems, nReflowProfiles);
 
-    OledMenu *plateRMenu = new OledMenu(MENUID_PLATERES);
+    OledMenu *debugMenu = new OledMenu(MENUID_DEBUG);
     OledMenu *tempsMenu = new OledMenu(3);
-    tempsMenu->setElements(new OledMenuItem[7]{
-                               OledMenuItem("ALL\0", MENUITEM_THERMISTOR_START + 6),
+    tempsMenu->setElements(new OledMenuItem[8]{
+                               OledMenuItem("C\0", MENUITEM_THERMISTOR_START + 6),
+                               OledMenuItem("R\0", MENUITEM_THERMISTOR_START + 7),
                                OledMenuItem("T1\0", MENUITEM_THERMISTOR_START + 0),
                                OledMenuItem("T2\0", MENUITEM_THERMISTOR_START + 1),
                                OledMenuItem("T3\0", MENUITEM_THERMISTOR_START + 2),
@@ -74,14 +116,14 @@ void OledDisplay::setup()
                                OledMenuItem("T5\0", MENUITEM_THERMISTOR_START + 4),
                                OledMenuItem("T6\0", MENUITEM_THERMISTOR_START + 5),
                            },
-                           6);
+                           8);
 
     curMenu->setChildren(
         new OledMenu *[3]
         {
             pickProfilesMenu,
-                plateRMenu,
                 tempsMenu,
+                debugMenu,
         },
         3);
     curMenu->setChildrenMatrix(3, new uint8_t[3][2]{
@@ -112,38 +154,11 @@ void OledDisplay::loop()
     ReflowProcessState state = reflowProcessState.get();
     if (state == USER_INPUT)
     {
-        display.clearDisplay();
-        display.setRotation(0);
-        display.setTextSize(2);
-
-        OledMenuItem menuItem = curMenu->getCurItem();
-        display.setTextSize(2);
-        if (menuItem.identifier >= MENUITEM_THERMISTOR_START && menuItem.identifier < MENUITEM_THERMISTOR_START + 7)
-        {
-            int thermistorIndex = menuItem.identifier - MENUITEM_THERMISTOR_START;
-            if (thermistorIndex == 6) {
-                // Showing all
-            } else {
-                int thermistorTemp = thermistors[thermistorIndex].getTemperature();
-                centerText((String(menuItem.title) + ": " + String(thermistorTemp)).c_str());
-                displayIndicators();
-            }
-            
-        }   
-        else if (curMenu->identifier == MENUID_PLATERES)
-        {
-            // TODO: Logic for plate resistance
-        }
-        else
-        {
-
-            // draw menu item with selectors.
-
-            centerText(menuItem.title);
-            displayIndicators();
-        }
-
-        display.display();
+        handleUserInputState();
+    }
+    else if (state >= REFLOW && state <= DONE)
+    {
+        handleReflowState();
     }
     // Loop implementation
 }
@@ -171,6 +186,7 @@ void OledDisplay::drawDebug()
 }
 void OledDisplay::displayIndicators()
 {
+    display.setTextSize(2);
     display.setRotation(1);
     display.setCursor(0, SCREEN_WIDTH / 2 - 5);
     display.print("<");
@@ -190,16 +206,33 @@ void OledDisplay::centerText(const char *txt)
 void OledDisplay::handleUserInputState()
 {
     display.clearDisplay();
-    display.setCursor(0, SCREEN_HEIGHT / 2 + 10);
+    display.setRotation(0);
     display.setTextSize(2);
 
-    display.display();
+    OledMenuItem menuItem = curMenu->getCurItem();
+    display.setTextSize(2);
+    // THERMISTORS
+    if (menuItem.identifier >= MENUITEM_THERMISTOR_START && menuItem.identifier < MENUITEM_THERMISTOR_START + 8)
+    {
+        handleDrawThermistorMenu(menuItem);
+    }
+    else if (curMenu->identifier == MENUID_DEBUG)
+    {
+        drawDebug();
+    }
+    else
+    {
+        // Default menu handling. Just display the title and the indicators to go back and forth
+        centerText(menuItem.title);
+        displayIndicators();
+        display.display();
+    }
 }
 void OledDisplay::handleReflowState()
 {
     display.clearDisplay();
     display.setCursor(0, 0);
-
-    display.println("REFLOW");
+    ReflowProcessState state = reflowProcessState.get();
+    centerText(STATE_STR(state));
     display.display();
 }

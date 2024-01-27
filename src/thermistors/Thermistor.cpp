@@ -1,12 +1,6 @@
 #include "Thermistor.h"
 
 
-void Thermistor::setPotentiometerResistance(float resistance)
-{
-    setRes = resistance;
-    calculateCoefficents(resistance, calibration);
-}
-
 int Thermistor::getTemperature()
 {
 
@@ -26,7 +20,7 @@ int Thermistor::getTemperature()
     return temp;
 }
 
-void Thermistor::calculateCoefficents(float resistance, TempCalibration calibration)
+void Thermistor::calculateCoefficents(TempCalibration calibration)
 {
 
     float lowK = calibration.lowC + K;

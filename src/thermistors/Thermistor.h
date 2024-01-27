@@ -41,27 +41,27 @@ public:
     // Constructor
     Thermistor();
 
-    Thermistor(uint8_t pin, float resistance, TempCalibration calibration): thermistorPin(pin), setRes(resistance), calibration(calibration) {
-        calculateCoefficents(resistance, calibration);
+    Thermistor(uint8_t pin, uint16_t resistance, TempCalibration calibration): thermistorPin(pin), setRes(resistance), calibration(calibration) {
+        calculateCoefficents(calibration);
     }
 
-    Thermistor(uint8_t pin, float resistance): thermistorPin(pin), setRes(resistance), calibration(calibration_100K_3950) {
-        calculateCoefficents(resistance, calibration);
+    Thermistor(uint8_t pin, uint16_t resistance): thermistorPin(pin), setRes(resistance), calibration(calibration_100K_3950) {
+        calculateCoefficents(calibration);
     }
 
     // Public Methods
     int getTemperature();
     float getResistance();
-    void setPotentiometerResistance(float resistance);
-
+    void setPotentiometerResistance(uint16_t resistance) { setRes = resistance; };
+    uint16_t getPotentiometerResistance() { return setRes; };
     // Public Variables
-    void calculateCoefficents(float resistance, TempCalibration calibration);
+    void calculateCoefficents(TempCalibration calibration);
 
 private:
     const double K = 273.15;
     float sensorResistance;
     uint8_t thermistorPin;
-    float setRes;
+    uint16_t setRes;
     Coefficents coefficents;
     float referenceResistance;
     TempCalibration calibration;

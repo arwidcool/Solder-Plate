@@ -6,7 +6,7 @@ AnalogRef analogRef(5.0);
 TempCalibration calibration_100K_3950 = {25, 100000, 86, 10000, 170, 1000};
 // Initalize the 3950 100K thermistors with ACTUAL reference resistor measurnment(Measured between Left pin and GND when the board is powered off) using the default calibration data for 100K thermistor
 Thermistor thermistor1(THERMISTOR1_PIN, 2500);
-Thermistor thermistor2(THERMISTOR2_PIN, 2500);
+Thermistor thermistor2(THERMISTOR2_PIN, 1111);
 Thermistor thermistor3(THERMISTOR3_PIN, 2500);
 Thermistor thermistor4(THERMISTOR4_PIN, 2500);
 Thermistor thermistor5(THERMISTOR5_PIN, 2500);
