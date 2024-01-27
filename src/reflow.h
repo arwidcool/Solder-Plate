@@ -6,8 +6,6 @@
 #include "thermistors/Thermistor.h"
 #include "displays/oled.h"
 
-extern Thermistor thermistor1;
-
 // STATE MACHINE
 enum ReflowProcessState
 {
@@ -61,8 +59,6 @@ public:
 
         case EASE_IN_OUT:
             return startTemp + (this->targetTempAtEnd - startTemp) * -(cos(percentage * PI) - 1) / (double)2;
-
-            Serial.println(this->targetTempAtEnd);
         case EASE_IN:
             return startTemp + (this->targetTempAtEnd - startTemp) * (1 - cos(percentage * PI / (double)2));
 
@@ -74,18 +70,11 @@ public:
 
 #define PROFILE_SERIALIZED_SIZE 40
 #define PROFILE_SERIALIZED_NAME_SIZE 20
+#define STEPINDEX(step) (step.state - PREHEAT)
 
 class ReflowProfile
 {
 public:
-    uint8_t preheatEndTime;
-    uint8_t soakEndTime;
-    uint8_t reflowEndTime;
-    uint8_t coolEndTime;
-    int totalDuration;
-
-    float targetTempReflow;
-
     float percentage;
 
     ReflowProfile(ReflowStep steps[5], char name[20])
@@ -102,211 +91,74 @@ public:
     }
     ReflowStep steps[5];
     char name[20];
+    uint16_t endTimes[5] = {0};
+    uint16_t startTimes[5] = {0};
     StopWatch timer;
 
     void start()
     {
         timer = StopWatch(StopWatch::Resolution::SECONDS);
         timer.start();
-        calculateEndTimes();
+        calculateTimes();
     }
 
-
-    void calculateEndTimes()
+    void calculateTimes()
     {
+        endTimes[0] = steps[0].duration;
+        endTimes[1] = endTimes[0] + steps[1].duration;
+        endTimes[2] = endTimes[1] + steps[2].duration;
+        endTimes[3] = endTimes[2] + steps[3].duration;
+        endTimes[4] = endTimes[3] + steps[4].duration;
 
-        preheatEndTime = steps[0].duration;
-        int soakEnd = steps[1].duration;
-        soakEndTime = preheatEndTime + soakEnd;
-        reflowEndTime = soakEndTime + steps[2].duration;
-        coolEndTime = reflowEndTime + steps[3].duration;
-
-        // reflowEndTime = soakEndTime + (steps[2].duration*1000);
-        // coolEndTime = reflowEndTime + (steps[3].duration*1000);
-
-        Serial.print("preheatEndTime: ");
-        Serial.println(preheatEndTime);
-        Serial.print("soakEndTime: ");
-        Serial.println(soakEndTime);
-        Serial.print("reflowEndTime: ");
-        Serial.println(reflowEndTime);
-        Serial.print("coolEndTime: ");
-        Serial.println(coolEndTime);
-
-        totalDuration = coolEndTime + steps[4].duration;
-
-        Serial.print("totalDuration: ");
-        Serial.println(totalDuration);
+        startTimes[0] = 0;
+        startTimes[1] = endTimes[0];
+        startTimes[2] = endTimes[1];
+        startTimes[3] = endTimes[2];
+        startTimes[4] = endTimes[3];
     }
 
     ReflowStep curReflowStep()
     {
+        if (!timer.isRunning()) {
+            return steps[0];
+        }
         uint8_t elapsed = timer.elapsed();
-
-        if (elapsed <= preheatEndTime)
+        for (int i = 0; i < 5; i++)
         {
-            return steps[0];
+            if (elapsed >= startTimes[i] && elapsed < endTimes[i])
+            {
+                return steps[i];
+            }
         }
-        else if (elapsed < soakEndTime)
-        {
-            return steps[1];
-        }
-        else if (elapsed < reflowEndTime)
-        {
-            return steps[2];
-        }
-        else if (elapsed < coolEndTime)
-        {
-            return steps[3];
-        }
-        else
-        {
-            return steps[4];
-            timer.stop();
-            timer.reset();
-        }
-    }
-
-    ReflowStep getPreviousSetep(ReflowStep step)
-    {
-        if (step.state == PREHEAT)
-        {
-            return steps[0];
-        }
-        else if (step.state == SOAK)
-        {
-            return steps[1];
-        }
-        else if (step.state == REFLOW)
-        {
-            return steps[2];
-        }
-        else if (step.state == COOL)
-        {
-            return steps[3];
-        }
-        else
-        {
-
-            return steps[4];
-        }
+        return steps[4]; // DONE by default
     }
 
     float getTargetTemp()
     {
         uint32_t elapsedTime = timer.elapsed();
         uint8_t startTemp = 20; // always assume 20 degrees at the start
-        // uint8_t startTemp=thermistor1.getTemperature();
 
         ReflowStep curStep = curReflowStep();
-        ReflowStep prevStep = getPreviousSetep(curStep);
-
-        int currenStepIndex = getCurrentStepIndex(curStep);
-        int previousStepIndex = getCurrentStepIndex(prevStep);
-
-        float relativeTIme = calculateCurrentStepRelativeTime(curStep);
-
-        if (currenStepIndex == -1)
+        if (curStep.state > PREHEAT)
         {
-            timer.reset();
-            timer.stop();
-            return startTemp; // We are done return 20 degrees
+            startTemp = steps[STEPINDEX(curStep) - 1].targetTempAtEnd;
         }
-        uint32_t relativeElapsedTime = elapsedTime;
-        for (int i = 0; i < currenStepIndex; i++)
-        {
-            relativeElapsedTime -= steps[i].duration;
-            startTemp = steps[i].targetTempAtEnd;
-        }
-        // float temp = curStep.calcTempAtPercentage(startTemp, percentage);
 
-        // Serial.print("relativeElapsedTime: ");
-        // Serial.println(relativeElapsedTime);
-        // Serial.print("relativeTIme: ");
-        // Serial.println(relativeTIme);
-        // Serial.print("startTemp: ");
-        // Serial.println(startTemp);
+        // startTemp => 20 or the targetTempAtEnd of the previous step
+        
+        uint16_t startTime = startTimes[STEPINDEX(curStep)];
 
-        percentage = (float)relativeElapsedTime / (float)(steps[currenStepIndex].duration);
+        uint32_t relativeElapsedTime = elapsedTime - startTime;
 
-        targetTempReflow = steps[currenStepIndex].calcTempAtPercentage(startTemp, percentage);
+        percentage = (float)relativeElapsedTime / (float)(curStep.duration);
 
-        return targetTempReflow;
+        return curStep.calcTempAtPercentage(startTemp, percentage);
     }
 
-    int getCurrentStepIndex()
-    {
-        uint8_t elapsed = timer.elapsed();
-
-        if (elapsed <= preheatEndTime)
-        {
-            return 0;
-        }
-        else if (elapsed < soakEndTime)
-        {
-            return 1;
-        }
-        else if (elapsed < reflowEndTime)
-        {
-            return 2;
-        }
-        else if (elapsed < coolEndTime)
-        {
-            return 3;
-        }
-        else
-        {
-            return 4;
-        }
-    }
-
-    int getCurrentStepIndex(ReflowStep step)
-    {
-        if (step.state == PREHEAT)
-        {
-            return 0;
-        }
-        else if (step.state == SOAK)
-        {
-            return 1;
-        }
-        else if (step.state == REFLOW)
-        {
-            return 2;
-        }
-        else if (step.state == COOL)
-        {
-            return 3;
-        }
-        else
-        {
-            return 4;
-        }
-    }
-
-    uint8_t getCurrentStepRelativeTime()
-    {
-        return calculateCurrentStepRelativeTime(curReflowStep());
-    };
-
-    uint8_t calculateCurrentStepRelativeTime(ReflowStep step)
-    {
-
-        uint32_t elapsed = timer.elapsed();
-
-        switch (step.state)
-        {
-        case PREHEAT:
-            return elapsed;
-        case SOAK:
-            return elapsed - preheatEndTime;
-        case REFLOW:
-            return elapsed - soakEndTime;
-        case COOL:
-            return elapsed - reflowEndTime;
-        case DONE:
-            return elapsed - coolEndTime;
-        }
+    uint8_t getCurrentStepRelativeTime() {
+        uint32_t elapsedTime = timer.elapsed();
+        uint16_t startTime = startTimes[STEPINDEX(curReflowStep())];
+        return elapsedTime - startTime;
     }
 
     void toBuffer(uint8_t *b)

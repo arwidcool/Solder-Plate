@@ -73,7 +73,6 @@ void loop()
       {
         // STOP REFLOW and restart
         reflowProcessState.set(USER_INPUT);
-        pidControllerData.targetTemp = 0; // should not be needed but why not?
         pidController.stop();
       }
     }
@@ -87,6 +86,7 @@ void loop()
       pidController.start();
     }
   }
+  state = newState;
 
   oled.loop();
 
@@ -104,6 +104,7 @@ void loop()
   if (state == DONE)
   {
     // TODO: BUZZER
+    pidController.stop();
     reflowProcessState.set(USER_INPUT);
   }
   

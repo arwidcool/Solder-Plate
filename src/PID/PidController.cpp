@@ -34,14 +34,15 @@ void PidController::debug()
 }
 
 void PidController::loop() {
-    pidControllerData.targetTemp = chosenReflowProfile.getTargetTemp();
-    pidControllerData.currentTemp = thermistor1.getTemperature();
+    data->targetTemp = chosenReflowProfile.getTargetTemp();
+    data->currentTemp = thermistor1.getTemperature();
     compute();
     analogWrite(MOSTFET_PIN, data->setPoint);
 }
 
 void PidController::stop()
 {
+    data->targetTemp = 0; // should not be needed but why not?
     // STOP
     digitalWrite(MOSTFET_PIN, LOW);
     controller.stop();
