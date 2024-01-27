@@ -55,7 +55,8 @@ float Thermistor::getResistance()
     // Get resistance value
     float buffer = raw * systemVoltage;
     float vOut = (buffer) / 1023;
-    // Serial.println(vOut);
+
+    //Calculate the resistance of the thermistor with the system voltage accounted for
     buffer = (systemVoltage / vOut) - 1;
 
     // return the resistence

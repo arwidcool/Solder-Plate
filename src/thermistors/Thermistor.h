@@ -21,7 +21,6 @@ struct TempCalibration
     float highR;
 };
 
-
 extern TempCalibration calibration_100K_3950;
 
 #define THERMISTOR1_PIN 39
@@ -35,17 +34,32 @@ extern AnalogRef analogRef;
 
 // Include any necessary libraries here
 
+enum ThermistorZ_Placement
+{
+    TOP,
+    BOTTOM
+};
+
+enum ThermistorXY_Placement
+{
+    MIDDLE,
+    LEFT,
+    RIGHT
+};
+
 class Thermistor
 {
 public:
     // Constructor
     Thermistor();
 
-    Thermistor(uint8_t pin, uint16_t resistance, TempCalibration calibration): thermistorPin(pin), setRes(resistance), calibration(calibration) {
+    Thermistor(uint8_t pin, uint16_t resistance, TempCalibration calibration,ThermistorZ_Placement zPlacement,ThermistorXY_Placement  xyPlacment) : thermistorPin(pin), setRes(resistance), calibration(calibration),zPlacement(zPlacement),xyPlacment(xyPlacment)
+    {
         calculateCoefficents(calibration);
     }
 
-    Thermistor(uint8_t pin, uint16_t resistance): thermistorPin(pin), setRes(resistance), calibration(calibration_100K_3950) {
+    Thermistor(uint8_t pin, uint16_t resistance,ThermistorZ_Placement zPlacement,ThermistorXY_Placement  xyPlacment) : thermistorPin(pin), setRes(resistance), calibration(calibration_100K_3950),zPlacement(zPlacement),xyPlacment(xyPlacment)
+    {
         calculateCoefficents(calibration);
     }
 
@@ -58,6 +72,8 @@ public:
     void calculateCoefficents(TempCalibration calibration);
 
 private:
+    ThermistorZ_Placement zPlacement;
+    ThermistorXY_Placement xyPlacment;
     const double K = 273.15;
     float sensorResistance;
     uint8_t thermistorPin;
