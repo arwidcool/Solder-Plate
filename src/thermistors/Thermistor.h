@@ -49,7 +49,7 @@ public:
     ~Thermistor();
 
     // Public Methods
-    int getTemperature();
+    float getTemperature();
     float getResistance();
 
     // Public Variables

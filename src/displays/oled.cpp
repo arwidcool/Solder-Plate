@@ -1,11 +1,13 @@
 #include "./oled.h"
 #include <Arduino.h>
 #include "../globals.h"
+#include "oled.h"
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
 #define OLED_RESET -1 // Reset pin # (or -1 if sharing Arduino reset pin)
 
 unsigned long lastProcessedReflowState = 0;
+
 OledDisplay::OledDisplay()
 {
 
@@ -90,12 +92,28 @@ void OledDisplay::drawDebug()
     display.setCursor(0, 0);
     display.println("SysV: " + String(sysVoltage));
     display.setCursor(0, 20);
-    display.println("In V: " + String(inputVoltage));
+    display.println("In V:" + String(inputVoltage));
     display.setCursor(0, 40);
     display.println("C°: " + String(thermistor1Temp));
     display.display();
 }
 
+void OledDisplay::clearAll()
+{
+    display.clearDisplay();
+    display.display();
+}
+void OledDisplay::warning(String message)
+{
+
+    display.clearDisplay();
+    display.setCursor(0, 0);
+    display.setTextSize(2);
+
+    display.println("WARNING");
+    display.println(message);
+    display.display();
+}
 void OledDisplay::handleUserInputState()
 {
     Serial.println("USER_INPUT_STATE");

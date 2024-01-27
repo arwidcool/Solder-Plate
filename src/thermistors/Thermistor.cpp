@@ -26,11 +26,11 @@ Thermistor::~Thermistor()
 {
 }
 
-int Thermistor::getTemperature()
+float Thermistor::getTemperature()
 {
 
     // Get an average of 5 readings
-    int temp = 0;
+    float temp = 0;
 
     uint8_t samples = 5;
     
