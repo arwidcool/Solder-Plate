@@ -12,4 +12,6 @@ extern Thermistor thermistor3;
 extern Thermistor thermistor4;
 extern Thermistor thermistor5;
 extern Thermistor thermistor6;
+extern ReflowProfile reflowProfiles[];
+extern int nReflowProfiles;
 #endif

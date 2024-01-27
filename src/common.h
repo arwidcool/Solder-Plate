@@ -50,6 +50,7 @@ template <typename First, typename Second>
 class Pair
 {
 public:
+    Pair(){};
     Pair(First first, Second second) : first(first), second(second) {}
     First first;
     Second second;

@@ -19,6 +19,7 @@ void LEDS::handleButtonStateChange(Pair<ButtonKind, StateChangeEvent<ButtonState
 {
     switch (change.first) {
         case ButtonKind::UP:
+            Serial.println("MEOW");
             if (change.second.to == ButtonState::PRESSED) {
                 digitalWrite(yellowLED, HIGH);
             } else if (!yellowLEDSeleOn) {

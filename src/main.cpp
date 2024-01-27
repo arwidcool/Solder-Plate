@@ -43,17 +43,28 @@ LEDS leds = LEDS();
 // Declare the PID
 ArduPID PID;
 OledDisplay oled = OledDisplay();
-ReflowProfile profile = ReflowProfile(new ReflowStep[5] {
+ReflowProfile reflowProfiles[] = {
+   ReflowProfile(new ReflowStep[5] {
     ReflowStep(ReflowProcessState::PREHEAT, 2, 150),
     ReflowStep(ReflowProcessState::SOAK, 3, 180),
     ReflowStep(ReflowProcessState::REFLOW, 3, 220, EASE_IN_OUT),
     ReflowStep(ReflowProcessState::COOL, 3, 100),
     ReflowStep(ReflowProcessState::DONE, 0, 0)
-  }, "meow\0");
+  }, "Test\0"),
+ ReflowProfile(new ReflowStep[5] {
+    ReflowStep(ReflowProcessState::PREHEAT, 2, 150),
+    ReflowStep(ReflowProcessState::SOAK, 3, 180),
+    ReflowStep(ReflowProcessState::REFLOW, 3, 220, EASE_IN_OUT),
+    ReflowStep(ReflowProcessState::COOL, 3, 100),
+    ReflowStep(ReflowProcessState::DONE, 0, 0)
+  }, "Test2\0"),
+};
+int nReflowProfiles = 2;
+
 void setup()
 {
 
-  Serial.begin(9600);
+  Serial.begin(38400);
 
   Serial.println("Starting OLED");
   // Set PWM frequency to 64 kHz
@@ -61,27 +72,8 @@ void setup()
   buttons.setup();
   leds.setup();
   oled.setup();
-  
-  char name[20] = "meow\0";
-  // ReflowProfile profile = ReflowProfile::fromEEPROM(0);
-  
-  // ReflowProfile profile = ReflowProfile(new ReflowStep[5] {
-  //   ReflowStep(ReflowProcessState::PREHEAT, 30, 150),
-  //   ReflowStep(ReflowProcessState::SOAK, 30, 180),
-  //   ReflowStep(ReflowProcessState::REFLOW, 30, 220),
-  //   ReflowStep(ReflowProcessState::COOL, 30, 100),
-  //   ReflowStep(ReflowProcessState::DONE, 0, 0)
-  // }, name);
-  // profile.toEEPROM(0);
-
-  Serial.println(profile.name);
-  for (int i=0; i<5; i++) {
-    Serial.print(profile.steps[i].duration);
-    Serial.print(" ");
-    Serial.println(profile.steps[i].targetTempAtEnd);
-  }
   reflowProcessState = USER_INPUT;
-  profile.start();
+  
 }
 
 void loop()
@@ -92,29 +84,30 @@ void loop()
 
   if (k != NULL) {
     leds.handleButtonStateChange(*k);
+    oled.handleButtonStateChange(*k);
 
-    if (ISBUTTONMIGRATEDTOSTATE(*k, ButtonKind::SELECT, ButtonState::PRESSED)) {
-      reflowProcessState.set(ReflowProcessState::PREHEAT);
-    } else if (ISBUTTONMIGRATEDTOSTATE(*k, ButtonKind::BACK, ButtonState::PRESSED)) {
-      reflowProcessState.set(ReflowProcessState::USER_INPUT);
-    } else if (ISBUTTONMIGRATEDTOSTATE(*k, ButtonKind::UP, ButtonState::PRESSED)) {
-      reflowProcessState.set(ReflowProcessState::COOL);
-    } else if (ISBUTTONMIGRATEDTOSTATE(*k, ButtonKind::DOWN, ButtonState::PRESSED)) {
-      reflowProcessState.set(ReflowProcessState::REFLOW);
-    }
+    // if (ISBUTTONMIGRATEDTOSTATE(*k, ButtonKind::SELECT, ButtonState::PRESSED)) {
+    //   reflowProcessState.set(ReflowProcessState::PREHEAT);
+    // } else if (ISBUTTONMIGRATEDTOSTATE(*k, ButtonKind::BACK, ButtonState::PRESSED)) {
+    //   reflowProcessState.set(ReflowProcessState::USER_INPUT);
+    // } else if (ISBUTTONMIGRATEDTOSTATE(*k, ButtonKind::UP, ButtonState::PRESSED)) {
+    //   reflowProcessState.set(ReflowProcessState::COOL);
+    // } else if (ISBUTTONMIGRATEDTOSTATE(*k, ButtonKind::DOWN, ButtonState::PRESSED)) {
+    //   reflowProcessState.set(ReflowProcessState::REFLOW);
+    // }
   }
 
-  ReflowStep step = profile.curReflowStep();
-  if (step.state != reflowProcessState.get()) {
-    reflowProcessState.set(step.state);
-  }
+  // ReflowStep step = profile.curReflowStep();
+  // if (step.state != reflowProcessState.get()) {
+  //   reflowProcessState.set(step.state);
+  // }
 
-  oled.loop();
-  if (step.state == ReflowProcessState::DONE) {
-    profile.start();
-    return;
-  }
-  Serial.print(String(STATE_STR(step.state)) + " " + String(step.duration) + " " + String(step.targetTempAtEnd) + " " + String(profile.getTargetTemp())+"\r");
+   oled.loop();
+  // if (step.state == ReflowProcessState::DONE) {
+  //   profile.start();
+  //   return;
+  // }
+  // Serial.print(String(STATE_STR(step.state)) + " " + String(step.duration) + " " + String(step.targetTempAtEnd) + " " + String(profile.getTargetTemp())+"\r");
   
 }
 
