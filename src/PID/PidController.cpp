@@ -37,6 +37,7 @@ void PidController::loop()
 {
     data->targetTemp = chosenReflowProfile.getTargetTemp();
     data->currentTemp = thermistor1.getTemperature();
+    debug();
     compute();
     analogWrite(MOSTFET_PIN, data->setPoint);
 }

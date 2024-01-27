@@ -6,8 +6,8 @@
 
 // If you didnt solder the LEDS in order, change the order here
 #define LEFT_LED_PIN 20
-#define MID_LED_PIN 19
-#define RIGHT_LED_PIN 18
+#define MID_LED_PIN 18
+#define RIGHT_LED_PIN 19
 #define GREEN_LED_PIN RIGHT_LED_PIN
 enum LedDesiredState
 {

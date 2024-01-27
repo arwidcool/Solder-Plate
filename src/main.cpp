@@ -47,6 +47,7 @@ void setup()
   Serial.println("Starting OLED");
   // Set PWM frequency to 64 kHz
   analogWriteFrequency(64);
+  
   buttons.setup();
   leds.setup();
   oled.setup();
@@ -78,6 +79,7 @@ void loop()
     }
   }
   ReflowProcessState newState = reflowProcessState.get();
+
   if (newState != state) {
     Serial.println("State changed from " + String(STATE_STR(state)) + " to " + String(STATE_STR(newState)));
     // State changed from state to newState (user input or wifi input needs to be above here)
