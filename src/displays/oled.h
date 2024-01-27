@@ -3,7 +3,11 @@
 #include <Adafruit_SSD1306.h>
 #include "../reflow.h"
 #include "menustatemachine.h"
-
+enum DisplayTextAlignment {
+    START,
+    CENTER,
+    END
+};
 class OledDisplay {
     public:
         OledDisplay();
@@ -18,12 +22,12 @@ class OledDisplay {
         void drawDebug();
         void handleUserInputState();
         void handleReflowState();
-
-        void centerText(const char * text);
+        void centerText(const char * text) {
+            centerText(text, DisplayTextAlignment::CENTER, DisplayTextAlignment::CENTER);
+        }
+        void centerText(const char * text, DisplayTextAlignment horizontal, DisplayTextAlignment vertical);
         void displayIndicators();
         void handleDrawThermistorMenu(OledMenuItem item);
 };
-
-
 
 #endif

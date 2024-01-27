@@ -9,7 +9,8 @@
 #include "leds/leds.h"
 #include "reflow.h"
 #include "displays/oled.h"
-#include "globals.h" 
+#include "PID/PidController.h"
+#include "globals.h"
 #include "EEPROMDataManager.h"
 
 // LCD display pins
@@ -21,6 +22,11 @@
 // Create an instance of the Adafruit ST7789 class using the custom SPI pins
 Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, MOSI, SCK, TFT_RST);
 
+#define MOSTFET_PIN 17
+
+double currentTemp = 0;
+double targetTemp = 60;
+double pwmValue = 255;
 
 Buttons buttons = Buttons();
 LEDS leds = LEDS();
@@ -29,8 +35,12 @@ ArduPID PID;
 OledDisplay oled = OledDisplay();
 
 
+
 void setup()
 {
+
+  pinMode(MOSTFET_PIN, OUTPUT);
+  analogWrite(MOSTFET_PIN, 255); // VERY IMPORTANT, DONT CHANGE!
 
   Serial.begin(38400);
 
@@ -41,43 +51,66 @@ void setup()
   leds.setup();
   oled.setup();
   eepromDataManager.setup();
-  
-  reflowProcessState = USER_INPUT;
-  
-}
 
+  reflowProcessState.set(USER_INPUT);
+}
 void loop()
 {
 
   // Return the button that changed state
   Pair<ButtonKind, StateChangeEvent<ButtonState>> *k = buttons.handleButtons();
-
-  if (k != NULL) {
+  ReflowProcessState state = reflowProcessState.get();
+  if (k != NULL)
+  {
     leds.handleButtonStateChange(*k);
-    oled.handleButtonStateChange(*k);
-
-    // if (ISBUTTONMIGRATEDTOSTATE(*k, ButtonKind::SELECT, ButtonState::PRESSED)) {
-    //   reflowProcessState.set(ReflowProcessState::PREHEAT);
-    // } else if (ISBUTTONMIGRATEDTOSTATE(*k, ButtonKind::BACK, ButtonState::PRESSED)) {
-    //   reflowProcessState.set(ReflowProcessState::USER_INPUT);
-    // } else if (ISBUTTONMIGRATEDTOSTATE(*k, ButtonKind::UP, ButtonState::PRESSED)) {
-    //   reflowProcessState.set(ReflowProcessState::COOL);
-    // } else if (ISBUTTONMIGRATEDTOSTATE(*k, ButtonKind::DOWN, ButtonState::PRESSED)) {
-    //   reflowProcessState.set(ReflowProcessState::REFLOW);
-    // }
+    if (state == USER_INPUT)
+    {
+      oled.handleButtonStateChange(*k);
+    }
+    else if (state >= PREHEAT && state <= COOL)
+    {
+      if (k->first == ButtonKind::BACK && k->second.to == ButtonState::PRESSED)
+      {
+        // STOP REFLOW and restart
+        reflowProcessState.set(USER_INPUT);
+        pidControllerData.targetTemp = 0; // should not be needed but why not?
+        pidController.stop();
+      }
+    }
+  }
+  ReflowProcessState newState = reflowProcessState.get();
+  if (newState != state) {
+    Serial.println("State changed from " + String(STATE_STR(state)) + " to " + String(STATE_STR(newState)));
+    // State changed from state to newState (user input or wifi input needs to be above here)
+    if (newState == PREHEAT) {
+      chosenReflowProfile.start();
+      pidController.start();
+    }
   }
 
-  // ReflowStep step = profile.curReflowStep();
-  // if (step.state != reflowProcessState.get()) {
-  //   reflowProcessState.set(step.state);
-  // }
+  oled.loop();
 
-   oled.loop();
+  if (state >= PREHEAT && state <= COOL)
+  {
+    pidController.loop();
+    ReflowStep step = chosenReflowProfile.curReflowStep();
+
+    if (step.state != newState)
+    {
+      reflowProcessState.set(step.state);
+    }
+  }
+
+  if (state == DONE)
+  {
+    // TODO: BUZZER
+    reflowProcessState.set(USER_INPUT);
+  }
+  
+
   // if (step.state == ReflowProcessState::DONE) {
   //   profile.start();
   //   return;
   // }
   // Serial.print(String(STATE_STR(step.state)) + " " + String(step.duration) + " " + String(step.targetTempAtEnd) + " " + String(profile.getTargetTemp())+"\r");
-  
 }
-

@@ -7,6 +7,8 @@
 #define OLED_RESET -1 // Reset pin # (or -1 if sharing Arduino reset pin)
 #define MENUID_DEBUG 2
 #define MENUITEM_THERMISTOR_START 150
+#define MENUID_PICK_PROFILE 100
+#define MENUITEM_PROFILE_START 100
 
 unsigned long lastProcessedReflowState = 0;
 OledDisplay::OledDisplay()
@@ -24,10 +26,28 @@ void OledDisplay::handleButtonStateChange(Pair<ButtonKind, StateChangeEvent<Butt
         {
             if (change.first == ButtonKind::SELECT)
             {
-                OledMenu *selectedMenu = curMenu->getNextMenu();
-                if (selectedMenu != NULL)
+                if (curMenu->identifier == MENUID_PICK_PROFILE)
                 {
-                    curMenu = selectedMenu;
+                    int profileIndex = curMenu->getCurItem().identifier - MENUITEM_PROFILE_START;
+                    if (profileIndex >= 0 && profileIndex < nReflowProfiles)
+                    {
+                        chosenReflowProfile = reflowProfiles[profileIndex];
+                        reflowProcessState.set(PREHEAT);
+                        Serial.println("Chosen profile: " + String(chosenReflowProfile.name));
+                    }
+                    else
+                    {
+                        Serial.println("Invalid profile index: " + String(profileIndex));
+                    }
+                }
+                else
+                {
+
+                    OledMenu *selectedMenu = curMenu->getNextMenu();
+                    if (selectedMenu != NULL)
+                    {
+                        curMenu = selectedMenu;
+                    }
                 }
             }
             else if (change.first == ButtonKind::BACK)
@@ -96,11 +116,11 @@ void OledDisplay::setup()
                          },
                          3);
 
-    OledMenu *pickProfilesMenu = new OledMenu(1);
+    OledMenu *pickProfilesMenu = new OledMenu(MENUID_PICK_PROFILE);
     OledMenuItem *pickProfilesMenuItems = new OledMenuItem[nReflowProfiles];
     for (int i = 0; i < nReflowProfiles; i++)
     {
-        pickProfilesMenuItems[i] = OledMenuItem(reflowProfiles[i].name, 100 + 1);
+        pickProfilesMenuItems[i] = OledMenuItem(reflowProfiles[i].name, MENUITEM_PROFILE_START + i);
     }
     pickProfilesMenu->setElements(pickProfilesMenuItems, nReflowProfiles);
 
@@ -156,7 +176,7 @@ void OledDisplay::loop()
     {
         handleUserInputState();
     }
-    else if (state >= REFLOW && state <= DONE)
+    else if (state >= PREHEAT && state <= DONE)
     {
         handleReflowState();
     }
@@ -193,12 +213,23 @@ void OledDisplay::displayIndicators()
     display.setCursor(SCREEN_HEIGHT - 14, SCREEN_WIDTH / 2 - 5);
     display.print(">");
 }
-void OledDisplay::centerText(const char *txt)
+void OledDisplay::centerText(const char *txt, DisplayTextAlignment horizontal, DisplayTextAlignment vertical)
 {
     int16_t x1, y1;
     uint16_t w, h;
     display.getTextBounds(txt, 0, 0, &x1, &y1, &w, &h);
-    display.setCursor(display.width() / 2 - w / 2, display.height() / 2 - h / 2);
+    int cursorX = (horizontal == DisplayTextAlignment::CENTER ? display.width() / 2 - w / 2 : 0);
+    if (horizontal == DisplayTextAlignment::END)
+    {
+        cursorX = display.width() - w;
+    }
+    int cursorY = (vertical == DisplayTextAlignment::CENTER ? display.height() / 2 - h / 2 : 0);
+    if (vertical == DisplayTextAlignment::END)
+    {
+        cursorY = display.height() - h;
+    }
+
+    display.setCursor(cursorX, cursorY);
 
     display.println(txt);
 }
@@ -231,8 +262,21 @@ void OledDisplay::handleUserInputState()
 void OledDisplay::handleReflowState()
 {
     display.clearDisplay();
+    display.setRotation(0);
     display.setCursor(0, 0);
+    display.setTextSize(2);
     ReflowProcessState state = reflowProcessState.get();
-    centerText(STATE_STR(state));
+    centerText(STATE_STR(state), DisplayTextAlignment::CENTER, DisplayTextAlignment::START);
+    
+    
+    display.setTextSize(1, 2);
+    uint32_t elapsedStep = chosenReflowProfile.getCurrentStepRelativeTime();
+    centerText("Remaining", DisplayTextAlignment::START, DisplayTextAlignment::CENTER);
+    centerText((String(chosenReflowProfile.curReflowStep().duration - elapsedStep) + "s").c_str(), DisplayTextAlignment::START, DisplayTextAlignment::END);
+
+    uint8_t curTemp = thermistor1.getTemperature();
+    uint8_t targetTemp = pidControllerData.targetTemp;
+    centerText(("Curr.: " + String(curTemp)).c_str(), DisplayTextAlignment::END, DisplayTextAlignment::CENTER);
+    centerText(("Target: " + String(targetTemp)).c_str(), DisplayTextAlignment::END, DisplayTextAlignment::END);
     display.display();
 }

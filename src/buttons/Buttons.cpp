@@ -21,7 +21,7 @@ Pair<ButtonKind, StateChangeEvent<ButtonState>>* Buttons::handleButtons()
     {
       StateChangeEvent<ButtonState> *change = __buttons[i]->lastChange();
 
-      Serial.println(String("ButtonStateChange: kind=") + KIND_STR(__buttons[i]->kind) + ", " + STATECHANGE_STR((*change)));
+      Serial.println(String("ButtonStateChange: kind=") + BTNKIND_STR(__buttons[i]->kind) + ", " + BTNSTATECHANGE_STR((*change)));
       return new Pair<ButtonKind, StateChangeEvent<ButtonState>>(__buttons[i]->kind, *change);
     }
   }

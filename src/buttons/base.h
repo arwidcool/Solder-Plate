@@ -17,12 +17,12 @@ enum ButtonKind
   NONE
 };
 
-#define KIND_STR(kind) (kind == ButtonKind::UP ? "UP" : kind == ButtonKind::DOWN ? "DOWN"   \
+#define BTNKIND_STR(kind) (kind == ButtonKind::UP ? "UP" : kind == ButtonKind::DOWN ? "DOWN"   \
                                                     : kind == ButtonKind::BACK   ? "BACK"   \
                                                     : kind == ButtonKind::SELECT ? "SELECT" \
                                                                                  : "NONE")
-#define STATE_STR(state) (state == ButtonState::IDLE ? "IDLE" : state == ButtonState::PRESSED ? "PRESSED" \
+#define BTNSTATE_STR(state) (state == ButtonState::IDLE ? "IDLE" : state == ButtonState::PRESSED ? "PRESSED" \
                                                                                               : "RELEASED")
-#define STATECHANGE_STR(change) (String(STATE_STR(change.from)) + " -> " + STATE_STR(change.to))
+#define BTNSTATECHANGE_STR(change) (String(BTNSTATE_STR(change.from)) + " -> " + BTNSTATE_STR(change.to))
 
 #endif

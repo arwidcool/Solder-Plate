@@ -4,6 +4,7 @@
 #include "./thermistors/Thermistor.h"
 #include "./reflow.h"
 #include "./EEPROMDataManager.h"
+#include "./PID/PidController.h"
 
 extern WrappedState<ReflowProcessState> reflowProcessState;
 extern AnalogRef analogRef;
@@ -15,11 +16,12 @@ extern Thermistor thermistor5;
 extern Thermistor thermistor6;
 extern Thermistor thermistors[6];
 extern ReflowProfile reflowProfiles[];
+extern ReflowProfile chosenReflowProfile;
 extern uint16_t plateResistanceOhm;
-// EEPROM data manager is in its own file
 extern int nReflowProfiles;
 
-
+extern PidControllerData pidControllerData;
+extern PidController pidController;
 extern EEPROMDataManager eepromDataManager;
 
 #endif

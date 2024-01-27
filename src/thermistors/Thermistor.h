@@ -50,7 +50,7 @@ public:
     }
 
     // Public Methods
-    int getTemperature();
+    float getTemperature();
     float getResistance();
     void setPotentiometerResistance(uint16_t resistance) { setRes = resistance; };
     uint16_t getPotentiometerResistance() { return setRes; };

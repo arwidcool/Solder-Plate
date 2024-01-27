@@ -14,23 +14,23 @@ Thermistor thermistor6(THERMISTOR6_PIN, 9000);
 Thermistor thermistors[6] = {thermistor1, thermistor2, thermistor3, thermistor4, thermistor5, thermistor6};
 
 ReflowProfile reflowProfiles[] = {
-   ReflowProfile(new ReflowStep[5] {
-    ReflowStep(ReflowProcessState::PREHEAT, 2, 150),
-    ReflowStep(ReflowProcessState::SOAK, 3, 180),
-    ReflowStep(ReflowProcessState::REFLOW, 3, 220, EASE_IN_OUT),
-    ReflowStep(ReflowProcessState::COOL, 3, 100),
-    ReflowStep(ReflowProcessState::DONE, 0, 0)
-  }, "Test\0"),
- ReflowProfile(new ReflowStep[5] {
-    ReflowStep(ReflowProcessState::PREHEAT, 2, 150),
-    ReflowStep(ReflowProcessState::SOAK, 3, 180),
-    ReflowStep(ReflowProcessState::REFLOW, 3, 220, EASE_IN_OUT),
-    ReflowStep(ReflowProcessState::COOL, 3, 100),
-    ReflowStep(ReflowProcessState::DONE, 0, 0)
-  }, "Test2\0"),
+    //138c profile Sn42Bi58
+    ReflowProfile(new ReflowStep[5]{
+                      ReflowStep(ReflowProcessState::PREHEAT, 60, 100, EASE_OUT),
+                      ReflowStep(ReflowProcessState::SOAK, 90, 155),
+                      ReflowStep(ReflowProcessState::REFLOW, 45, 185, EASE_OUT),
+                      ReflowStep(ReflowProcessState::COOL, 45, 155, EASE_OUT),
+                      ReflowStep(ReflowProcessState::DONE, 0, 0)},
+                  "138c Sn42Bi58\0"),
+    ReflowProfile(new ReflowStep[5]{ReflowStep(ReflowProcessState::PREHEAT, 2, 150), ReflowStep(ReflowProcessState::SOAK, 3, 180), ReflowStep(ReflowProcessState::REFLOW, 3, 220, EASE_IN_OUT), ReflowStep(ReflowProcessState::COOL, 3, 100), ReflowStep(ReflowProcessState::DONE, 0, 0)}, "Test2\0"),
 };
+
+ReflowProfile chosenReflowProfile = reflowProfiles[0];
 
 int nReflowProfiles = 2;
 
 uint16_t plateResistanceOhm = 0;
 EEPROMDataManager eepromDataManager = EEPROMDataManager();
+
+PidControllerData pidControllerData = {0 /*currentTemp*/, 60 /*TargetTemp*/, 255 /*PWM*/};
+PidController pidController = PidController(&pidControllerData);
