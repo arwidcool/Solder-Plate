@@ -201,9 +201,9 @@ void OledDisplay::drawDebug()
     display.setCursor(0, 0);
     display.println("SysV: " + String(sysVoltage));
     display.setCursor(0, 20);
-    display.println("In V: " + String(inputVoltage));
+    display.println("In V:" + String(inputVoltage));
     display.setCursor(0, 40);
-    display.println("C°: " + String(thermistor1Temp));
+    display.println("C: " + String(thermistor1Temp));
     display.display();
 }
 void OledDisplay::displayIndicators()
@@ -285,5 +285,11 @@ void OledDisplay::handleReflowState()
     uint8_t targetTemp = pidControllerData.targetTemp;
     centerText(("Curr.: " + String(curTemp)).c_str(), DisplayTextAlignment::END, DisplayTextAlignment::CENTER);
     centerText(("Target: " + String(targetTemp)).c_str(), DisplayTextAlignment::END, DisplayTextAlignment::END);
+
+    display.setTextSize(1, 1);
+    display.setCursor(25, 40);
+    float systemVoltage = analogRef.calculateInputVoltage();
+    display.println("In:"+String(systemVoltage));
+
     display.display();
 }

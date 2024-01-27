@@ -65,6 +65,20 @@ void Thermistor::calculateCoefficents(TempCalibration calibration)
     coefficents.c = (c);
 }
 
+bool Thermistor::isPluggedIn()
+{
+   //check if the resistnece is INF is so then the thermistor is not plugged in
+    if (getResistance() == INFINITY)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+    
+}
+
 /**
  * Calculates the scaling factor for the thermistor based on its placement in the 3D space.
  * The scaling factor is used to adjust the temperature readings of the thermistor.

@@ -6,6 +6,20 @@
 #include "./EEPROMDataManager.h"
 #include "./PID/PidController.h"
 
+//Comment out to disable debug messages
+
+//#define DEBUG 
+
+//For printing debug messages
+#ifdef DEBUG
+#define debugLine(x)  Serial.println(x)
+#define debugC(x) Serial.print(x)
+#else
+#define debugLine(x)
+#define debugC(x)
+#endif
+
+
 extern WrappedState<ReflowProcessState> reflowProcessState;
 extern AnalogRef analogRef;
 extern Thermistor thermistor1;

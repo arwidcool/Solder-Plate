@@ -1,6 +1,8 @@
 #include "./globals.h"
 #include "./EEPROMDataManager.h"
 
+
+
 WrappedState<ReflowProcessState> reflowProcessState = WrappedState<ReflowProcessState>(INITIALIZING);
 AnalogRef analogRef(5.0);
 
@@ -54,7 +56,7 @@ int nReflowProfiles = 2;
 ReflowProfile reflowProfiles[] = {
     // 138c profile Sn42Bi58
     ReflowProfile(new ReflowStep[5]{
-                      ReflowStep(ReflowProcessState::PREHEAT, 60, 100, EASE_OUT),
+                      ReflowStep(ReflowProcessState::PREHEAT, 120, 35, EASE_OUT),
                       ReflowStep(ReflowProcessState::SOAK, 90, 155),
                       ReflowStep(ReflowProcessState::REFLOW, 45, 185, EASE_OUT),
                       ReflowStep(ReflowProcessState::COOL, 45, 155, EASE_IN),

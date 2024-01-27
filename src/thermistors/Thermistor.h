@@ -71,8 +71,9 @@ public:
     uint16_t getPotentiometerResistance() { return setRes; };
     // Public Variables
     void calculateCoefficents(TempCalibration calibration);
-
     float getScalingFactor() { return scalingFactor; };
+
+    bool isPluggedIn();
 
 private:
     ThermistorZ_Placement zPlacement;

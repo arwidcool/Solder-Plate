@@ -12,6 +12,9 @@
 #include "PID/PidController.h"
 #include "globals.h"
 #include "EEPROMDataManager.h"
+#include "thermistors/TemperatureController.h"
+
+
 
 // LCD display pins
 #define TFT_CS 7
@@ -34,6 +37,10 @@ LEDS leds = LEDS();
 ArduPID PID;
 OledDisplay oled = OledDisplay();
 
+TemperatureController temperatureController ;
+
+
+
 
 
 void setup()
@@ -47,13 +54,15 @@ void setup()
   Serial.println("Starting OLED");
   // Set PWM frequency to 64 kHz
   analogWriteFrequency(64);
-  
+
   buttons.setup();
   leds.setup();
   oled.setup();
   eepromDataManager.setup();
 
   reflowProcessState.set(USER_INPUT);
+
+  temperatureController.checkPluggedInThermistors();
 }
 void loop()
 {
