@@ -73,6 +73,7 @@ void OledDisplay::handleButtonStateChange(Pair<ButtonKind, StateChangeEvent<Butt
 void OledDisplay::handleDrawThermistorMenu(OledMenuItem menuItem)
 {
     int thermistorIndex = menuItem.identifier - MENUITEM_THERMISTOR_START;
+    // Serial.println("Thermistor index: " + String(thermistorIndex));
     if (thermistorIndex == 6)
     {
         // Showing all thermistors values in a row
@@ -104,6 +105,7 @@ void OledDisplay::handleDrawThermistorMenu(OledMenuItem menuItem)
         centerText((String(menuItem.title) + ": " + String(thermistorTemp)).c_str());
         displayIndicators();
     }
+    display.display();
 }
 
 void OledDisplay::setup()

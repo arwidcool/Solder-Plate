@@ -62,9 +62,9 @@ void loop()
   ReflowProcessState state = reflowProcessState.get();
   if (k != NULL)
   {
-    leds.handleButtonStateChange(*k);
     if (state == USER_INPUT)
     {
+      leds.handleButtonStateChange(*k);
       oled.handleButtonStateChange(*k);
     }
     else if (state >= PREHEAT && state <= COOL)
@@ -87,7 +87,8 @@ void loop()
     }
   }
   state = newState;
-
+  
+  leds.loop();
   oled.loop();
 
   if (state >= PREHEAT && state <= COOL)

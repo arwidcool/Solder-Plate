@@ -68,6 +68,7 @@ public:
         {
             if (childrenMatrix[i][0] == curItem)
             {
+                Serial.println(String(childrenMatrix[i][0]) + " " + String(childrenMatrix[i][1]));
                 return children[childrenMatrix[i][1]];
             }
         }
@@ -106,7 +107,7 @@ public:
         return elements[curItem];
     }
 
-    OledMenu *parent;
+    OledMenu *parent = nullptr;
 
 protected:
     int curItem = 0;
