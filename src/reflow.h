@@ -6,8 +6,6 @@
 #include "thermistors/Thermistor.h"
 #include "displays/oled.h"
 
-
-
 extern Thermistor thermistor1;
 
 // STATE MACHINE
@@ -116,7 +114,7 @@ public:
 
     // Make sure the total time does not exceed 254 seconds
 
-    //TODO: Fix overflow problem. Something is making the times and
+    // TODO: Fix overflow problem. Something is making the times and
     void checkTotalTime(){
 
     };
@@ -204,9 +202,9 @@ public:
     float getTargetTemp()
     {
         uint32_t elapsedTime = timer.elapsed();
-       // uint8_t startTemp = 20; // always assume 20 degrees at the start
-        uint8_t startTemp=thermistor1.getTemperature();
-        
+        uint8_t startTemp = 20; // always assume 20 degrees at the start
+        // uint8_t startTemp=thermistor1.getTemperature();
+
         ReflowStep curStep = curReflowStep();
         ReflowStep prevStep = getPreviousSetep(curStep);
 

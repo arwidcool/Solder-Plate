@@ -57,10 +57,10 @@ LEDS leds = LEDS();
 // Declare the PID
 
 ReflowProfile profile = ReflowProfile(new ReflowStep[5]{
-                                          ReflowStep(ReflowProcessState::PREHEAT, 2, 50),
-                                          ReflowStep(ReflowProcessState::SOAK, 2, 70),
-                                          ReflowStep(ReflowProcessState::REFLOW, 2, 85),
-                                          ReflowStep(ReflowProcessState::COOL, 2, 20),
+                                          ReflowStep(ReflowProcessState::PREHEAT, 120, 150,EASE_OUT),
+                                          ReflowStep(ReflowProcessState::SOAK, 30, 183),
+                                          ReflowStep(ReflowProcessState::REFLOW, 60, 210,EASE_OUT),
+                                          ReflowStep(ReflowProcessState::COOL, 30, 183,EASE_OUT),
                                           ReflowStep(ReflowProcessState::DONE, 0, 0)},
                                       "meow\0");
 
@@ -114,7 +114,7 @@ void setup()
 
 void loop()
 {
-    timer.start();
+
   // Return the button that changed state
   Pair<ButtonKind, StateChangeEvent<ButtonState>> *k = buttons.handleButtons();
 
@@ -160,7 +160,7 @@ void loop()
   else
   {
 
-
+  
     // targetTemp = profile.getTargetTemp();
     targetTemp = profile.getTargetTemp();
     currentTemp = thermistor1.getTemperature();
@@ -173,15 +173,16 @@ void loop()
     char myCharArray[50]; // Ensure this array is large enough to hold the string plus the null terminator
 
     String(STATE_STR(step.state)).toCharArray(myCharArray, sizeof(myCharArray));
-   
 
-    // controller.debug2(myCharArray);
+     controller.debug2(myCharArray);
   };
 
   // Serial.print("Targt temp: ");
   // Serial.print(targetTemp);
+  //timer.start();
 
   oled.drawDebug();
+  //timer.stop();
 
   //   if (step.state == ReflowProcessState::DONE) {
   //     profile.start();

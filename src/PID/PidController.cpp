@@ -9,7 +9,7 @@ PidController::PidController(double *input, double *output, double *setpoint)
 
     controller.begin(input, output, setpoint, kp, ki, kd);
     controller.reverse();
-    controller.setOutputLimits(25, 255);
+    controller.setOutputLimits(3, 255);
     controller.setSampleTime(20);
     controller.setWindUpLimits(-100, 185);
 

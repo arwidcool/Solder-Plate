@@ -94,7 +94,7 @@ void OledDisplay::drawDebug()
     display.setCursor(0, 20);
     display.println("In V:" + String(inputVoltage));
     display.setCursor(0, 40);
-    display.println("C°: " + String(thermistor1Temp));
+    display.println("C: " + String(thermistor1Temp));
     display.display();
 }
 
