@@ -1,29 +1,10 @@
 #include "Thermistor.h"
 
-Thermistor::Thermistor()
-{
-}
 
-Thermistor::Thermistor(uint8_t pin, float resistance, TempCalibration calibration)
+void Thermistor::setPotentiometerResistance(float resistance)
 {
-
-    thermistorPin = pin;
     setRes = resistance;
-
     calculateCoefficents(resistance, calibration);
-}
-
-Thermistor::Thermistor(uint8_t pin, float resistance)
-{
-
-    thermistorPin = pin;
-    setRes = resistance;
-
-    calculateCoefficents(resistance, calibration_100K_3950);
-}
-
-Thermistor::~Thermistor()
-{
 }
 
 int Thermistor::getTemperature()
@@ -33,7 +14,7 @@ int Thermistor::getTemperature()
     int temp = 0;
 
     uint8_t samples = 5;
-    
+
     for (int i = 0; i < samples; i++)
     {
         getResistance();
@@ -82,7 +63,7 @@ float Thermistor::getResistance()
     float vOut = (buffer) / 1023;
     // Serial.println(vOut);
     buffer = (systemVoltage / vOut) - 1;
-    
+
     // return the resistence
     sensorResistance = setRes * buffer;
 

@@ -10,14 +10,7 @@
 #include "reflow.h"
 #include "displays/oled.h"
 #include "globals.h" 
-
-WrappedState<ReflowProcessState> reflowProcessState = WrappedState<ReflowProcessState>(INITIALIZING);
-
-// Define the analog ref used for the system voltage
-AnalogRef analogRef(5.0);
-
-// Calibration data for 100K thermistor
-TempCalibration calibration_100K_3950 = {25, 100000, 86, 10000, 170, 1000};
+#include "EEPROMDataManager.h"
 
 // LCD display pins
 #define TFT_CS 7
@@ -29,37 +22,12 @@ TempCalibration calibration_100K_3950 = {25, 100000, 86, 10000, 170, 1000};
 Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, MOSI, SCK, TFT_RST);
 
 
-// Initalize the 3950 100K thermistors with ACTUAL reference resistor measurnment(Measured between Left pin and GND when the board is powered off) using the default calibration data for 100K thermistor
-Thermistor thermistor1(THERMISTOR1_PIN, 2500);
-Thermistor thermistor2(THERMISTOR2_PIN, 2500);
-Thermistor thermistor3(THERMISTOR3_PIN, 2500);
-Thermistor thermistor4(THERMISTOR4_PIN, 2500);
-Thermistor thermistor5(THERMISTOR5_PIN, 2500);
-Thermistor thermistor6(THERMISTOR6_PIN, 9000);
-
-// Initialize the buttons
 Buttons buttons = Buttons();
 LEDS leds = LEDS();
 // Declare the PID
 ArduPID PID;
 OledDisplay oled = OledDisplay();
-ReflowProfile reflowProfiles[] = {
-   ReflowProfile(new ReflowStep[5] {
-    ReflowStep(ReflowProcessState::PREHEAT, 2, 150),
-    ReflowStep(ReflowProcessState::SOAK, 3, 180),
-    ReflowStep(ReflowProcessState::REFLOW, 3, 220, EASE_IN_OUT),
-    ReflowStep(ReflowProcessState::COOL, 3, 100),
-    ReflowStep(ReflowProcessState::DONE, 0, 0)
-  }, "Test\0"),
- ReflowProfile(new ReflowStep[5] {
-    ReflowStep(ReflowProcessState::PREHEAT, 2, 150),
-    ReflowStep(ReflowProcessState::SOAK, 3, 180),
-    ReflowStep(ReflowProcessState::REFLOW, 3, 220, EASE_IN_OUT),
-    ReflowStep(ReflowProcessState::COOL, 3, 100),
-    ReflowStep(ReflowProcessState::DONE, 0, 0)
-  }, "Test2\0"),
-};
-int nReflowProfiles = 2;
+
 
 void setup()
 {
@@ -72,6 +40,8 @@ void setup()
   buttons.setup();
   leds.setup();
   oled.setup();
+  eepromDataManager.setup();
+  
   reflowProcessState = USER_INPUT;
   
 }

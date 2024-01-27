@@ -20,6 +20,7 @@ class OledDisplay {
         void handleReflowState();
 
         void centerText(const char * text);
+        void displayIndicators();
 };
 
 
