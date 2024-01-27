@@ -12,7 +12,9 @@
 #include "globals.h"
 #include "PID/PidController.h"
 #include "reflow.h"
+#include "tools/ExecutionTimer.h"
 
+ExecutionTimer timer = ExecutionTimer();
 
 WrappedState<ReflowProcessState> reflowProcessState = WrappedState<ReflowProcessState>(INITIALIZING);
 
@@ -54,14 +56,12 @@ Buttons buttons = Buttons();
 LEDS leds = LEDS();
 // Declare the PID
 
-
-
 ReflowProfile profile = ReflowProfile(new ReflowStep[5]{
-                                   ReflowStep(ReflowProcessState::PREHEAT, 2, 50),
-                                             ReflowStep(ReflowProcessState::SOAK, 2, 70),
-                                             ReflowStep(ReflowProcessState::REFLOW, 2, 85),
-                                             ReflowStep(ReflowProcessState::COOL, 2, 20),
-                                             ReflowStep(ReflowProcessState::DONE, 0, 0)},
+                                          ReflowStep(ReflowProcessState::PREHEAT, 2, 50),
+                                          ReflowStep(ReflowProcessState::SOAK, 2, 70),
+                                          ReflowStep(ReflowProcessState::REFLOW, 2, 85),
+                                          ReflowStep(ReflowProcessState::COOL, 2, 20),
+                                          ReflowStep(ReflowProcessState::DONE, 0, 0)},
                                       "meow\0");
 
 // Reflowprofile profile = Reflowprofile(new ReflowStep[5]{
@@ -114,7 +114,7 @@ void setup()
 
 void loop()
 {
-
+    timer.start();
   // Return the button that changed state
   Pair<ButtonKind, StateChangeEvent<ButtonState>> *k = buttons.handleButtons();
 
@@ -160,6 +160,7 @@ void loop()
   else
   {
 
+
     // targetTemp = profile.getTargetTemp();
     targetTemp = profile.getTargetTemp();
     currentTemp = thermistor1.getTemperature();
@@ -172,11 +173,9 @@ void loop()
     char myCharArray[50]; // Ensure this array is large enough to hold the string plus the null terminator
 
     String(STATE_STR(step.state)).toCharArray(myCharArray, sizeof(myCharArray));
+   
 
-    controller.debug2(myCharArray);
-
-    ;
-    // Serial.print(String(STATE_STR(step.state)) + " " + String(step.duration) + " " + String(step.targetTempAtEnd) + " " + String(profile.timer.elapsed()) + " Step Time " + String(profile.getCurrentStepRelativeTime()) + " Target Temp:" + String(profile.targetTempReflow) + " % " + String(profile.percentage) + "\r");
+    // controller.debug2(myCharArray);
   };
 
   // Serial.print("Targt temp: ");
