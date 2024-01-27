@@ -56,13 +56,24 @@ Buttons buttons = Buttons();
 LEDS leds = LEDS();
 // Declare the PID
 
+// //183c pprofile
+// ReflowProfile profile = ReflowProfile(new ReflowStep[5]{
+//                                           ReflowStep(ReflowProcessState::PREHEAT, 120, 150,EASE_OUT),
+//                                           ReflowStep(ReflowProcessState::SOAK, 30, 183),
+//                                           ReflowStep(ReflowProcessState::REFLOW, 60, 210,EASE_OUT),
+//                                           ReflowStep(ReflowProcessState::COOL, 30, 183,EASE_OUT),
+//                                           ReflowStep(ReflowProcessState::DONE, 0, 0)},
+//                                       "meow\0");
+                                      
+
+//138c profile Sn42Bi58
 ReflowProfile profile = ReflowProfile(new ReflowStep[5]{
-                                          ReflowStep(ReflowProcessState::PREHEAT, 120, 150,EASE_OUT),
-                                          ReflowStep(ReflowProcessState::SOAK, 30, 183),
-                                          ReflowStep(ReflowProcessState::REFLOW, 60, 210,EASE_OUT),
-                                          ReflowStep(ReflowProcessState::COOL, 30, 183,EASE_OUT),
+                                          ReflowStep(ReflowProcessState::PREHEAT, 60, 100,EASE_OUT),
+                                          ReflowStep(ReflowProcessState::SOAK, 90, 155),
+                                          ReflowStep(ReflowProcessState::REFLOW, 45, 185,EASE_OUT),
+                                          ReflowStep(ReflowProcessState::COOL, 45, 155,EASE_OUT),
                                           ReflowStep(ReflowProcessState::DONE, 0, 0)},
-                                      "meow\0");
+                                      "meow\0");  
 
 // Reflowprofile profile = Reflowprofile(new ReflowStep[5]{
 //                                              ReflowStep(ReflowProcessState::PREHEAT, 20, 50),
