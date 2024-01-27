@@ -13,7 +13,7 @@ PidController::PidController(double *input, double *output, double *setpoint)
     controller.setSampleTime(20);
     controller.setWindUpLimits(-100, 185);
 
-    controller.start();
+    
 }
 
 double *PidController::compute()
@@ -51,4 +51,10 @@ void PidController::stop()
 {
 
     controller.stop();
+    controller.reset();
+}
+
+void PidController::start()
+{
+    controller.start();
 }

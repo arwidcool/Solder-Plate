@@ -15,6 +15,7 @@ public:
     void debug();
     void debug2(const char* extraText);
     void stop();
+    void start();
 
     boolean started = false;
 

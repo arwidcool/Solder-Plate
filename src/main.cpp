@@ -57,11 +57,11 @@ LEDS leds = LEDS();
 
 
 ReflowProfile profile = ReflowProfile(new ReflowStep[5]{
-                                          ReflowStep(ReflowProcessState::PREHEAT, 2, 100),
-                                          ReflowStep(ReflowProcessState::SOAK, 2, 140),
-                                          ReflowStep(ReflowProcessState::REFLOW, 2, 160, EASE_IN_OUT),
-                                          ReflowStep(ReflowProcessState::COOL, 2, 20),
-                                          ReflowStep(ReflowProcessState::DONE, 0, 0)},
+                                   ReflowStep(ReflowProcessState::PREHEAT, 2, 50),
+                                             ReflowStep(ReflowProcessState::SOAK, 2, 70),
+                                             ReflowStep(ReflowProcessState::REFLOW, 2, 85),
+                                             ReflowStep(ReflowProcessState::COOL, 2, 20),
+                                             ReflowStep(ReflowProcessState::DONE, 0, 0)},
                                       "meow\0");
 
 // Reflowprofile profile = Reflowprofile(new ReflowStep[5]{
@@ -108,6 +108,8 @@ void setup()
   }
   reflowProcessState = USER_INPUT;
   profile.start();
+
+  controller.start();
 }
 
 void loop()
