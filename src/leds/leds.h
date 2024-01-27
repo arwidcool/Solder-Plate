@@ -4,11 +4,13 @@
 #include "../common.h"
 #include "../globals.h"
 
-// If you didnt solder the LEDS in order, change the order here
-#define LEFT_LED_PIN 20
-#define MID_LED_PIN 18
-#define RIGHT_LED_PIN 19
+// If you didnt solder the LEDS in order, change the order here just change the pin numbers till it matches your board
+#define LEFT_LED_PIN 20 //Should be RED
+#define MID_LED_PIN 18 //Should be YELLOW
+#define RIGHT_LED_PIN 19 //Should be GREEN
 #define GREEN_LED_PIN RIGHT_LED_PIN
+
+
 enum LedDesiredState
 {
   LED_ON,

@@ -287,9 +287,9 @@ void OledDisplay::handleReflowState()
     centerText(("Target: " + String(targetTemp)).c_str(), DisplayTextAlignment::END, DisplayTextAlignment::END);
 
     display.setTextSize(1, 1);
-    display.setCursor(25, 40);
+    display.setCursor(15, 16);
     float systemVoltage = analogRef.calculateInputVoltage();
-    display.println("In:"+String(systemVoltage));
+    display.println("In Voltage:"+String(systemVoltage));
 
     display.display();
 }

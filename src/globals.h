@@ -6,8 +6,7 @@
 #include "./EEPROMDataManager.h"
 #include "./PID/PidController.h"
 
-//Comment out to disable debug messages
-
+//Comment out to enable debug messages
 //#define DEBUG 
 
 //For printing debug messages
