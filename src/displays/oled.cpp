@@ -92,9 +92,9 @@ void OledDisplay::handleDrawThermistorMenu(OledMenuItem menuItem)
         display.setTextSize(1, 2);
         for (int i = 0; i < 6; i++)
         {
-            float thermR = thermistors[i].getResistance();
+            float thermR = thermistors[i].getResistance()/1000;
             display.setCursor(i < 3 ? 0 : (SCREEN_WIDTH / 2 + 20), 20 * (i % 3));
-            display.println(String(i + 1) + " " + String((int)(thermR)));
+            display.println(String(i + 1) + ":" + String(thermR));
         }
         centerText(menuItem.title);
         displayIndicators();
@@ -130,7 +130,7 @@ void OledDisplay::setup()
     OledMenu *tempsMenu = new OledMenu(3);
     tempsMenu->setElements(new OledMenuItem[8]{
                                OledMenuItem("C\0", MENUITEM_THERMISTOR_START + 6),
-                               OledMenuItem("R\0", MENUITEM_THERMISTOR_START + 7),
+                               OledMenuItem("R(K)\0", MENUITEM_THERMISTOR_START + 7),
                                OledMenuItem("T1\0", MENUITEM_THERMISTOR_START + 0),
                                OledMenuItem("T2\0", MENUITEM_THERMISTOR_START + 1),
                                OledMenuItem("T3\0", MENUITEM_THERMISTOR_START + 2),

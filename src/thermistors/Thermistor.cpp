@@ -1,6 +1,14 @@
 #include "Thermistor.h"
 
-
+/**
+ * @brief Calculates and returns the temperature based on the resistance of the thermistor.
+ *
+ * This function calculates the temperature using the Steinhart-Hart equation and the coefficients
+ * provided. It takes an average of 5 resistance readings and converts it to temperature using the
+ * scaling factor. The calculated temperature is returned.
+ *
+ * @return The temperature in degrees Celsius.
+ */
 float Thermistor::getTemperature()
 {
 
@@ -17,9 +25,21 @@ float Thermistor::getTemperature()
 
     temp = temp / samples;
 
+    // The scaling factor should only be applied when the plate is being heated up -> 60C seems like a good threshold unless you live in the sahara desert with no AC
+    // Its non-linear so it will be more accurate so we will probably need to impliment a refrence table for the scaling factor this is just a rough estimate it will be based on a sensor calibrated on the top middle of the plate
+    if (temp > 60)
+    {
+        temp = temp * scalingFactor;
+    }
+
     return temp;
 }
 
+/**
+ * Calculates the coefficients for the thermistor based on the given temperature calibration.
+ *
+ * @param calibration The temperature calibration data.
+ */
 void Thermistor::calculateCoefficents(TempCalibration calibration)
 {
 
@@ -45,6 +65,47 @@ void Thermistor::calculateCoefficents(TempCalibration calibration)
     coefficents.c = (c);
 }
 
+/**
+ * Calculates the scaling factor for the thermistor based on its placement in the 3D space.
+ * The scaling factor is used to adjust the temperature readings of the thermistor.
+ */
+void Thermistor::calculateScalingFactor()
+{
+
+    switch (zPlacement)
+    {
+    case TOP:
+        switch (xyPlacment)
+        {
+        case MIDDLE:
+            scalingFactor = 1;
+            break;
+        case LEFT:
+            scalingFactor = 1.1;
+            break;
+        case RIGHT:
+            scalingFactor = 1.1;
+            break;
+        }
+        break;
+
+    case BOTTOM:
+        switch (xyPlacment)
+        {
+        case MIDDLE:
+            scalingFactor = 1.1;
+            break;
+        case LEFT:
+            scalingFactor = 1.2;
+            break;
+        case RIGHT:
+            scalingFactor = 1.2;
+            break;
+        }
+        break;
+    }
+}
+
 float Thermistor::getResistance()
 {
 
@@ -56,7 +117,7 @@ float Thermistor::getResistance()
     float buffer = raw * systemVoltage;
     float vOut = (buffer) / 1023;
 
-    //Calculate the resistance of the thermistor with the system voltage accounted for
+    // Calculate the resistance of the thermistor with the system voltage accounted for
     buffer = (systemVoltage / vOut) - 1;
 
     // return the resistence

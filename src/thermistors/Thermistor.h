@@ -32,7 +32,6 @@ extern TempCalibration calibration_100K_3950;
 
 extern AnalogRef analogRef;
 
-// Include any necessary libraries here
 
 enum ThermistorZ_Placement
 {
@@ -56,11 +55,13 @@ public:
     Thermistor(uint8_t pin, uint16_t resistance, TempCalibration calibration,ThermistorZ_Placement zPlacement,ThermistorXY_Placement  xyPlacment) : thermistorPin(pin), setRes(resistance), calibration(calibration),zPlacement(zPlacement),xyPlacment(xyPlacment)
     {
         calculateCoefficents(calibration);
+        calculateScalingFactor();
     }
 
     Thermistor(uint8_t pin, uint16_t resistance,ThermistorZ_Placement zPlacement,ThermistorXY_Placement  xyPlacment) : thermistorPin(pin), setRes(resistance), calibration(calibration_100K_3950),zPlacement(zPlacement),xyPlacment(xyPlacment)
     {
         calculateCoefficents(calibration);
+        calculateScalingFactor();
     }
 
     // Public Methods
@@ -70,6 +71,8 @@ public:
     uint16_t getPotentiometerResistance() { return setRes; };
     // Public Variables
     void calculateCoefficents(TempCalibration calibration);
+
+    float getScalingFactor() { return scalingFactor; };
 
 private:
     ThermistorZ_Placement zPlacement;
@@ -81,6 +84,10 @@ private:
     Coefficents coefficents;
     float referenceResistance;
     TempCalibration calibration;
+    float scalingFactor ;
+    void calculateScalingFactor();
+
+
 };
 
 #endif // THERMISTOR_H
