@@ -161,7 +161,7 @@ public:
 
         // startTemp => 20 or the targetTempAtEnd of the previous step
 
-        uint16_t startTimeMS = startTimes[STEPINDEX(curStep)] * 1000;
+        uint32_t startTimeMS = startTimes[STEPINDEX(curStep)] * 1000;
 
         uint32_t relativeElapsedTime = elapsedMS - startTimeMS;
 
