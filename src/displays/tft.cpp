@@ -390,6 +390,13 @@ void TFT_Display::drawReflowTargetTempLine()
         Serial.println(String(endTime));
         Serial.println(" ");
 
+
+        if(profile->steps[i].flagged) {
+          //  tft.drawCircle(startX, startY, 5, ST77XX_RED);
+            startTemp = profile->steps[i-2].targetTempAtEnd;
+            
+        }
+
         // Draw the line pixel by pixel
         switch (profile->steps[i].easeFunction)
         {

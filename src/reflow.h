@@ -81,22 +81,29 @@ public:
     {
 
         bool flag = false;
-        uint8_t sinePosition = 0;
+        uint8_t flagPosistion = 0;
 
         for (int i = 0; i < 5; i++)
         {
-            //TODO: Important we need to flag the step after half sine because its starting temp is the PEAK of the sine wave and the sine wave ends at the start of the sine wave
-            //this creates a problem because the next step will start at the peak of the sine wave and not the end of the sine wave
-            //We can fix this by flagging the effect step and then when we are calculating the target temp we can check if the step is flagged and if it is we can use the target temp of the step prevous to the sine wave
+            // TODO: Important we need to flag the step after half sine because its starting temp is the PEAK of the sine wave and the sine wave ends at the start of the sine wave
+            // this creates a problem because the next step will start at the peak of the sine wave and not the end of the sine wave
+            // We can fix this by flagging the effect step and then when we are calculating the target temp we can check if the step is flagged and if it is we can use the target temp of the step prevous to the sine wave
             if (steps[i].easeFunction == HALF_SINE && i != 3 && i != 0)
             {
-                this->steps[i + 1].flagged = true;
+
                 this->steps[i] = steps[i];
+                flag = true;
+                flagPosistion = i + 1;
             }
             else
             {
                 this->steps[i] = steps[i];
             }
+        }
+
+        if (flag)
+        {
+            this->steps[flagPosistion].flagged = true;
         }
 
         for (int i = 0; i < 20; i++)
@@ -206,8 +213,15 @@ public:
         float percentage = relativeElapsedTime / duration;
         // Serial.println(String(percentage)+ "%" + String(STATE_STR(curStep.state)) + " Elapsed: " + String(elapsedMS) + " ___ " + String(curStep.duration  * 1000));
 
+        if (curStep.flagged)
+        {
+            startTemp = steps[STEPINDEX(curStep) - 2].targetTempAtEnd;
             return curStep.calcTempAtPercentage(startTemp, percentage);
-        
+        }
+        else
+        {
+            return curStep.calcTempAtPercentage(startTemp, percentage);
+        }
     }
 
     /**
