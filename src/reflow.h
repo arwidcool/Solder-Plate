@@ -95,6 +95,7 @@ public:
     uint16_t endTimes[5] = {0};
     uint16_t startTimes[5] = {0};
     uint8_t endTemps[5] = {0};
+    uint8_t startTemps[5] = {0};
     StopWatch timer;
 
     void start()
@@ -110,19 +111,26 @@ public:
         endTimes[2] = endTimes[1] + steps[2].duration;
         endTimes[3] = endTimes[2] + steps[3].duration;
         endTimes[4] = endTimes[3] + steps[4].duration;
-        
 
+        
         startTimes[0] = 0;
         startTimes[1] = endTimes[0];
         startTimes[2] = endTimes[1];
         startTimes[3] = endTimes[2];
         startTimes[4] = endTimes[3];
 
-        endTemps[0] = steps[0].calcTempAtPercentage(20, 1);
+        startTemps[0] = 20;
+
+        endTemps[0] = steps[0].calcTempAtPercentage(startTemps[0], 1);
         endTemps[1] = steps[1].calcTempAtPercentage(endTemps[0], 1);
         endTemps[2] = steps[2].calcTempAtPercentage(endTemps[1], 1);
         endTemps[3] = steps[3].calcTempAtPercentage(endTemps[2], 1);
         endTemps[4] = steps[4].calcTempAtPercentage(endTemps[3], 1);
+
+        startTemps[1] = endTemps[0];
+        startTemps[2] = endTemps[1];
+        startTemps[3] = endTemps[2];
+        startTemps[4] = endTemps[3];
     }
 
     ReflowStep reflowStep()

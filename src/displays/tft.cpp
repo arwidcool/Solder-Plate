@@ -29,6 +29,9 @@ void TFT_Display::init(ReflowProfile *profile)
 
     clear();
 
+    prevousTempXY.x = graphXY.x;
+    prevousTempXY.y = graphXY.y;
+
     tft.setTextColor(ST77XX_WHITE);
     tft.setTextSize(2);
     TFT_XY xy = getCenteredTextXY(profile->name);
@@ -73,7 +76,7 @@ void TFT_Display::drawRealTemp(double *temp, float percentage)
         // Draw the pixel
 
         //tft.drawPixel(x, y, ST77XX_RED);
-
+        
         tft.drawLine(prevousTempXY.x, prevousTempXY.y, x, y, ST77XX_RED);
 
         prevousTempXY.x = x;
