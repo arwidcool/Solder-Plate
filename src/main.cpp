@@ -105,8 +105,11 @@ void loop()
 
   if (state >= ReflowProcessState::PREHEAT && state <= ReflowProcessState::COOL)
   {
+
+
     pidController.loop();
     ReflowStep step = chosenReflowProfile.reflowStep();
+    // Here we draw the actual temp vs time to the display
 
     if (step.state != newState)
     {
