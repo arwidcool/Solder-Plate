@@ -32,7 +32,8 @@ enum ReflowStepEaseFunction
     LINEAR,
     EASE_IN_OUT,
     EASE_IN,
-    EASE_OUT
+    EASE_OUT,
+    HALF_SINE
 };
 class ReflowStep
 {
@@ -56,7 +57,6 @@ public:
         {
         case LINEAR:
             return startTemp + (this->targetTempAtEnd - startTemp) * percentage;
-
         case EASE_IN_OUT:
             return startTemp + (this->targetTempAtEnd - startTemp) * -(cos(percentage * PI) - 1) / (double)2;
         case EASE_IN:
@@ -64,6 +64,8 @@ public:
 
         case EASE_OUT:
             return startTemp + (this->targetTempAtEnd - startTemp) * (sin(percentage * PI / (double)2));
+        case HALF_SINE:
+            return startTemp + (this->targetTempAtEnd - startTemp) * (sin(percentage * PI));
         }
     }
 };
@@ -89,13 +91,13 @@ public:
     }
     ReflowStep steps[5];
     char name[20];
-    uint32_t endTimes[5] = {0};
-    uint32_t startTimes[5] = {0};
+    float endTimes[5] = {0};
+    float startTimes[5] = {0};
     StopWatch timer;
 
     void start()
     {
-        timer = StopWatch(StopWatch::Resolution::MILLIS);
+        timer.setResolution(StopWatch::MILLIS);
         timer.start();
         calculateTimes();
     }
@@ -128,7 +130,14 @@ public:
     {
         for (int i = 0; i < 5; i++)
         {
-            if (elapsedMS >= startTimes[i] * 1000 && elapsedMS < endTimes[i] * 1000)
+
+            float startTimeFloat = startTimes[i];
+            float endTimeFloat = endTimes[i];
+
+            startTimeFloat *= 1000;
+            endTimeFloat *= 1000;
+
+            if (elapsedMS >= startTimeFloat && elapsedMS <endTimeFloat)
             {
                 // Serial.println(String(elapsedMS) + " " + String(startTimes[i] * 1000) + " " + String(endTimes[i] * 1000) + " " + String(i) + " " + String(steps[i].state));
                 return steps[i];
@@ -138,8 +147,15 @@ public:
         return steps[4]; // DONE by default
     }
 
-    float getPercentage() {
-        return (double)timer.elapsed() / (double)(endTimes[4] * 1000);
+    float getPercentage()
+    {
+
+        float timerElapsed = timer.elapsed();
+
+        float endTimesFloat[4];
+
+      
+        return timerElapsed / (float)(endTimes[4] * 1000);
     }
 
     float getTargetTemp()
@@ -148,9 +164,10 @@ public:
         {
             return 20;
         }
-        return getTargetTemp(timer.elapsed());        
+        return getTargetTemp(timer.elapsed());
     }
-    float getTargetTemp(uint32_t elapsedMS) {
+    float getTargetTemp(uint32_t elapsedMS)
+    {
         uint8_t startTemp = 20; // always assume 20 degrees at the start
 
         ReflowStep curStep = reflowStep(elapsedMS);
@@ -161,25 +178,31 @@ public:
 
         // startTemp => 20 or the targetTempAtEnd of the previous step
 
-        uint32_t startTimeMS = startTimes[STEPINDEX(curStep)] * 1000;
+        uint32_t startTimeMS = startTimes[STEPINDEX(curStep)];
+
+        startTimeMS *= 1000;
 
         uint32_t relativeElapsedTime = elapsedMS - startTimeMS;
 
-        float percentage = (double)relativeElapsedTime / ((double)(curStep.duration) * 1000);
+
+        float duration = curStep.duration ;
+        duration *= 1000;
+
+        float relativeElapsedTimeF = relativeElapsedTime;
+
+        float percentage = relativeElapsedTime / duration;
         // Serial.println(String(percentage)+ "%" + String(STATE_STR(curStep.state)) + " Elapsed: " + String(elapsedMS) + " ___ " + String(curStep.duration  * 1000));
         return curStep.calcTempAtPercentage(startTemp, percentage);
     }
-
-    
 
     /**
      * @brief Get the Target Temp At Process Percentage.
      * @param processPercentage a number between 0 and 1. 0 is the start of the process, 1 is the end of the process
      * @return float the target temperature at the given percentage of the full process
-    */
+     */
     float getTargetTempFromPercentage(double processPercentage)
     {
-        uint32_t duration = endTimes[4];
+        uint16_t duration = endTimes[4];
         uint8_t startTemp = 20; // always assume 20 degrees at the start
         return getTargetTemp(duration * 1000 * processPercentage);
     }
@@ -190,16 +213,6 @@ public:
         uint32_t startTimeMS = startTimes[STEPINDEX(reflowStep())] * 1000;
         return (elapsedMS - startTimeMS) / 1000;
     }
-
-
-
-
-
-
-
-
-
-
 
     void toBuffer(uint8_t *b)
     {

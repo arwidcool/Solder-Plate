@@ -147,6 +147,7 @@ void TFT_Display::drawGraph()
     drawGraphAxis();
     drawGraphAxisLabels();
     drawGraphAxisTicks();
+    drawGraphAxisTickLabels();
 }
 
 void TFT_Display::drawGraphAxis()
@@ -166,18 +167,29 @@ void TFT_Display::drawGraphAxisLabels()
     tft.setCursor(5, 10);
     tft.println("Temp");
 
-    TFT_XY position = getCenteredTextXY("Time");
-    tft.setCursor(position.x, position.y +228);
+    tft.setCursor(150, 228);
     tft.println("Time");
-
-
 }
 
 void TFT_Display::drawGraphAxisTicks()
 {
+}
+
+void TFT_Display::drawGraphAxisTickLabels()
+{
+
+    //Always starts at 20c
     tft.setTextColor(ST77XX_WHITE);
     tft.setTextSize(1);
     TFT_XY position = getRightAlignedTextXY("20", graphXY.x, graphXY.y);
     tft.setCursor(position.x, position.y);
     tft.println("20");
+
+    //Always ends at maxTemp
+
+    // tft.setTextColor(ST77XX_WHITE);
+    // tft.setTextSize(1);
+    // position = getRightAlignedTextXY(maxTemp, graphXY.x, graphXY.y - graphHeight);
+    // tft
+    
 }

@@ -42,6 +42,7 @@ private:
     void drawGraphAxis();
     void drawGraphAxisLabels();
     void drawGraphAxisTicks();
+    void drawGraphAxisTickLabels();
 };
 
 #endif // TFT_H

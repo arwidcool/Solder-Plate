@@ -93,9 +93,11 @@ void loop()
     if (newState == ReflowProcessState::PREHEAT) {
 
       tftDisplay.init(&chosenReflowProfile);
+      
       chosenReflowProfile.start();
       // Start the PID
       pidController.start();
+
     }
   }
   state = newState;
@@ -108,6 +110,7 @@ void loop()
 
 
     pidController.loop();
+    pidController.debug();
     ReflowStep step = chosenReflowProfile.reflowStep();
     // Here we draw the actual temp vs time to the display
 
@@ -117,6 +120,7 @@ void loop()
       if (step.state == ReflowProcessState::DONE)
       {
         pidController.stop();
+     
       }
     }
   }
