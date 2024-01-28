@@ -168,6 +168,8 @@ public:
         return curStep.calcTempAtPercentage(startTemp, percentage);
     }
 
+    
+
     /**
      * @brief Get the Target Temp At Process Percentage.
      * @param processPercentage a number between 0 and 1. 0 is the start of the process, 1 is the end of the process

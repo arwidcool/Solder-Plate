@@ -16,6 +16,7 @@
 
 
 
+
 #define MOSTFET_PIN 17
 
 double currentTemp = 0;
@@ -32,6 +33,12 @@ TFT_Display tftDisplay ;
 
 
 TemperatureController temperatureController;
+
+TFT_Display tftDisplay ;
+
+
+
+
 
 void setup()
 {
@@ -89,12 +96,7 @@ void loop()
     // State changed from state to newState (user input or wifi input needs to be above here)
     if (newState == ReflowProcessState::PREHEAT) {
 
-
-      // Initalize the TFT
       tftDisplay.init(&chosenReflowProfile);
-      
-
-      //Start the reflow profile after tft to make sure the timer is accurate
       chosenReflowProfile.start();
       // Start the PID
       pidController.start();
@@ -119,13 +121,6 @@ void loop()
       }
     }
   }
-
-
-  if (state == DONE)
-  {
-    // TODO: BUZZER
-    pidController.stop();
-    reflowProcessState.set(USER_INPUT);
-  }
+ 
 
 }
