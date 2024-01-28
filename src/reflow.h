@@ -119,7 +119,7 @@ public:
         startTimes[3] = endTimes[2];
         startTimes[4] = endTimes[3];
 
-        startTemps[0] = 20;
+        startTemps[0] = 20; // USe ambient temp as the starting temp for the first step
 
         endTemps[0] = steps[0].calcTempAtPercentage(startTemps[0], 1);
         endTemps[1] = steps[1].calcTempAtPercentage(endTemps[0], 1);
@@ -163,27 +163,19 @@ public:
     {
         if (!timer.isRunning())
         {
-            return 20;
+            return startTemps[0];
         }
         return getTargetTemp(timer.elapsed());
     }
     float getTargetTemp(uint32_t elapsedMS)
     {
-        uint8_t startTemp = 20; // always assume 20 degrees at the start
-
         ReflowStep curStep = reflowStep(elapsedMS);
-        if (curStep.state > PREHEAT)
-        {
-            startTemp = endTemps[STEPINDEX(curStep) - 1];
-        }
-
-        // startTemp => 20 or the temp at 100% of the previous step
 
         uint32_t startTimeMS = TOMILLIS(startTimes[STEPINDEX(curStep)]);
         uint32_t relativeElapsedTime = elapsedMS - startTimeMS;
 
         float stepPercentage = relativeElapsedTime / (double)TOMILLIS(curStep.duration);
-        return curStep.calcTempAtPercentage(startTemp, stepPercentage);
+        return curStep.calcTempAtPercentage(startTemps[STEPINDEX(curStep)], stepPercentage);
     }
 
     /**

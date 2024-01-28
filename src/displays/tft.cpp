@@ -342,13 +342,13 @@ void TFT_Display::drawGraphReflowStagesBackground()
 
 
 void TFT_Display::drawReflowTargetTempLine() {
-    uint16_t y = tempYonGraph(20);
+    uint16_t y = tempYonGraph(chosenReflowProfile.startTemps[0]);
     uint16_t x = percentageToX(0);
     for (float i=0.00; i<=1; i+=0.01) {
         float temp = profile->getTargetTempFromPercentage(i);
         uint16_t y2 = tempYonGraph(temp);
         uint16_t x2 = percentageToX(i);
-        Serial.println(String(i) + " - temp: "+ String(temp) + " - x:" + String(x) + " y:" + String(y) + " x2:" + String(x2) + " y2:" + String(y2));
+        // Serial.println(String(i) + " - temp: "+ String(temp) + " - x:" + String(x) + " y:" + String(y) + " x2:" + String(x2) + " y2:" + String(y2));
         tft.drawLine(x, y, x2, y2, ST77XX_WHITE);
         x = x2;
         y = y2;
