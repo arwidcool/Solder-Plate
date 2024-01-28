@@ -139,7 +139,7 @@ public:
     }
 
     float getPercentage() {
-        return (float)timer.elapsed() / (float)(endTimes[4] * 1000);
+        return (double)timer.elapsed() / (double)(endTimes[4] * 1000);
     }
 
     float getTargetTemp()
@@ -165,7 +165,7 @@ public:
 
         uint32_t relativeElapsedTime = elapsedMS - startTimeMS;
 
-        float percentage = (float)relativeElapsedTime / ((float)(curStep.duration) * 1000);
+        float percentage = (double)relativeElapsedTime / ((double)(curStep.duration) * 1000);
         // Serial.println(String(percentage)+ "%" + String(STATE_STR(curStep.state)) + " Elapsed: " + String(elapsedMS) + " ___ " + String(curStep.duration  * 1000));
         return curStep.calcTempAtPercentage(startTemp, percentage);
     }
