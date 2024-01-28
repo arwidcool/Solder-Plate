@@ -5,6 +5,7 @@
 #include <Adafruit_ST7789.h> // Include the ST7789 library
 #include <reflow.h>
 #include <globals.h>
+#include <StopWatch.h>
 
 struct TFT_XY
 {
@@ -21,9 +22,14 @@ public:
     void start();
     // Add your class methods here
     void init(ReflowProfile *profile);
+    void drawRealTemp(double *temp, float time);
     void clear();
 
 private:
+
+    TFT_XY prevousTempXY = {32, 220};
+
+    StopWatch drawTimer;
 
     ReflowProfile *profile;
 
@@ -37,7 +43,7 @@ private:
     void getTotalTimeFromProfile(ReflowProfile *profile);
 
     uint16_t graphHeight = 180;
-    uint16_t graphWidth = 256;
+    uint16_t graphWidth = 255;
     TFT_XY graphXY = {32, 220};
     uint16_t maxTemp = 0;
     uint16_t totalTIme =0;
@@ -54,6 +60,7 @@ private:
     void drawReflowTargetTempLine();
 
     uint16_t tempYonGraph(float temp);
+    uint16_t tempYonGraph(float *temp);
     uint16_t timeXonGraph(float time);
 
     template <typename T>

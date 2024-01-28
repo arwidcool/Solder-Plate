@@ -39,7 +39,54 @@ void TFT_Display::init(ReflowProfile *profile)
 
     this->profile = profile;
 
+    drawTimer.reset();
+
+    drawTimer.setResolution(StopWatch::MILLIS);
+    drawTimer.start();
+
     drawGraph();
+}
+
+void TFT_Display::drawRealTemp(double *temp, float time)
+{
+
+    uint32_t timeSinceLastDraw = drawTimer.elapsed();
+
+    // Serial.print("Time since last draw:");
+    // Serial.println(timeSinceLastDraw);
+
+    if (timeSinceLastDraw >= 930)
+    {
+        float timeElapsed = time;
+
+        float temperature = static_cast<float>(*temp);
+
+        time = time / 1000;
+        // Serial.print("Time:");
+        // Serial.print(time);
+        // Serial.print(" Temp:");
+        // Serial.println(temperature);
+
+        uint16_t eplased = drawTimer.elapsed();
+
+        // Get the xy and y pixel of the temp
+
+        uint16_t x = timeXonGraph(time);
+        uint16_t y = tempYonGraph(temperature);
+        // Draw the pixel
+
+        //tft.drawPixel(x, y, ST77XX_RED);
+
+        tft.drawLine(prevousTempXY.x, prevousTempXY.y, x, y, ST77XX_RED);
+
+        prevousTempXY.x = x;
+        prevousTempXY.y = y;
+        drawTimer.reset();
+        drawTimer.start();
+    }
+    else
+    {
+    };
 }
 
 void TFT_Display::clear()
@@ -304,7 +351,7 @@ void TFT_Display::drawGraphReflowStagesBackground()
     uint16_t x = graphXY.x + 1;
     uint16_t previopusWidth;
     // Draw the background for the reflow stages
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 4; i++)
     {
 
         Serial.println("Time x");
@@ -345,7 +392,6 @@ void TFT_Display::drawGraphReflowStagesBackground()
             break;
 
         default:
-
             break;
         }
     }
@@ -370,31 +416,31 @@ void TFT_Display::drawReflowTargetTempLine()
         uint16_t endX = timeXonGraph(endTime);
         uint16_t endY = tempYonGraph(endTemp);
 
-        Serial.print("State:");
-        Serial.println(String(STATE_STR(profile->steps[i].state)));
-        Serial.print("Start x:");
-        Serial.println(String(startX));
-        Serial.print("Start y:");
-        Serial.println(String(startY));
-        Serial.print("End x:");
-        Serial.println(String(endX));
-        Serial.print("End y:");
-        Serial.println(String(endY));
-        Serial.print("Start temp:");
-        Serial.println(String(startTemp));
-        Serial.print("End temp:");
-        Serial.println(String(endTemp));
-        Serial.print("Start time:");
-        Serial.println(String(startTime));
-        Serial.print("End time:");
-        Serial.println(String(endTime));
-        Serial.println(" ");
+        // Serial.print("State:");
+        // Serial.println(String(STATE_STR(profile->steps[i].state)));
+        // Serial.print("Start x:");
+        // Serial.println(String(startX));
+        // Serial.print("Start y:");
+        // Serial.println(String(startY));
+        // Serial.print("End x:");
+        // Serial.println(String(endX));
+        // Serial.print("End y:");
+        // Serial.println(String(endY));
+        // Serial.print("Start temp:");
+        // Serial.println(String(startTemp));
+        // Serial.print("End temp:");
+        // Serial.println(String(endTemp));
+        // Serial.print("Start time:");
+        // Serial.println(String(startTime));
+        // Serial.print("End time:");
+        // Serial.println(String(endTime));
+        // Serial.println(" ");
 
-
-        if(profile->steps[i].flagged) {
-          //  tft.drawCircle(startX, startY, 5, ST77XX_RED);
-            startTemp = profile->steps[i-2].targetTempAtEnd;
-            
+        // Check for the half sine function flag if its flagged draw the line using the ending temp of the step 2 before the current step
+        if (profile->steps[i].flagged)
+        {
+            //  tft.drawCircle(startX, startY, 5, ST77XX_RED);
+            startTemp = profile->steps[i - 2].targetTempAtEnd;
         }
 
         // Draw the line pixel by pixel
@@ -415,12 +461,6 @@ void TFT_Display::drawReflowTargetTempLine()
                 // calculate the temp at the current percentage of the line
 
                 float temp = startTemp + (endTemp - startTemp) * -(cos(percentage * PI) - 1) / (double)2;
-
-                Serial.print("Temp:");
-                Serial.println(temp);
-
-                Serial.print("Percentage:");
-                Serial.println(percentage);
 
                 float time = startTime + (duration * percentage);
 
@@ -445,12 +485,6 @@ void TFT_Display::drawReflowTargetTempLine()
 
                 float temp = startTemp + (endTemp - startTemp) * (1 - cos(percentage * PI / (double)2));
 
-                Serial.print("Temp:");
-                Serial.println(temp);
-
-                Serial.print("Percentage:");
-                Serial.println(percentage);
-
                 // Calculate the x and y position of the temp on the graph
 
                 uint16_t y = tempYonGraph(temp);
@@ -468,15 +502,7 @@ void TFT_Display::drawReflowTargetTempLine()
 
                 // calculate the temp at the current percentage of the line
 
-        
-
                 float temp = startTemp + (endTemp - startTemp) * (sin(percentage * PI / (double)2));
-
-                Serial.print("Temp:");
-                Serial.println(temp);
-
-                Serial.print("Percentage:");
-                Serial.println(percentage);
 
                 // Calculate the x and y position of the temp on the graph
 
@@ -496,14 +522,7 @@ void TFT_Display::drawReflowTargetTempLine()
                 float percentage = i / 100.0;
 
                 // calculate the temp at the current percentage of the line
-
                 float temp = startTemp + (endTemp - startTemp) * (sin(percentage * PI));
-
-                Serial.print("Temp:");
-                Serial.println(temp);
-
-                Serial.print("Percentage:");
-                Serial.println(percentage);
 
                 // Calculate the x and y position of the temp on the graph
 
@@ -540,6 +559,13 @@ uint16_t TFT_Display::tempYonGraph(float temp)
 
     float y = graphXY.y - (graphHeight * ((temp - minTemp) / (maxTemp - minTemp)));
 
+    return y;
+}
+
+uint16_t TFT_Display::tempYonGraph(float *temp)
+{
+
+    float y = graphXY.y - (graphHeight * ((*temp - minTemp) / (maxTemp - minTemp)));
     return y;
 }
 

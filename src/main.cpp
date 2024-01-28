@@ -13,9 +13,7 @@
 #include "globals.h"
 #include "EEPROMDataManager.h"
 #include "thermistors/TemperatureController.h"
-
-
-
+#include "tools/ExecutionTimer.h"
 
 #define MOSTFET_PIN 17
 
@@ -23,18 +21,16 @@ double currentTemp = 0;
 double targetTemp = 60;
 double pwmValue = 255;
 
+ExecutionTimer executionTimer;
+
 Buttons buttons = Buttons();
 LEDS leds = LEDS();
 // Declare the PID
 ArduPID PID;
 OledDisplay oled = OledDisplay();
 
-TFT_Display tftDisplay ;
+TFT_Display tftDisplay;
 TemperatureController temperatureController;
-
-
-
-
 
 void setup()
 {
@@ -62,6 +58,8 @@ void setup()
 void loop()
 {
 
+//  executionTimer.start();
+
   // Return the button that changed state
   Pair<ButtonKind, StateChangeEvent<ButtonState>> *k = buttons.handleButtons();
   ReflowProcessState state = reflowProcessState.get();
@@ -80,11 +78,11 @@ void loop()
         reflowProcessState.set(ReflowProcessState::USER_INPUT);
         pidController.stop();
         leds.reset();
-
       }
-    } else if (state == ReflowProcessState::DONE) {
+    }
+    else if (state == ReflowProcessState::DONE)
+    {
       oled.handleButtonStateChange(*k);
-
     }
   }
   ReflowProcessState newState = reflowProcessState.get();
@@ -93,14 +91,14 @@ void loop()
   {
     Serial.println("State changed from " + String(STATE_STR(state)) + " to " + String(STATE_STR(newState)));
     // State changed from state to newState (user input or wifi input needs to be above here)
-    if (newState == ReflowProcessState::PREHEAT) {
+    if (newState == ReflowProcessState::PREHEAT)
+    {
 
       tftDisplay.init(&chosenReflowProfile);
-      
+
       chosenReflowProfile.start();
       // Start the PID
       pidController.start();
-
     }
   }
   state = newState;
@@ -111,9 +109,9 @@ void loop()
   if (state >= ReflowProcessState::PREHEAT && state <= ReflowProcessState::COOL)
   {
 
-
     pidController.loop();
-    //pidController.debug();
+    pidController.debug();
+    tftDisplay.drawRealTemp(pidController.getInput(), chosenReflowProfile.getCurrentTime());
     ReflowStep step = chosenReflowProfile.reflowStep();
     // Here we draw the actual temp vs time to the display
 
@@ -123,10 +121,9 @@ void loop()
       if (step.state == ReflowProcessState::DONE)
       {
         pidController.stop();
-     
       }
     }
   }
- 
 
+//  executionTimer.stop();
 }

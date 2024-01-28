@@ -57,3 +57,8 @@ void PidController::start()
     controller.start();
     
 }
+
+double* PidController::getInput()
+{
+    return controller.input;
+}

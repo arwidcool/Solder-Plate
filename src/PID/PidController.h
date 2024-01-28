@@ -20,6 +20,8 @@ public:
     void loop();
     void start();
 
+    double* getInput();
+
     boolean started = false;
 
 private:

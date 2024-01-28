@@ -300,9 +300,10 @@ void OledDisplay::handleReflowState()
     
     display.setTextSize(1, 2);
     // SysV topright
-    #ifdef DEBUG
+    // #ifdef DEBUG
+    
         drawPositionedText((String(analogRef.calculateInputVoltage())+"V").c_str(), DisplayTextAlignment::END, DisplayTextAlignment::START);
-    #endif
+    // #endif
     
     
     // Remaining time center left + bottom left

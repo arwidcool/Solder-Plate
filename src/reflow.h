@@ -243,6 +243,11 @@ public:
         return (elapsedMS - startTimeMS) / 1000;
     }
 
+    uint32_t getCurrentTime()
+    {
+        return timer.elapsed();
+    }
+
     void toBuffer(uint8_t *b)
     {
         memset(b, 0, PROFILE_SERIALIZED_SIZE);
