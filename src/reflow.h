@@ -187,6 +187,7 @@ public:
         uint32_t elapsedMS = timer.elapsed();
         uint16_t startTimeMS = startTimes[STEPINDEX(reflowStep())] * 1000;
         return (elapsedMS - startTimeMS) / 1000;
+
     }
 
     void toBuffer(uint8_t *b)

@@ -29,7 +29,10 @@ LEDS leds = LEDS();
 ArduPID PID;
 OledDisplay oled = OledDisplay();
 
-TemperatureController temperatureController ;
+TFT_Display tftDisplay ;
+
+
+TemperatureController temperatureController;
 
 TFT_Display tftDisplay ;
 
@@ -91,7 +94,7 @@ void loop()
   {
     Serial.println("State changed from " + String(STATE_STR(state)) + " to " + String(STATE_STR(newState)));
     // State changed from state to newState (user input or wifi input needs to be above here)
-    if (newState == PREHEAT) {
+    if (newState == ReflowProcessState::PREHEAT) {
 
       tftDisplay.init(&chosenReflowProfile);
       chosenReflowProfile.start();
@@ -112,20 +115,12 @@ void loop()
     if (step.state != newState)
     {
       reflowProcessState.set(step.state);
+      if (step.state == ReflowProcessState::DONE)
+      {
+        pidController.stop();
+      }
     }
   }
+ 
 
-  if (state == DONE)
-  {
-    // TODO: BUZZER
-    pidController.stop();
-    reflowProcessState.set(USER_INPUT);
-  }
-  
-
-  // if (step.state == ReflowProcessState::DONE) {
-  //   profile.start();
-  //   return;
-  // }
-  // Serial.print(String(STATE_STR(step.state)) + " " + String(step.duration) + " " + String(step.targetTempAtEnd) + " " + String(profile.getTargetTemp())+"\r");
 }
