@@ -30,11 +30,7 @@ ArduPID PID;
 OledDisplay oled = OledDisplay();
 
 TFT_Display tftDisplay ;
-
-
 TemperatureController temperatureController;
-
-TFT_Display tftDisplay ;
 
 
 
