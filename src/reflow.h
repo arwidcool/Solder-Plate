@@ -110,6 +110,7 @@ public:
         endTimes[2] = endTimes[1] + steps[2].duration;
         endTimes[3] = endTimes[2] + steps[3].duration;
         endTimes[4] = endTimes[3] + steps[4].duration;
+        
 
         startTimes[0] = 0;
         startTimes[1] = endTimes[0];
@@ -147,7 +148,7 @@ public:
 
     float getPercentage()
     {
-        return timer.elapsed() / TOMILLIS(endTimes[4]);
+        return timer.elapsed() / (double)TOMILLIS(endTimes[4]);
     }
 
     float getTargetTemp()
