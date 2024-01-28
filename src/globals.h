@@ -6,6 +6,7 @@
 #include "./EEPROMDataManager.h"
 #include "./PID/PidController.h"
 
+
 //Comment out to enable debug messages
 //#define DEBUG 
 
@@ -36,5 +37,10 @@ extern int nReflowProfiles;
 extern PidControllerData pidControllerData;
 extern PidController pidController;
 extern EEPROMDataManager eepromDataManager;
+
+extern uint16_t reflow_COLOR;
+extern uint16_t preheat_COLOR;
+extern uint16_t soak_COLOR;
+extern uint16_t cool_COLOR;
 
 #endif

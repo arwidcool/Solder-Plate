@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <Adafruit_ST7789.h> // Include the ST7789 library
 #include <reflow.h>
+#include <globals.h>
 
 struct TFT_XY
 {
@@ -23,6 +24,9 @@ public:
     void clear();
 
 private:
+
+    ReflowProfile *profile;
+
     uint8_t tickMarkLength = 5;
     // Add your private members here
     TFT_XY getCenteredTextXY(char *text);
@@ -46,9 +50,11 @@ private:
     void drawGraphAxisLabels();
     void drawGraphAxisTicks();
     void drawGraphAxisTickLabels();
+    void drawGraphReflowStagesBackground();
+    void drawReflowTargetTempLine();
 
-    uint16_t tempYonGraph(uint16_t temp);
-    uint16_t timeXonGraph(uint16_t time);
+    uint16_t tempYonGraph(float temp);
+    uint16_t timeXonGraph(float time);
 
     template <typename T>
     char *numberToCharPtr(T number);

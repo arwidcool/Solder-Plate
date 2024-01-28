@@ -50,6 +50,7 @@ public:
     uint8_t targetTempAtEnd;
     ReflowProcessState state;
     ReflowStepEaseFunction easeFunction;
+    bool flagged = false;
 
     float calcTempAtPercentage(uint8_t startTemp, float percentage)
     {
@@ -61,7 +62,6 @@ public:
             return startTemp + (this->targetTempAtEnd - startTemp) * -(cos(percentage * PI) - 1) / (double)2;
         case EASE_IN:
             return startTemp + (this->targetTempAtEnd - startTemp) * (1 - cos(percentage * PI / (double)2));
-
         case EASE_OUT:
             return startTemp + (this->targetTempAtEnd - startTemp) * (sin(percentage * PI / (double)2));
         case HALF_SINE:
@@ -79,9 +79,24 @@ class ReflowProfile
 public:
     ReflowProfile(ReflowStep steps[5], char name[20])
     {
+
+        bool flag = false;
+        uint8_t sinePosition = 0;
+
         for (int i = 0; i < 5; i++)
         {
-            this->steps[i] = steps[i];
+            //TODO: Important we need to flag the step after half sine because its starting temp is the PEAK of the sine wave and the sine wave ends at the start of the sine wave
+            //this creates a problem because the next step will start at the peak of the sine wave and not the end of the sine wave
+            //We can fix this by flagging the effect step and then when we are calculating the target temp we can check if the step is flagged and if it is we can use the target temp of the step prevous to the sine wave
+            if (steps[i].easeFunction == HALF_SINE && i != 3 && i != 0)
+            {
+                this->steps[i + 1].flagged = true;
+                this->steps[i] = steps[i];
+            }
+            else
+            {
+                this->steps[i] = steps[i];
+            }
         }
 
         for (int i = 0; i < 20; i++)
@@ -137,7 +152,7 @@ public:
             startTimeFloat *= 1000;
             endTimeFloat *= 1000;
 
-            if (elapsedMS >= startTimeFloat && elapsedMS <endTimeFloat)
+            if (elapsedMS >= startTimeFloat && elapsedMS < endTimeFloat)
             {
                 // Serial.println(String(elapsedMS) + " " + String(startTimes[i] * 1000) + " " + String(endTimes[i] * 1000) + " " + String(i) + " " + String(steps[i].state));
                 return steps[i];
@@ -154,7 +169,6 @@ public:
 
         float endTimesFloat[4];
 
-      
         return timerElapsed / (float)(endTimes[4] * 1000);
     }
 
@@ -184,15 +198,16 @@ public:
 
         uint32_t relativeElapsedTime = elapsedMS - startTimeMS;
 
-
-        float duration = curStep.duration ;
+        float duration = curStep.duration;
         duration *= 1000;
 
         float relativeElapsedTimeF = relativeElapsedTime;
 
         float percentage = relativeElapsedTime / duration;
         // Serial.println(String(percentage)+ "%" + String(STATE_STR(curStep.state)) + " Elapsed: " + String(elapsedMS) + " ___ " + String(curStep.duration  * 1000));
-        return curStep.calcTempAtPercentage(startTemp, percentage);
+
+            return curStep.calcTempAtPercentage(startTemp, percentage);
+        
     }
 
     /**

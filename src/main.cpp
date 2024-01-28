@@ -113,7 +113,7 @@ void loop()
 
 
     pidController.loop();
-    pidController.debug();
+    //pidController.debug();
     ReflowStep step = chosenReflowProfile.reflowStep();
     // Here we draw the actual temp vs time to the display
 
