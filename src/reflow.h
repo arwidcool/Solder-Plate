@@ -72,7 +72,7 @@ public:
 #define PROFILE_SERIALIZED_SIZE 40
 #define PROFILE_SERIALIZED_NAME_SIZE 20
 #define STEPINDEX(step) (step.state - PREHEAT)
-
+#define TOMILLIS(x) (((uint32_t)x) * (uint32_t)1000)
 class ReflowProfile
 {
 public:
@@ -92,14 +92,14 @@ public:
     }
     ReflowStep steps[5];
     char name[20];
-    float endTimes[5] = {0};
-    float startTimes[5] = {0};
-    float endTemps[5] = {0};
+    uint16_t endTimes[5] = {0};
+    uint16_t startTimes[5] = {0};
+    uint8_t endTemps[5] = {0};
     StopWatch timer;
 
     void start()
     {
-        timer.setResolution(StopWatch::MILLIS);
+        timer = StopWatch(StopWatch::MILLIS);
         timer.start();
     }
 
@@ -137,29 +137,17 @@ public:
     {
         for (int i = 0; i < 5; i++)
         {
-
-            float startTimeFloat = startTimes[i];
-            float endTimeFloat = endTimes[i];
-
-            startTimeFloat *= 1000;
-            endTimeFloat *= 1000;
-
-            if (elapsedMS >= startTimeFloat && elapsedMS < endTimeFloat)
+            if (elapsedMS >= TOMILLIS(startTimes[i]) && elapsedMS < TOMILLIS(endTimes[i]))
             {
-                // Serial.println(String(elapsedMS) + " " + String(startTimes[i] * 1000) + " " + String(endTimes[i] * 1000) + " " + String(i) + " " + String(steps[i].state));
                 return steps[i];
             }
         }
-        // Serial.println("AAA");
         return steps[4]; // DONE by default
     }
 
     float getPercentage()
     {
-
-        float timerElapsed = timer.elapsed();
-
-        return timerElapsed / (float)(endTimes[4] * 1000);
+        return timer.elapsed() / TOMILLIS(endTimes[4]);
     }
 
     float getTargetTemp()
@@ -182,20 +170,11 @@ public:
 
         // startTemp => 20 or the temp at 100% of the previous step
 
-        uint32_t startTimeMS = startTimes[STEPINDEX(curStep)];
-
-        startTimeMS *= 1000;
-
+        uint32_t startTimeMS = TOMILLIS(startTimes[STEPINDEX(curStep)]);
         uint32_t relativeElapsedTime = elapsedMS - startTimeMS;
 
-        float duration = curStep.duration;
-        duration *= 1000;
-
-        float relativeElapsedTimeF = relativeElapsedTime;
-
-        float percentage = relativeElapsedTime / duration;
-        // Serial.println(String(percentage)+ "%" + String(STATE_STR(curStep.state)) + " Elapsed: " + String(elapsedMS) + " ___ " + String(curStep.duration  * 1000));
-        return curStep.calcTempAtPercentage(startTemp, percentage);
+        float stepPercentage = relativeElapsedTime / (double)TOMILLIS(curStep.duration);
+        return curStep.calcTempAtPercentage(startTemp, stepPercentage);
     }
 
     /**
@@ -205,19 +184,14 @@ public:
      */
     float getTargetTempFromPercentage(double processPercentage)
     {
-        return getTargetTemp(endTimes[4] * (1000 * processPercentage));
+        return getTargetTemp(TOMILLIS(endTimes[4]) * processPercentage);
     }
 
     uint8_t getCurrentStepRelativeTime()
     {
         uint32_t elapsedMS = timer.elapsed();
-        uint32_t startTimeMS = startTimes[STEPINDEX(reflowStep())] * 1000;
+        uint32_t startTimeMS = TOMILLIS(startTimes[STEPINDEX(reflowStep())]);
         return (elapsedMS - startTimeMS) / 1000;
-    }
-
-    uint32_t getCurrentTime()
-    {
-        return timer.elapsed();
     }
 
     void toBuffer(uint8_t *b)
