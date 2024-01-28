@@ -82,6 +82,11 @@ public:
     }
   }
 
+  void reset()
+  {
+    leftLED = midLED = rightLED = LED_OFF;
+  }
+
 private:
   LedDesiredState leftLED = LedDesiredState::LED_OFF;
   LedDesiredState midLED = LedDesiredState::LED_OFF;

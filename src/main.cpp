@@ -79,9 +79,12 @@ void loop()
         // STOP REFLOW and restart
         reflowProcessState.set(ReflowProcessState::USER_INPUT);
         pidController.stop();
+        leds.reset();
+
       }
     } else if (state == ReflowProcessState::DONE) {
       oled.handleButtonStateChange(*k);
+
     }
   }
   ReflowProcessState newState = reflowProcessState.get();

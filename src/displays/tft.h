@@ -23,17 +23,20 @@ public:
     void clear();
 
 private:
+    uint8_t tickMarkLength = 5;
     // Add your private members here
     TFT_XY getCenteredTextXY(char *text);
     TFT_XY getRightAlignedTextXY(char *text, uint16_t x, uint16_t y);
     TFT_XY getLeftAlignedTopTextXY(char *text, uint16_t x, uint16_t y);
+    TFT_XY getCenterAlignedBottomTextXY(char *text, uint16_t x, uint16_t y);
     void getMaxTempFromProfile(ReflowProfile *profile);
+    void getTotalTimeFromProfile(ReflowProfile *profile);
 
     uint16_t graphHeight = 180;
     uint16_t graphWidth = 256;
     TFT_XY graphXY = {32, 220};
     uint16_t maxTemp = 0;
-    uint16_t totalTIme ;
+    uint16_t totalTIme =0;
     uint8_t minTemp = 20;
 
     TFT_XY getXYWithinGraphBounds(uint8_t temp, uint8_t time);
@@ -43,6 +46,28 @@ private:
     void drawGraphAxisLabels();
     void drawGraphAxisTicks();
     void drawGraphAxisTickLabels();
+
+    uint16_t tempYonGraph(uint16_t temp);
+    uint16_t timeXonGraph(uint16_t time);
+
+    template <typename T>
+    char *numberToCharPtr(T number);
 };
 
 #endif // TFT_H
+
+/**
+ * Converts a number to a character pointer.!! remember to delete the pointer after use
+ *
+ * @tparam T The type of the number.
+ * @param number The number to be converted.
+ * @return A dynamically allocated character pointer containing the converted number.
+ */
+template <typename T>
+inline char *TFT_Display::numberToCharPtr(T number)
+{
+    String numStr = String(number);
+    char *charPtr = new char[numStr.length() + 1];
+    strcpy(charPtr, numStr.c_str());
+    return charPtr;
+}
