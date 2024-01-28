@@ -97,7 +97,7 @@ public:
 
     void start()
     {
-        timer = StopWatch(StopWatch::Resolution::SECONDS);
+        timer = StopWatch(StopWatch::Resolution::MILLIS);
         timer.start();
         calculateTimes();
     }
@@ -122,10 +122,10 @@ public:
         if (!timer.isRunning()) {
             return steps[0];
         }
-        uint8_t elapsed = timer.elapsed();
+        uint32_t elapsedMS = timer.elapsed();
         for (int i = 0; i < 5; i++)
         {
-            if (elapsed >= startTimes[i] && elapsed < endTimes[i])
+            if (elapsedMS >= startTimes[i] *1000 && elapsedMS < endTimes[i] * 1000)
             {
                 return steps[i];
             }
@@ -135,7 +135,7 @@ public:
 
     float getTargetTemp()
     {
-        uint32_t elapsedTime = timer.elapsed();
+        uint32_t elapsedMS = timer.elapsed();
         uint8_t startTemp = 20; // always assume 20 degrees at the start
 
         ReflowStep curStep = curReflowStep();
@@ -146,19 +146,19 @@ public:
 
         // startTemp => 20 or the targetTempAtEnd of the previous step
         
-        uint16_t startTime = startTimes[STEPINDEX(curStep)];
+        uint16_t startTimeMS = startTimes[STEPINDEX(curStep)] * 1000;
 
-        uint32_t relativeElapsedTime = elapsedTime - startTime;
+        uint32_t relativeElapsedTime = elapsedMS - startTimeMS;
 
-        percentage = (float)relativeElapsedTime / (float)(curStep.duration);
+        percentage = (float)relativeElapsedTime / (float)(curStep.duration * 1000);
 
         return curStep.calcTempAtPercentage(startTemp, percentage);
     }
 
     uint8_t getCurrentStepRelativeTime() {
-        uint32_t elapsedTime = timer.elapsed();
-        uint16_t startTime = startTimes[STEPINDEX(curReflowStep())];
-        return elapsedTime - startTime;
+        uint32_t elapsedMS = timer.elapsed();
+        uint16_t startTimeMS = startTimes[STEPINDEX(curReflowStep())] * 1000;
+        return (elapsedMS - startTimeMS) / 1000;
     }
 
     void toBuffer(uint8_t *b)

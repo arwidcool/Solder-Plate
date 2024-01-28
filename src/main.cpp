@@ -41,10 +41,6 @@ OledDisplay oled = OledDisplay();
 
 TemperatureController temperatureController ;
 
-
-
-
-
 void setup()
 {
 
@@ -62,7 +58,7 @@ void setup()
   oled.setup();
   eepromDataManager.setup();
 
-  reflowProcessState.set(USER_INPUT);
+  reflowProcessState.set(ReflowProcessState::USER_INPUT);
 
   temperatureController.checkPluggedInThermistors();
 }
@@ -74,19 +70,21 @@ void loop()
   ReflowProcessState state = reflowProcessState.get();
   if (k != NULL)
   {
-    if (state == USER_INPUT)
+    if (state == ReflowProcessState::USER_INPUT)
     {
       leds.handleButtonStateChange(*k);
       oled.handleButtonStateChange(*k);
     }
-    else if (state >= PREHEAT && state <= COOL)
+    else if (state >= ReflowProcessState::PREHEAT && state <= ReflowProcessState::COOL)
     {
       if (k->first == ButtonKind::BACK && k->second.to == ButtonState::PRESSED)
       {
         // STOP REFLOW and restart
-        reflowProcessState.set(USER_INPUT);
+        reflowProcessState.set(ReflowProcessState::USER_INPUT);
         pidController.stop();
       }
+    } else if (state == ReflowProcessState::DONE) {
+      oled.handleButtonStateChange(*k);
     }
   }
   ReflowProcessState newState = reflowProcessState.get();
@@ -94,7 +92,7 @@ void loop()
   if (newState != state) {
     Serial.println("State changed from " + String(STATE_STR(state)) + " to " + String(STATE_STR(newState)));
     // State changed from state to newState (user input or wifi input needs to be above here)
-    if (newState == PREHEAT) {
+    if (newState == ReflowProcessState::PREHEAT) {
       chosenReflowProfile.start();
       pidController.start();
     }
@@ -104,7 +102,7 @@ void loop()
   leds.loop();
   oled.loop();
 
-  if (state >= PREHEAT && state <= COOL)
+  if (state >= ReflowProcessState::PREHEAT && state <= ReflowProcessState::COOL)
   {
     pidController.loop();
     ReflowStep step = chosenReflowProfile.curReflowStep();
@@ -112,20 +110,12 @@ void loop()
     if (step.state != newState)
     {
       reflowProcessState.set(step.state);
+      if (step.state == ReflowProcessState::DONE)
+      {
+        pidController.stop();
+      }
     }
   }
 
-  if (state == DONE)
-  {
-    // TODO: BUZZER
-    pidController.stop();
-    reflowProcessState.set(USER_INPUT);
-  }
-  
 
-  // if (step.state == ReflowProcessState::DONE) {
-  //   profile.start();
-  //   return;
-  // }
-  // Serial.print(String(STATE_STR(step.state)) + " " + String(step.duration) + " " + String(step.targetTempAtEnd) + " " + String(profile.getTargetTemp())+"\r");
 }
