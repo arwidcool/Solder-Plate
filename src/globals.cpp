@@ -59,7 +59,7 @@ ReflowProfile reflowProfiles[] = {
                       ReflowStep(ReflowProcessState::PREHEAT, 120, 35, EASE_OUT),
                       ReflowStep(ReflowProcessState::SOAK, 90, 155),
                       ReflowStep(ReflowProcessState::REFLOW, 45, 185, EASE_OUT),
-                      ReflowStep(ReflowProcessState::COOL, 45, 155, EASE_IN),
+                      ReflowStep(ReflowProcessState::COOL, 45, 155, EASE_OUT),
                       ReflowStep(ReflowProcessState::DONE, 0, 0)},
                     "138c Sn42Bi58\0"),
                   

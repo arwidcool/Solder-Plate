@@ -155,6 +155,8 @@ public:
         return curStep.calcTempAtPercentage(startTemp, percentage);
     }
 
+    
+
     uint8_t getCurrentStepRelativeTime() {
         uint32_t elapsedTime = timer.elapsed();
         uint16_t startTime = startTimes[STEPINDEX(curReflowStep())];
