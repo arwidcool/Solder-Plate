@@ -6,8 +6,8 @@
 WrappedState<ReflowProcessState> reflowProcessState = WrappedState<ReflowProcessState>(INITIALIZING);
 AnalogRef analogRef(5.0);
 
-// Calibration data for 100K thermistors ->https://fab.cba.mit.edu/classes/863.18/CBA/people/erik/reference/11_NTC-3950-100K.pdf ->Glass thermistor NTC 3950 100K
-TempCalibration calibration_100K_3950 = {25, 100000, 86, 10324, 169, 1148};
+// Calibration data for 100K thermistors ->https://datasheet.lcsc.com/lcsc/1810161311_Nanjing-Shiheng-Elec-MF58-104F3950_C123399.pdf ->Glass thermistor NTC 3950 100K
+TempCalibration calibration_100K_3950 = {25, 100000, 107, 4957, 167, 1000};
 // Initalize the 3950 100K thermistors with ACTUAL reference resistor measurnment(Measured between Left pin and GND when the board is powered off) using the default calibration data for 100K thermistor
 
 // You can also make a custom calibration data for your thermistor and use that instead of the default one pass it as shown below --> keep the naming of the thermistor the same as the one you are replacing
@@ -23,7 +23,7 @@ TempCalibration calibration_100K_3950 = {25, 100000, 86, 10324, 169, 1148};
 // To measure the resistence turn off the controller completley and measure between GND and the left pin of the connector with the thermistor unplugged
 
 // 2.5k reference = Best accuracy around 138C
-Thermistor thermistor1(THERMISTOR1_PIN, 2500, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::RIGHT);
+Thermistor thermistor1(THERMISTOR1_PIN, 2500, ThermistorZ_Placement::TOP, ThermistorXY_Placement::MIDDLE);
 Thermistor thermistor2(THERMISTOR2_PIN, 2500, ThermistorZ_Placement::TOP, ThermistorXY_Placement::MIDDLE);
 Thermistor thermistor3(THERMISTOR3_PIN, 2500, ThermistorZ_Placement::TOP, ThermistorXY_Placement::MIDDLE);
 // 1k reference = Best accuracy around 173c

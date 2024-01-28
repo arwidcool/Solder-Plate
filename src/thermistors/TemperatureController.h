@@ -14,10 +14,12 @@ public:
 
     float getPlateTemperature();
     void checkPluggedInThermistors();
+    float static getThermistorTempFast(uint8_t thermistorIndex);
     
 private:
     bool thermistorIsActive[6];
     uint8_t activeThermistorCount =0 ;
+
 
 };
 #endif // TEMPERATURE_CONTROLLER_H

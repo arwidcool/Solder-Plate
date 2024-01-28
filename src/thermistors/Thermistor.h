@@ -32,7 +32,6 @@ extern TempCalibration calibration_100K_3950;
 
 extern AnalogRef analogRef;
 
-
 enum ThermistorZ_Placement
 {
     TOP,
@@ -52,13 +51,13 @@ public:
     // Constructor
     Thermistor();
 
-    Thermistor(uint8_t pin, uint16_t resistance, TempCalibration calibration,ThermistorZ_Placement zPlacement,ThermistorXY_Placement  xyPlacment) : thermistorPin(pin), setRes(resistance), calibration(calibration),zPlacement(zPlacement),xyPlacment(xyPlacment)
+    Thermistor(uint8_t pin, uint16_t resistance, TempCalibration calibration, ThermistorZ_Placement zPlacement, ThermistorXY_Placement xyPlacment) : thermistorPin(pin), setRes(resistance), calibration(calibration), zPlacement(zPlacement), xyPlacment(xyPlacment)
     {
         calculateCoefficents(calibration);
         calculateScalingFactor();
     }
 
-    Thermistor(uint8_t pin, uint16_t resistance,ThermistorZ_Placement zPlacement,ThermistorXY_Placement  xyPlacment) : thermistorPin(pin), setRes(resistance), calibration(calibration_100K_3950),zPlacement(zPlacement),xyPlacment(xyPlacment)
+    Thermistor(uint8_t pin, uint16_t resistance, ThermistorZ_Placement zPlacement, ThermistorXY_Placement xyPlacment) : thermistorPin(pin), setRes(resistance), calibration(calibration_100K_3950), zPlacement(zPlacement), xyPlacment(xyPlacment)
     {
         calculateCoefficents(calibration);
         calculateScalingFactor();
@@ -74,6 +73,7 @@ public:
     float getScalingFactor() { return scalingFactor; };
 
     bool isPluggedIn();
+    float getTemperatureFast();
 
 private:
     ThermistorZ_Placement zPlacement;
@@ -81,14 +81,12 @@ private:
     const double K = 273.15;
     float sensorResistance;
     uint8_t thermistorPin;
-    uint16_t setRes;
+    float setRes;
     Coefficents coefficents;
     float referenceResistance;
     TempCalibration calibration;
-    float scalingFactor ;
+    float scalingFactor;
     void calculateScalingFactor();
-
-
 };
 
 #endif // THERMISTOR_H

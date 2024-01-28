@@ -67,9 +67,12 @@ void OledDisplay::handleButtonStateChange(Pair<ButtonKind, StateChangeEvent<Butt
                 curMenu->goNextItem();
             }
         }
-    } else if (state == DONE) {
+    }
+    else if (state == DONE)
+    {
         // GO back to iniital state
-        if (change.second.to == ButtonState::PRESSED) {
+        if (change.second.to == ButtonState::PRESSED)
+        {
             reflowProcessState.set(USER_INPUT);
         }
     }
@@ -97,7 +100,7 @@ void OledDisplay::handleDrawThermistorMenu(OledMenuItem menuItem)
         display.setTextSize(1, 2);
         for (int i = 0; i < 6; i++)
         {
-            float thermR = thermistors[i].getResistance()/1000;
+            float thermR = thermistors[i].getResistance() / 1000;
             display.setCursor(i < 3 ? 0 : (SCREEN_WIDTH / 2 + 20), 20 * (i % 3));
             display.println(String(i + 1) + ":" + String(thermR));
         }
@@ -186,9 +189,12 @@ void OledDisplay::loop()
     else if (state >= ReflowProcessState::PREHEAT && state < ReflowProcessState::DONE)
     {
         handleReflowState();
-    } else if (state == ReflowProcessState::DONE) {
+    }
+    else if (state == ReflowProcessState::DONE)
+    {
         // Traverse back to root menu
-        while (curMenu->parent != NULL) {
+        while (curMenu->parent != NULL)
+        {
             curMenu = curMenu->parent;
         }
         display.clearDisplay();
@@ -196,9 +202,9 @@ void OledDisplay::loop()
         display.setTextSize(2);
         drawPositionedText("DONE :)", DisplayTextAlignment::CENTER, DisplayTextAlignment::START);
         uint8_t curTemp = thermistor1.getTemperature();
-        display.setTextSize(1,2);
+        display.setTextSize(1, 2);
         drawPositionedText("Temperature", DisplayTextAlignment::START, DisplayTextAlignment::CENTER);
-        drawPositionedText((String(curTemp)+" C").c_str(), DisplayTextAlignment::END, DisplayTextAlignment::CENTER);
+        drawPositionedText((String(curTemp) + " C").c_str(), DisplayTextAlignment::END, DisplayTextAlignment::CENTER);
 
         display.display();
 
@@ -278,9 +284,12 @@ void OledDisplay::handleUserInputState()
     else
     {
         // Default menu handling. Just display the title and the indicators to go back and forth
-        if (strlen(menuItem.title) > 8) {
+        if (strlen(menuItem.title) > 8)
+        {
             display.setTextSize(1, 2);
-        } else {
+        }
+        else
+        {
             display.setTextSize(2);
         }
         centerText(menuItem.title);
@@ -297,15 +306,10 @@ void OledDisplay::handleReflowState()
     ReflowProcessState state = reflowProcessState.get();
     // Title topleft
     drawPositionedText(STATE_STR(state), DisplayTextAlignment::CENTER, DisplayTextAlignment::START);
-    
+
     display.setTextSize(1, 2);
-    // SysV topright
-    // #ifdef DEBUG
-    
-        drawPositionedText((String(analogRef.calculateInputVoltage())+"V").c_str(), DisplayTextAlignment::END, DisplayTextAlignment::START);
-    // #endif
-    
-    
+
+
     // Remaining time center left + bottom left
     uint32_t elapsedStep = chosenReflowProfile.getCurrentStepRelativeTime();
     drawPositionedText("Remaining", DisplayTextAlignment::START, DisplayTextAlignment::CENTER);
@@ -317,8 +321,14 @@ void OledDisplay::handleReflowState()
     drawPositionedText(("Curr.: " + String(curTemp)).c_str(), DisplayTextAlignment::END, DisplayTextAlignment::CENTER);
     drawPositionedText(("Target: " + String(targetTemp)).c_str(), DisplayTextAlignment::END, DisplayTextAlignment::END);
 
-    
     // display.println("In Voltage:"+String(systemVoltage));
+
+    // SysV topright
+    // #ifdef DEBUG
+    display.setCursor(25, 15);
+    display.setTextSize(1, 1);
+    display.print(analogRef.calculateInputVoltage());
+    // #endif
 
     display.display();
 }

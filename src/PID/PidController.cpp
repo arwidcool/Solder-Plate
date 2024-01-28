@@ -1,6 +1,9 @@
 #include "PidController.h"
 #include "globals.h"
 #define MOSTFET_PIN 17
+#include "voltageReference/AnalogRef.h"
+
+extern AnalogRef analogRef;
 
 PidController::PidController(PidControllerData *data)
 {
@@ -13,7 +16,7 @@ PidController::PidController(PidControllerData *data)
     controller.begin(&(this->data->currentTemp), &(this->data->setPoint), &(this->data->targetTemp), kp, ki, kd);
     controller.reverse();
     controller.setOutputLimits(0, 255);
-    controller.setSampleTime(20);
+    //controller.setSampleTime(20);
     controller.setWindUpLimits(-100, 185);
 }
 
@@ -38,6 +41,24 @@ void PidController::loop()
     data->targetTemp = chosenReflowProfile.getTargetTemp();
     data->currentTemp = thermistor1.getTemperature();
     // debug();
+
+    float sysVoltage = analogRef.calculateSystemVoltage();
+
+    // // Serial.print("Sys Voltage: ");
+    // // Serial.println(sysVoltage);
+
+
+    // if (sysVoltage < 10.5)
+    // {
+
+    //     controller.setWindUpLimits(-20, 50);
+ 
+
+    // }else{
+    // controller.setWindUpLimits(-100, 185);
+        
+    // }
+
     compute();
     analogWrite(MOSTFET_PIN, data->setPoint);
 }
@@ -50,6 +71,8 @@ void PidController::stop()
     analogWrite(MOSTFET_PIN, 255); // VERY IMPORTANT, DONT CHANGE!
     controller.reset();
     controller.stop();
+
+
 }
 
 void PidController::start()

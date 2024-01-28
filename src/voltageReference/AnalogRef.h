@@ -64,7 +64,7 @@ public:
 
     float value;
 
-    uint8_t sampleCount = 20;
+    uint8_t sampleCount = 10;
     value = 0;
 
     for (size_t i = 0; i < sampleCount; ++i)

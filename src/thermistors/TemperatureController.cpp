@@ -40,6 +40,14 @@ void TemperatureController::checkPluggedInThermistors()
     debugLine(activeThermistorCount);
 }
 
+float TemperatureController::getThermistorTempFast(uint8_t thermistorIndex)
+{
+    
+    return thermistors[thermistorIndex].getTemperatureFast();
+}
+
+
+
 /**
  * Calculates and returns the average temperature of the solder plate based on the active thermistors.
  * The average temperature is calculated by summing the temperature of each active thermistor and dividing by the number of active thermistors.

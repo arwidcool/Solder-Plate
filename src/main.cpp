@@ -110,9 +110,9 @@ void loop()
   {
 
     pidController.loop();
-    #ifdef DEBUG
+   // #ifdef DEBUG
       pidController.debug();
-    #endif
+ //   #endif
     tftDisplay.drawRealTemp(pidController.getInput(), chosenReflowProfile.getPercentage());
     ReflowStep step = chosenReflowProfile.reflowStep();
     // Here we draw the actual temp vs time to the display
