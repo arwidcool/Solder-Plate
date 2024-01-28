@@ -61,10 +61,10 @@ int nReflowProfiles = 3;
 ReflowProfile reflowProfiles[] = {
     // 138c profile Sn42Bi58
     ReflowProfile(new ReflowStep[5]{
-                      ReflowStep(ReflowProcessState::PREHEAT, 20, 100, EASE_OUT),
-                      ReflowStep(ReflowProcessState::SOAK, 20, 155,EASE_IN_OUT),
-                      ReflowStep(ReflowProcessState::REFLOW, 20, 185, HALF_SINE),
-                      ReflowStep(ReflowProcessState::COOL, 20, 95, EASE_IN),
+                      ReflowStep(ReflowProcessState::PREHEAT, 90, 100, EASE_OUT),
+                      ReflowStep(ReflowProcessState::SOAK, 90, 155,EASE_IN_OUT),
+                      ReflowStep(ReflowProcessState::REFLOW, 90, 185, HALF_SINE),
+                      ReflowStep(ReflowProcessState::COOL, 50, 85, EASE_IN),
                       ReflowStep(ReflowProcessState::DONE, 0, 0)},
                   "138c Sn42Bi58\0"),
 
