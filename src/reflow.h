@@ -179,7 +179,7 @@ public:
     */
     float getTargetTempFromPercentage(double processPercentage)
     {
-        uint16_t duration = endTimes[4];
+        uint32_t duration = endTimes[4];
         uint8_t startTemp = 20; // always assume 20 degrees at the start
         return getTargetTemp(duration * 1000 * processPercentage);
     }
@@ -187,7 +187,7 @@ public:
     uint8_t getCurrentStepRelativeTime()
     {
         uint32_t elapsedMS = timer.elapsed();
-        uint16_t startTimeMS = startTimes[STEPINDEX(reflowStep())] * 1000;
+        uint32_t startTimeMS = startTimes[STEPINDEX(reflowStep())] * 1000;
         return (elapsedMS - startTimeMS) / 1000;
     }
 
