@@ -105,7 +105,7 @@ void loop()
   if (state >= ReflowProcessState::PREHEAT && state <= ReflowProcessState::COOL)
   {
     pidController.loop();
-    ReflowStep step = chosenReflowProfile.curReflowStep();
+    ReflowStep step = chosenReflowProfile.reflowStep();
 
     if (step.state != newState)
     {

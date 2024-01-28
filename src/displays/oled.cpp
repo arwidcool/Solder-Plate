@@ -308,7 +308,7 @@ void OledDisplay::handleReflowState()
     // Remaining time center left + bottom left
     uint32_t elapsedStep = chosenReflowProfile.getCurrentStepRelativeTime();
     drawPositionedText("Remaining", DisplayTextAlignment::START, DisplayTextAlignment::CENTER);
-    drawPositionedText((String(chosenReflowProfile.curReflowStep().duration - elapsedStep) + "s").c_str(), DisplayTextAlignment::START, DisplayTextAlignment::END);
+    drawPositionedText((String(chosenReflowProfile.reflowStep().duration - elapsedStep) + "s").c_str(), DisplayTextAlignment::START, DisplayTextAlignment::END);
 
     // Current temp center right + bottom right
     uint8_t curTemp = thermistor1.getTemperature();

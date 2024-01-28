@@ -75,8 +75,6 @@ public:
 class ReflowProfile
 {
 public:
-    float percentage;
-
     ReflowProfile(ReflowStep steps[5], char name[20])
     {
         for (int i = 0; i < 5; i++)
@@ -117,15 +115,20 @@ public:
         startTimes[4] = endTimes[3];
     }
 
-    ReflowStep curReflowStep()
+    ReflowStep reflowStep()
     {
-        if (!timer.isRunning()) {
+        if (!timer.isRunning())
+        {
             return steps[0];
         }
-        uint32_t elapsedMS = timer.elapsed();
+        return reflowStep(timer.elapsed());
+    }
+
+    ReflowStep reflowStep(uint32_t elapsedMS)
+    {
         for (int i = 0; i < 5; i++)
         {
-            if (elapsedMS >= startTimes[i] *1000 && elapsedMS < endTimes[i] * 1000)
+            if (elapsedMS >= startTimes[i] * 1000 && elapsedMS < endTimes[i] * 1000)
             {
                 return steps[i];
             }
@@ -133,31 +136,54 @@ public:
         return steps[4]; // DONE by default
     }
 
+    float getPercentage() {
+        return (float)timer.elapsed() / (float)(endTimes[4] * 1000);
+    }
+
     float getTargetTemp()
     {
-        uint32_t elapsedMS = timer.elapsed();
+        if (!timer.isRunning())
+        {
+            return 20;
+        }
+        return getTargetTemp(timer.elapsed());        
+    }
+    float getTargetTemp(uint32_t elapsedMS) {
         uint8_t startTemp = 20; // always assume 20 degrees at the start
 
-        ReflowStep curStep = curReflowStep();
+        ReflowStep curStep = reflowStep(elapsedMS);
         if (curStep.state > PREHEAT)
         {
             startTemp = steps[STEPINDEX(curStep) - 1].targetTempAtEnd;
         }
 
         // startTemp => 20 or the targetTempAtEnd of the previous step
-        
+
         uint16_t startTimeMS = startTimes[STEPINDEX(curStep)] * 1000;
 
         uint32_t relativeElapsedTime = elapsedMS - startTimeMS;
 
-        percentage = (float)relativeElapsedTime / (float)(curStep.duration * 1000);
+        float percentage = (float)relativeElapsedTime / (float)(curStep.duration * 1000);
 
         return curStep.calcTempAtPercentage(startTemp, percentage);
     }
 
-    uint8_t getCurrentStepRelativeTime() {
+    /**
+     * @brief Get the Target Temp At Process Percentage.
+     * @param processPercentage a number between 0 and 1. 0 is the start of the process, 1 is the end of the process
+     * @return float the target temperature at the given percentage of the full process
+    */
+    float getTargetTempFromPercentage(double processPercentage)
+    {
+        uint16_t duration = endTimes[4];
+        uint8_t startTemp = 20; // always assume 20 degrees at the start
+        return getTargetTemp(duration * 1000 * processPercentage);
+    }
+
+    uint8_t getCurrentStepRelativeTime()
+    {
         uint32_t elapsedMS = timer.elapsed();
-        uint16_t startTimeMS = startTimes[STEPINDEX(curReflowStep())] * 1000;
+        uint16_t startTimeMS = startTimes[STEPINDEX(reflowStep())] * 1000;
         return (elapsedMS - startTimeMS) / 1000;
     }
 
