@@ -65,7 +65,8 @@ TFT_XY TFT_Display::getRightAlignedTextXY(char *text, uint16_t x, uint16_t y)
 {
     TFT_XY xy;
 
-    uint8_t textLength = strlen(text);
+    uint8_t textLength = strlen(text) * 6;
+    uint8_t textHeight = 4;
     int16_t x1, y1;
     uint16_t w, h;
     w = tft.width();
@@ -74,7 +75,7 @@ TFT_XY TFT_Display::getRightAlignedTextXY(char *text, uint16_t x, uint16_t y)
     tft.getTextBounds(text, 0, 0, &x1, &y1, &w, &h);
 
     xy.x = x - textLength - 1;
-    xy.y = y;
+    xy.y = y - textHeight;
 
     return xy;
 }
@@ -143,15 +144,40 @@ TFT_XY TFT_Display::getXYWithinGraphBounds(uint8_t temp, uint8_t time)
 void TFT_Display::drawGraph()
 {
 
-    tft.drawPixel(graphXY.x, graphXY.y, ST77XX_WHITE);
+    drawGraphAxis();
+    drawGraphAxisLabels();
+    drawGraphAxisTicks();
+}
+
+void TFT_Display::drawGraphAxis()
+{
 
     tft.drawFastHLine(graphXY.x, graphXY.y, graphWidth, ST77XX_WHITE);
 
     tft.drawFastVLine(graphXY.x, graphXY.y - graphHeight, graphHeight, ST77XX_WHITE);
+}
+
+void TFT_Display::drawGraphAxisLabels()
+{
 
     tft.setTextColor(ST77XX_WHITE);
     tft.setTextSize(1);
-    TFT_XY position = getLeftAlignedTopTextXY("20", graphXY.x, graphXY.y);
+
+    tft.setCursor(5, 10);
+    tft.println("Temp");
+
+    TFT_XY position = getCenteredTextXY("Time");
+    tft.setCursor(position.x, position.y +228);
+    tft.println("Time");
+
+
+}
+
+void TFT_Display::drawGraphAxisTicks()
+{
+    tft.setTextColor(ST77XX_WHITE);
+    tft.setTextSize(1);
+    TFT_XY position = getRightAlignedTextXY("20", graphXY.x, graphXY.y);
     tft.setCursor(position.x, position.y);
     tft.println("20");
 }
