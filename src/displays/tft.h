@@ -29,7 +29,7 @@ private:
     TFT_XY getLeftAlignedTopTextXY(char *text, uint16_t x, uint16_t y);
     void getMaxTempFromProfile(ReflowProfile *profile);
 
-    uint8_t graphHeight = 180;
+    uint16_t graphHeight = 180;
     uint16_t graphWidth = 256;
     TFT_XY graphXY = {32, 220};
     uint16_t maxTemp = 0;
@@ -39,6 +39,9 @@ private:
     TFT_XY getXYWithinGraphBounds(uint8_t temp, uint8_t time);
 
     void drawGraph();
+    void drawGraphAxis();
+    void drawGraphAxisLabels();
+    void drawGraphAxisTicks();
 };
 
 #endif // TFT_H
