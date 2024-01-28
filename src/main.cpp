@@ -27,10 +27,12 @@ LEDS leds = LEDS();
 // Declare the PID
 ArduPID PID;
 OledDisplay oled = OledDisplay();
-TFT_Display tftDisplay ;
+
+TemperatureController temperatureController ;
 
 
-TemperatureController temperatureController;
+
+
 
 void setup()
 {
@@ -49,7 +51,7 @@ void setup()
   oled.setup();
   eepromDataManager.setup();
 
-  reflowProcessState.set(USER_INPUT);
+  reflowProcessState.set(ReflowProcessState::USER_INPUT);
 
   temperatureController.checkPluggedInThermistors();
 
@@ -63,19 +65,21 @@ void loop()
   ReflowProcessState state = reflowProcessState.get();
   if (k != NULL)
   {
-    if (state == USER_INPUT)
+    if (state == ReflowProcessState::USER_INPUT)
     {
       leds.handleButtonStateChange(*k);
       oled.handleButtonStateChange(*k);
     }
-    else if (state >= PREHEAT && state <= COOL)
+    else if (state >= ReflowProcessState::PREHEAT && state <= ReflowProcessState::COOL)
     {
       if (k->first == ButtonKind::BACK && k->second.to == ButtonState::PRESSED)
       {
         // STOP REFLOW and restart
-        reflowProcessState.set(USER_INPUT);
+        reflowProcessState.set(ReflowProcessState::USER_INPUT);
         pidController.stop();
       }
+    } else if (state == ReflowProcessState::DONE) {
+      oled.handleButtonStateChange(*k);
     }
   }
   ReflowProcessState newState = reflowProcessState.get();
@@ -84,14 +88,7 @@ void loop()
   {
     Serial.println("State changed from " + String(STATE_STR(state)) + " to " + String(STATE_STR(newState)));
     // State changed from state to newState (user input or wifi input needs to be above here)
-    if (newState == PREHEAT)
-    {
-
-      // Initalize the TFT
-      tftDisplay.init(&chosenReflowProfile);
-      
-
-      //Start the reflow profile after tft to make sure the timer is accurate
+    if (newState == PREHEAT) {
       chosenReflowProfile.start();
       // Start the PID
       pidController.start();
@@ -102,10 +99,10 @@ void loop()
   leds.loop();
   oled.loop();
 
-  if (state >= PREHEAT && state <= COOL)
+  if (state >= ReflowProcessState::PREHEAT && state <= ReflowProcessState::COOL)
   {
     pidController.loop();
-    ReflowStep step = chosenReflowProfile.curReflowStep();
+    ReflowStep step = chosenReflowProfile.reflowStep();
 
     if (step.state != newState)
     {
@@ -119,6 +116,7 @@ void loop()
     pidController.stop();
     reflowProcessState.set(USER_INPUT);
   }
+  
 
   // if (step.state == ReflowProcessState::DONE) {
   //   profile.start();

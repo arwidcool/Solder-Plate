@@ -51,7 +51,7 @@ Thermistor thermistors[6] = {thermistor1, thermistor2, thermistor3, thermistor4,
 
 // These are the reflow profiles that you can choose from, you can add more if you want (up to 5) but you will have to change the nReflowProfiles variable to the number of profiles you have
 
-int nReflowProfiles = 2;
+int nReflowProfiles = 3;
 
 ReflowProfile reflowProfiles[] = {
     // 138c profile Sn42Bi58
@@ -70,6 +70,13 @@ ReflowProfile reflowProfiles[] = {
                      ReflowStep(ReflowProcessState::COOL, 30, 183),
                      ReflowStep(ReflowProcessState::DONE, 0, 0)}, 
                     "183C Sn63 Pb37 \0"),
+      ReflowProfile(new ReflowStep[5]{
+                     ReflowStep(ReflowProcessState::PREHEAT, 5, 150),
+                     ReflowStep(ReflowProcessState::SOAK, 5, 180),
+                     ReflowStep(ReflowProcessState::REFLOW, 5, 220, EASE_IN_OUT),
+                     ReflowStep(ReflowProcessState::COOL, 5, 183),
+                     ReflowStep(ReflowProcessState::DONE, 0, 0)}, 
+                    "debug profi \0"),
 
  
 };

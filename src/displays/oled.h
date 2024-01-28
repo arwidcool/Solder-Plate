@@ -23,9 +23,9 @@ class OledDisplay {
         void handleUserInputState();
         void handleReflowState();
         void centerText(const char * text) {
-            centerText(text, DisplayTextAlignment::CENTER, DisplayTextAlignment::CENTER);
+            drawPositionedText(text, DisplayTextAlignment::CENTER, DisplayTextAlignment::CENTER);
         }
-        void centerText(const char * text, DisplayTextAlignment horizontal, DisplayTextAlignment vertical);
+        void drawPositionedText(const char * text, DisplayTextAlignment horizontal, DisplayTextAlignment vertical);
         void displayIndicators();
         void handleDrawThermistorMenu(OledMenuItem item);
 };

@@ -67,6 +67,11 @@ void OledDisplay::handleButtonStateChange(Pair<ButtonKind, StateChangeEvent<Butt
                 curMenu->goNextItem();
             }
         }
+    } else if (state == DONE) {
+        // GO back to iniital state
+        if (change.second.to == ButtonState::PRESSED) {
+            reflowProcessState.set(USER_INPUT);
+        }
     }
 }
 
@@ -174,13 +179,30 @@ void OledDisplay::loop()
 {
 
     ReflowProcessState state = reflowProcessState.get();
-    if (state == USER_INPUT)
+    if (state == ReflowProcessState::USER_INPUT)
     {
         handleUserInputState();
     }
-    else if (state >= PREHEAT && state <= DONE)
+    else if (state >= ReflowProcessState::PREHEAT && state < ReflowProcessState::DONE)
     {
         handleReflowState();
+    } else if (state == ReflowProcessState::DONE) {
+        // Traverse back to root menu
+        while (curMenu->parent != NULL) {
+            curMenu = curMenu->parent;
+        }
+        display.clearDisplay();
+        display.setRotation(0);
+        display.setTextSize(2);
+        drawPositionedText("DONE :)", DisplayTextAlignment::CENTER, DisplayTextAlignment::START);
+        uint8_t curTemp = thermistor1.getTemperature();
+        display.setTextSize(1,2);
+        drawPositionedText("Temperature", DisplayTextAlignment::START, DisplayTextAlignment::CENTER);
+        drawPositionedText((String(curTemp)+" C").c_str(), DisplayTextAlignment::END, DisplayTextAlignment::CENTER);
+
+        display.display();
+
+        // This is not super efficient but it's fine for now
     }
     // Loop implementation
 }
@@ -215,7 +237,7 @@ void OledDisplay::displayIndicators()
     display.setCursor(SCREEN_HEIGHT - 14, SCREEN_WIDTH / 2 - 5);
     display.print(">");
 }
-void OledDisplay::centerText(const char *txt, DisplayTextAlignment horizontal, DisplayTextAlignment vertical)
+void OledDisplay::drawPositionedText(const char *txt, DisplayTextAlignment horizontal, DisplayTextAlignment vertical)
 {
     int16_t x1, y1;
     uint16_t w, h;
@@ -273,23 +295,29 @@ void OledDisplay::handleReflowState()
     display.setCursor(0, 0);
     display.setTextSize(2);
     ReflowProcessState state = reflowProcessState.get();
-    centerText(STATE_STR(state), DisplayTextAlignment::CENTER, DisplayTextAlignment::START);
-    
+    // Title topleft
+    drawPositionedText(STATE_STR(state), DisplayTextAlignment::CENTER, DisplayTextAlignment::START);
     
     display.setTextSize(1, 2);
+    // SysV topright
+    #ifdef DEBUG
+        drawPositionedText((String(analogRef.calculateInputVoltage())+"V").c_str(), DisplayTextAlignment::END, DisplayTextAlignment::START);
+    #endif
+    
+    
+    // Remaining time center left + bottom left
     uint32_t elapsedStep = chosenReflowProfile.getCurrentStepRelativeTime();
-    centerText("Remaining", DisplayTextAlignment::START, DisplayTextAlignment::CENTER);
-    centerText((String(chosenReflowProfile.curReflowStep().duration - elapsedStep) + "s").c_str(), DisplayTextAlignment::START, DisplayTextAlignment::END);
+    drawPositionedText("Remaining", DisplayTextAlignment::START, DisplayTextAlignment::CENTER);
+    drawPositionedText((String(chosenReflowProfile.reflowStep().duration - elapsedStep) + "s").c_str(), DisplayTextAlignment::START, DisplayTextAlignment::END);
 
+    // Current temp center right + bottom right
     uint8_t curTemp = thermistor1.getTemperature();
     uint8_t targetTemp = pidControllerData.targetTemp;
-    centerText(("Curr.: " + String(curTemp)).c_str(), DisplayTextAlignment::END, DisplayTextAlignment::CENTER);
-    centerText(("Target: " + String(targetTemp)).c_str(), DisplayTextAlignment::END, DisplayTextAlignment::END);
+    drawPositionedText(("Curr.: " + String(curTemp)).c_str(), DisplayTextAlignment::END, DisplayTextAlignment::CENTER);
+    drawPositionedText(("Target: " + String(targetTemp)).c_str(), DisplayTextAlignment::END, DisplayTextAlignment::END);
 
-    display.setTextSize(1, 1);
-    display.setCursor(15, 16);
-    float systemVoltage = analogRef.calculateInputVoltage();
-    display.println("In Voltage:"+String(systemVoltage));
+    
+    // display.println("In Voltage:"+String(systemVoltage));
 
     display.display();
 }
