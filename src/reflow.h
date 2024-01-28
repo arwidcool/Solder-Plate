@@ -39,33 +39,32 @@ class ReflowStep
 {
 public:
     ReflowStep() {}
-    ReflowStep(ReflowProcessState state, uint8_t time, uint8_t targetTempAtEnd) : state(state), duration(time), targetTempAtEnd(targetTempAtEnd), easeFunction(LINEAR) {}
-    ReflowStep(ReflowProcessState state, uint8_t time, uint8_t targetTempAtEnd, ReflowStepEaseFunction fn) : state(state),
-                                                                                                             duration(time),
-                                                                                                             targetTempAtEnd(targetTempAtEnd),
-                                                                                                             easeFunction(fn)
+    ReflowStep(ReflowProcessState state, uint8_t time, uint8_t targetTemp) : state(state), duration(time), targetTemp(targetTemp), easeFunction(LINEAR) {}
+    ReflowStep(ReflowProcessState state, uint8_t time, uint8_t targetTemp, ReflowStepEaseFunction fn) : state(state),
+                                                                                                        duration(time),
+                                                                                                        targetTemp(targetTemp),
+                                                                                                        easeFunction(fn)
     {
     }
     uint8_t duration;
-    uint8_t targetTempAtEnd;
+    uint8_t targetTemp;
     ReflowProcessState state;
     ReflowStepEaseFunction easeFunction;
-    bool flagged = false;
 
     float calcTempAtPercentage(uint8_t startTemp, float percentage)
     {
         switch (this->easeFunction)
         {
         case LINEAR:
-            return startTemp + (this->targetTempAtEnd - startTemp) * percentage;
+            return startTemp + (this->targetTemp - startTemp) * percentage;
         case EASE_IN_OUT:
-            return startTemp + (this->targetTempAtEnd - startTemp) * -(cos(percentage * PI) - 1) / (double)2;
+            return startTemp + (this->targetTemp - startTemp) * -(cos(percentage * PI) - 1) / (double)2;
         case EASE_IN:
-            return startTemp + (this->targetTempAtEnd - startTemp) * (1 - cos(percentage * PI / (double)2));
+            return startTemp + (this->targetTemp - startTemp) * (1 - cos(percentage * PI / (double)2));
         case EASE_OUT:
-            return startTemp + (this->targetTempAtEnd - startTemp) * (sin(percentage * PI / (double)2));
+            return startTemp + (this->targetTemp - startTemp) * (sin(percentage * PI / (double)2));
         case HALF_SINE:
-            return startTemp + (this->targetTempAtEnd - startTemp) * (sin(percentage * PI));
+            return startTemp + (this->targetTemp - startTemp) * (sin(percentage * PI));
         }
     }
 };
@@ -80,51 +79,31 @@ public:
     ReflowProfile(ReflowStep steps[5], char name[20])
     {
 
-        bool flag = false;
-        uint8_t flagPosistion = 0;
-
         for (int i = 0; i < 5; i++)
         {
-            // TODO: Important we need to flag the step after half sine because its starting temp is the PEAK of the sine wave and the sine wave ends at the start of the sine wave
-            // this creates a problem because the next step will start at the peak of the sine wave and not the end of the sine wave
-            // We can fix this by flagging the effect step and then when we are calculating the target temp we can check if the step is flagged and if it is we can use the target temp of the step prevous to the sine wave
-            if (steps[i].easeFunction == HALF_SINE && i != 3 && i != 0)
-            {
-
-                this->steps[i] = steps[i];
-                flag = true;
-                flagPosistion = i + 1;
-            }
-            else
-            {
-                this->steps[i] = steps[i];
-            }
-        }
-
-        if (flag)
-        {
-            this->steps[flagPosistion].flagged = true;
+            this->steps[i] = steps[i];
         }
 
         for (int i = 0; i < 20; i++)
         {
             this->name[i] = name[i];
         }
+        calculateValues();
     }
     ReflowStep steps[5];
     char name[20];
     float endTimes[5] = {0};
     float startTimes[5] = {0};
+    float endTemps[5] = {0};
     StopWatch timer;
 
     void start()
     {
         timer.setResolution(StopWatch::MILLIS);
         timer.start();
-        calculateTimes();
     }
 
-    void calculateTimes()
+    void calculateValues()
     {
         endTimes[0] = steps[0].duration;
         endTimes[1] = endTimes[0] + steps[1].duration;
@@ -137,6 +116,12 @@ public:
         startTimes[2] = endTimes[1];
         startTimes[3] = endTimes[2];
         startTimes[4] = endTimes[3];
+
+        endTemps[0] = steps[0].calcTempAtPercentage(20, 1);
+        endTemps[1] = steps[1].calcTempAtPercentage(endTemps[0], 1);
+        endTemps[2] = steps[2].calcTempAtPercentage(endTemps[1], 1);
+        endTemps[3] = steps[3].calcTempAtPercentage(endTemps[2], 1);
+        endTemps[4] = steps[4].calcTempAtPercentage(endTemps[3], 1);
     }
 
     ReflowStep reflowStep()
@@ -174,8 +159,6 @@ public:
 
         float timerElapsed = timer.elapsed();
 
-        float endTimesFloat[4];
-
         return timerElapsed / (float)(endTimes[4] * 1000);
     }
 
@@ -194,10 +177,10 @@ public:
         ReflowStep curStep = reflowStep(elapsedMS);
         if (curStep.state > PREHEAT)
         {
-            startTemp = steps[STEPINDEX(curStep) - 1].targetTempAtEnd;
+            startTemp = endTemps[STEPINDEX(curStep) - 1];
         }
 
-        // startTemp => 20 or the targetTempAtEnd of the previous step
+        // startTemp => 20 or the temp at 100% of the previous step
 
         uint32_t startTimeMS = startTimes[STEPINDEX(curStep)];
 
@@ -212,16 +195,7 @@ public:
 
         float percentage = relativeElapsedTime / duration;
         // Serial.println(String(percentage)+ "%" + String(STATE_STR(curStep.state)) + " Elapsed: " + String(elapsedMS) + " ___ " + String(curStep.duration  * 1000));
-
-        if (curStep.flagged)
-        {
-            startTemp = steps[STEPINDEX(curStep) - 2].targetTempAtEnd;
-            return curStep.calcTempAtPercentage(startTemp, percentage);
-        }
-        else
-        {
-            return curStep.calcTempAtPercentage(startTemp, percentage);
-        }
+        return curStep.calcTempAtPercentage(startTemp, percentage);
     }
 
     /**
@@ -231,9 +205,7 @@ public:
      */
     float getTargetTempFromPercentage(double processPercentage)
     {
-        uint16_t duration = endTimes[4];
-        uint8_t startTemp = 20; // always assume 20 degrees at the start
-        return getTargetTemp(duration * 1000 * processPercentage);
+        return getTargetTemp(endTimes[4] * (1000 * processPercentage));
     }
 
     uint8_t getCurrentStepRelativeTime()
@@ -255,7 +227,7 @@ public:
         for (int i = 0; i < 5; i++)
         {
             b[PROFILE_SERIALIZED_NAME_SIZE + i * 3] = steps[i].duration;
-            b[PROFILE_SERIALIZED_NAME_SIZE + 1 + i * 3] = steps[i].targetTempAtEnd;
+            b[PROFILE_SERIALIZED_NAME_SIZE + 1 + i * 3] = steps[i].targetTemp;
             b[PROFILE_SERIALIZED_NAME_SIZE + 2 + i * 3] = steps[i].easeFunction;
         }
     }

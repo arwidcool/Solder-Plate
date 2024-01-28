@@ -40,16 +40,12 @@ private:
     TFT_XY getLeftAlignedTopTextXY(char *text, uint16_t x, uint16_t y);
     TFT_XY getCenterAlignedBottomTextXY(char *text, uint16_t x, uint16_t y);
     void getMaxTempFromProfile(ReflowProfile *profile);
-    void getTotalTimeFromProfile(ReflowProfile *profile);
 
     uint16_t graphHeight = 180;
     uint16_t graphWidth = 255;
     TFT_XY graphXY = {32, 220};
     uint16_t maxTemp = 0;
-    uint16_t totalTIme =0;
     uint8_t minTemp = 20;
-
-    TFT_XY getXYWithinGraphBounds(uint8_t temp, uint8_t time);
 
     void drawGraph();
     void drawGraphAxis();
@@ -61,7 +57,7 @@ private:
 
     uint16_t tempYonGraph(float temp);
     uint16_t tempYonGraph(float *temp);
-    uint16_t timeXonGraph(float time);
+    uint16_t percentageToX(float time);
 
     template <typename T>
     char *numberToCharPtr(T number);
