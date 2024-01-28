@@ -1,6 +1,5 @@
 #include <Arduino.h>
 #include "ArduPID.h"
-#include <Adafruit_ST7789.h> // Include the ST7789 library
 #include <Adafruit_GFX.h>
 #include <voltageReference/AnalogRef.h>
 #include <Wire.h>
@@ -9,21 +8,11 @@
 #include "leds/leds.h"
 #include "reflow.h"
 #include "displays/oled.h"
+#include "displays/tft.h"
 #include "PID/PidController.h"
 #include "globals.h"
 #include "EEPROMDataManager.h"
 #include "thermistors/TemperatureController.h"
-
-
-
-// LCD display pins
-#define TFT_CS 7
-#define TFT_RST 12
-#define TFT_DC 14
-#define MOSI 4 // MOSI
-#define SCK 6  // SCK
-// Create an instance of the Adafruit ST7789 class using the custom SPI pins
-Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, MOSI, SCK, TFT_RST);
 
 
 
@@ -39,7 +28,10 @@ LEDS leds = LEDS();
 ArduPID PID;
 OledDisplay oled = OledDisplay();
 
-TemperatureController temperatureController ;
+TFT_Display tftDisplay ;
+
+
+TemperatureController temperatureController;
 
 void setup()
 {
@@ -61,6 +53,8 @@ void setup()
   reflowProcessState.set(ReflowProcessState::USER_INPUT);
 
   temperatureController.checkPluggedInThermistors();
+
+  tftDisplay.start();
 }
 void loop()
 {
@@ -89,16 +83,25 @@ void loop()
   }
   ReflowProcessState newState = reflowProcessState.get();
 
-  if (newState != state) {
+  if (newState != state)
+  {
     Serial.println("State changed from " + String(STATE_STR(state)) + " to " + String(STATE_STR(newState)));
     // State changed from state to newState (user input or wifi input needs to be above here)
     if (newState == ReflowProcessState::PREHEAT) {
+
+
+      // Initalize the TFT
+      tftDisplay.init(&chosenReflowProfile);
+      
+
+      //Start the reflow profile after tft to make sure the timer is accurate
       chosenReflowProfile.start();
+      // Start the PID
       pidController.start();
     }
   }
   state = newState;
-  
+
   leds.loop();
   oled.loop();
 
@@ -117,5 +120,12 @@ void loop()
     }
   }
 
+
+  if (state == DONE)
+  {
+    // TODO: BUZZER
+    pidController.stop();
+    reflowProcessState.set(USER_INPUT);
+  }
 
 }
