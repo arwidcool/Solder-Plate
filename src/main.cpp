@@ -16,6 +16,7 @@
 
 
 
+
 #define MOSTFET_PIN 17
 
 double currentTemp = 0;
@@ -29,6 +30,8 @@ ArduPID PID;
 OledDisplay oled = OledDisplay();
 
 TemperatureController temperatureController ;
+
+TFT_Display tftDisplay ;
 
 
 
@@ -89,6 +92,8 @@ void loop()
     Serial.println("State changed from " + String(STATE_STR(state)) + " to " + String(STATE_STR(newState)));
     // State changed from state to newState (user input or wifi input needs to be above here)
     if (newState == PREHEAT) {
+
+      tftDisplay.init(&chosenReflowProfile);
       chosenReflowProfile.start();
       // Start the PID
       pidController.start();
