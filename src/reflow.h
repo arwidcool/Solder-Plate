@@ -89,8 +89,8 @@ public:
     }
     ReflowStep steps[5];
     char name[20];
-    uint16_t endTimes[5] = {0};
-    uint16_t startTimes[5] = {0};
+    uint32_t endTimes[5] = {0};
+    uint32_t startTimes[5] = {0};
     StopWatch timer;
 
     void start()
@@ -130,9 +130,11 @@ public:
         {
             if (elapsedMS >= startTimes[i] * 1000 && elapsedMS < endTimes[i] * 1000)
             {
+                // Serial.println(String(elapsedMS) + " " + String(startTimes[i] * 1000) + " " + String(endTimes[i] * 1000) + " " + String(i) + " " + String(steps[i].state));
                 return steps[i];
             }
         }
+        // Serial.println("AAA");
         return steps[4]; // DONE by default
     }
 
@@ -163,8 +165,8 @@ public:
 
         uint32_t relativeElapsedTime = elapsedMS - startTimeMS;
 
-        float percentage = (float)relativeElapsedTime / (float)(curStep.duration * 1000);
-
+        float percentage = (float)relativeElapsedTime / ((float)(curStep.duration) * 1000);
+        // Serial.println(String(percentage)+ "%" + String(STATE_STR(curStep.state)) + " Elapsed: " + String(elapsedMS) + " ___ " + String(curStep.duration  * 1000));
         return curStep.calcTempAtPercentage(startTemp, percentage);
     }
 
