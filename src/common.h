@@ -55,4 +55,18 @@ public:
     First first;
     Second second;
 };
+enum ThermistorZ_Placement
+{
+    TOP,
+    BOTTOM
+};
+
+enum ThermistorXY_Placement
+{
+    MIDDLE,
+    SIDE
+};
+
+
+
 #endif

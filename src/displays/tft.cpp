@@ -62,10 +62,10 @@ void TFT_Display::drawRealTemp(double *temp, float percentage)
 
         float temperature = static_cast<float>(*temp);
 
-        Serial.print("Time:");
-        Serial.print(percentage);
-        Serial.print(" Temp:");
-        Serial.println(temperature);
+        // Serial.print("Time:");
+        // Serial.print(percentage);
+        // Serial.print(" Temp:");
+        // Serial.println(temperature);
 
         uint16_t eplased = drawTimer.elapsed();
 

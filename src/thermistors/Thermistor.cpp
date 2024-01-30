@@ -1,4 +1,5 @@
 #include "Thermistor.h"
+#include "../globals.h"
 
 /**
  * @brief Calculates and returns the temperature based on the resistance of the thermistor.
@@ -9,9 +10,29 @@
  *
  * @return The temperature in degrees Celsius.
  */
-float Thermistor::getTemperature()
+Thermistor::Thermistor()
+{
+}
+Thermistor::Thermistor(uint8_t pin, uint16_t resistance, TempCalibration calibration, ThermistorZ_Placement zPlacement1, ThermistorXY_Placement xyPlacment1) : thermistorPin(pin), setRes(resistance), calibration(calibration)
+{
+    calculateCoefficents(calibration);
+
+    zPlacement = zPlacement1;
+
+    xyPlacment = xyPlacment1;
+}
+Thermistor::Thermistor(uint8_t pin, uint16_t resistance, ThermistorZ_Placement zPlacement1, ThermistorXY_Placement xyPlacment1) : thermistorPin(pin), setRes(resistance), calibration(calibration_100K_3950)
 {
 
+    calculateCoefficents(calibration);
+
+    zPlacement = zPlacement1;
+
+    xyPlacment = xyPlacment1;
+}
+float Thermistor::getTemperature()
+{
+    scalingFactor = 1;
     // Get an average of 5 readings
     float temp = 0;
 
@@ -25,14 +46,8 @@ float Thermistor::getTemperature()
 
     temp = temp / samples;
 
-    // The scaling factor should only be applied when the plate is being heated up -> 60C seems like a good threshold unless you live in the sahara desert with no AC
-    // Its non-linear so it will be more accurate so we will probably need to impliment a refrence table for the scaling factor this is just a rough estimate it will be based on a sensor calibrated on the top middle of the plate
-    
-    //TODO: Impliment a method to calculate the scaling factor based on the placement of the thermistor by measurnment sof refrence center thermistor to other positions
-    if (temp > 60)
-    {
-        temp = temp * scalingFactor;
-    }
+    scalingFactor = thermistorLookup.getFactor(zPlacement, xyPlacment, temp);
+    temp = temp * scalingFactor;
 
     return temp;
 }
@@ -84,42 +99,6 @@ bool Thermistor::isPluggedIn()
  * Calculates the scaling factor for the thermistor based on its placement in the 3D space.
  * The scaling factor is used to adjust the temperature readings of the thermistor.
  */
-void Thermistor::calculateScalingFactor()
-{
-
-    switch (zPlacement)
-    {
-    case TOP:
-        switch (xyPlacment)
-        {
-        case MIDDLE:
-            scalingFactor = 1;
-            break;
-        case LEFT:
-            scalingFactor = 1.1;
-            break;
-        case RIGHT:
-            scalingFactor = 1.1;
-            break;
-        }
-        break;
-
-    case BOTTOM:
-        switch (xyPlacment)
-        {
-        case MIDDLE:
-            scalingFactor = 1.1;
-            break;
-        case LEFT:
-            scalingFactor = 1.2;
-            break;
-        case RIGHT:
-            scalingFactor = 1.2;
-            break;
-        }
-        break;
-    }
-}
 
 float Thermistor::getTemperatureFast()
 {
@@ -133,11 +112,7 @@ float Thermistor::getTemperatureFast()
 
     // Its non-linear so it will be more accurate so we will probably need to impliment a refrence table for the scaling factor this is just a rough estimate it will be based on a sensor calibrated on the top middle of the plate
 
-    if (temp > 60)
-    {
-        temp = temp * scalingFactor;
-    }
-
+    // float scalingFactor = ThermistorLookup::getFactor(thermistorPin, temp);
     return temp;
 }
 

@@ -5,6 +5,7 @@
 #include "./reflow.h"
 #include "./EEPROMDataManager.h"
 #include "./PID/PidController.h"
+#include "./thermistors/ThermistorLookup.h"
 
 
 //Comment out to enable debug messages
@@ -18,6 +19,8 @@
 #define debugLine(x)
 #define debugC(x)
 #endif
+
+
 
 
 extern WrappedState<ReflowProcessState> reflowProcessState;
@@ -42,5 +45,11 @@ extern uint16_t reflow_COLOR;
 extern uint16_t preheat_COLOR;
 extern uint16_t soak_COLOR;
 extern uint16_t cool_COLOR;
+extern ThermistorLookup thermistorLookup;
+
+
+
+
+
 
 #endif

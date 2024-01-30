@@ -14,6 +14,8 @@
 #include "EEPROMDataManager.h"
 #include "thermistors/TemperatureController.h"
 #include "tools/ExecutionTimer.h"
+#include "StopWatch.h"
+#include "thermistors/Thermistor.h"
 
 #define MOSTFET_PIN 17
 
@@ -32,11 +34,14 @@ OledDisplay oled = OledDisplay();
 TFT_Display tftDisplay;
 TemperatureController temperatureController;
 
+StopWatch thermTimer = StopWatch();
+StopWatch thermMilisTimer = StopWatch();
+
 void setup()
 {
 
   pinMode(MOSTFET_PIN, OUTPUT);
-  analogWrite(MOSTFET_PIN, 255); // VERY IMPORTANT, DONT CHANGE!
+  analogWrite(MOSTFET_PIN, 255); // VERY IMPORTANT, DONT CHANGE! 255=off, 0=full power
 
   Serial.begin(38400);
 
@@ -54,11 +59,15 @@ void setup()
   temperatureController.checkPluggedInThermistors();
 
   tftDisplay.start();
+
+  thermTimer.setResolution(StopWatch::Resolution::MILLIS);
+  thermTimer.start();
+  thermMilisTimer.setResolution(StopWatch::Resolution::MILLIS);
 }
 void loop()
 {
 
-//  executionTimer.start();
+  //  executionTimer.start();
 
   // Return the button that changed state
   Pair<ButtonKind, StateChangeEvent<ButtonState>> *k = buttons.handleButtons();
@@ -99,6 +108,8 @@ void loop()
       chosenReflowProfile.start();
       // Start the PID
       pidController.start();
+      thermMilisTimer.start();
+      Serial.println("Time,Therm1,Therm2,Therm3,Therm4");
     }
   }
   state = newState;
@@ -110,12 +121,35 @@ void loop()
   {
 
     pidController.loop();
-   // #ifdef DEBUG
-      pidController.debug();
- //   #endif
+    // #ifdef DEBUG
+    // pidController.debug();
+    //   #endif
     tftDisplay.drawRealTemp(pidController.getInput(), chosenReflowProfile.getPercentage());
     ReflowStep step = chosenReflowProfile.reflowStep();
     // Here we draw the actual temp vs time to the display
+
+    if (thermTimer.elapsed() > 500)
+    {
+
+      Serial.print(thermTimer.elapsed());
+      Serial.print(",");
+      Serial.print(thermistor1.getTemperature());
+      Serial.print(",");
+      Serial.print(thermistor2.getTemperature());
+      Serial.print(",");
+      Serial.print(thermistor3.getTemperature());
+      Serial.print(",");
+      Serial.print(thermistor4.getTemperature());
+      Serial.print(",");
+      Serial.print(thermistor1.scalingFactor);
+      Serial.print(",");
+      Serial.print(thermistor2.scalingFactor);
+      Serial.print(",");
+      Serial.print(thermistor3.scalingFactor);
+      Serial.print(",");
+      Serial.print(thermistor4.scalingFactor);
+      Serial.println();
+    }
 
     if (step.state != newState)
     {
@@ -127,5 +161,5 @@ void loop()
     }
   }
 
-//  executionTimer.stop();
+  //  executionTimer.stop();
 }

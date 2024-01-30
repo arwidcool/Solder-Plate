@@ -3,8 +3,13 @@
 #include "Adafruit_ST7789.h"
 
 
+
 WrappedState<ReflowProcessState> reflowProcessState = WrappedState<ReflowProcessState>(INITIALIZING);
+
 AnalogRef analogRef(5.0);
+
+ThermistorLookup thermistorLookup = ThermistorLookup();
+
 
 // Calibration data for 100K thermistors ->https://datasheet.lcsc.com/lcsc/1810161311_Nanjing-Shiheng-Elec-MF58-104F3950_C123399.pdf ->Glass thermistor NTC 3950 100K
 TempCalibration calibration_100K_3950 = {25, 100000, 107, 4957, 167, 1000};
@@ -23,11 +28,11 @@ TempCalibration calibration_100K_3950 = {25, 100000, 107, 4957, 167, 1000};
 // To measure the resistence turn off the controller completley and measure between GND and the left pin of the connector with the thermistor unplugged
 
 // 2.5k reference = Best accuracy around 138C
-Thermistor thermistor1(THERMISTOR1_PIN, 2500, ThermistorZ_Placement::TOP, ThermistorXY_Placement::MIDDLE);
-Thermistor thermistor2(THERMISTOR2_PIN, 2500, ThermistorZ_Placement::TOP, ThermistorXY_Placement::MIDDLE);
-Thermistor thermistor3(THERMISTOR3_PIN, 2500, ThermistorZ_Placement::TOP, ThermistorXY_Placement::MIDDLE);
+Thermistor thermistor1(THERMISTOR1_PIN, 2570, ThermistorZ_Placement::TOP, ThermistorXY_Placement::MIDDLE);
+Thermistor thermistor2(THERMISTOR2_PIN, 2520, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE);
+Thermistor thermistor3(THERMISTOR3_PIN, 2542, ThermistorZ_Placement::TOP, ThermistorXY_Placement::MIDDLE);
 // 1k reference = Best accuracy around 173c
-Thermistor thermistor4(THERMISTOR4_PIN, 1000, ThermistorZ_Placement::TOP, ThermistorXY_Placement::MIDDLE);
+Thermistor thermistor4(THERMISTOR4_PIN, 2545, ThermistorZ_Placement::TOP, ThermistorXY_Placement::MIDDLE);
 // 515R reference = Best accuracy around 210C
 Thermistor thermistor5(THERMISTOR5_PIN, 515, ThermistorZ_Placement::TOP, ThermistorXY_Placement::MIDDLE);
 // 9k reference = Best accuracy around 90C -> This thermistor is used for the preheat phase if attached
@@ -48,8 +53,6 @@ uint16_t preheat_COLOR = 0x6800;
 uint16_t soak_COLOR = 0x6b60;
 uint16_t reflow_COLOR = 0x0201;
 uint16_t cool_COLOR = 0x00a8;
-
-
 
 
 

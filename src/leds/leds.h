@@ -9,8 +9,8 @@
 
 // DO NOT TOUCH
 #define LEFT_LED_PIN 20 //Should be RED
-#define MID_LED_PIN 19 //Should be YELLOW
-#define RIGHT_LED_PIN 18 //Should be GREEN
+#define MID_LED_PIN 18 //Should be YELLOW
+#define RIGHT_LED_PIN 19 //Should be GREEN
 
 
 
