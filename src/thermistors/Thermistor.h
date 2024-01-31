@@ -5,8 +5,6 @@
 #include <voltageReference/AnalogRef.h>
 #include <common.h>
 
-
-
 struct Coefficents
 {
     float a;
@@ -33,6 +31,9 @@ extern TempCalibration calibration_100K_3950;
 #define THERMISTOR5_PIN 33
 #define THERMISTOR6_PIN 32
 
+
+
+
 extern AnalogRef analogRef;
 
 class Thermistor
@@ -43,8 +44,8 @@ public:
 
     Thermistor(uint8_t pin, uint16_t resistance, TempCalibration calibration, ThermistorZ_Placement zPlacement1, ThermistorXY_Placement xyPlacment1);
 
-    Thermistor(uint8_t pin, uint16_t resistance, ThermistorZ_Placement zPlacement1, ThermistorXY_Placement xyPlacment1) ;
- 
+    Thermistor(uint8_t pin, uint16_t resistance, ThermistorZ_Placement zPlacement1, ThermistorXY_Placement xyPlacment1);
+
     // Public Methods
     float getTemperature();
     float getResistance();
@@ -55,9 +56,11 @@ public:
 
     bool isPluggedIn();
     float getTemperatureFast();
+    float getWeightingFactor();
     ThermistorXY_Placement xyPlacment;
     ThermistorZ_Placement zPlacement;
-    float scalingFactor ;
+    float scalingFactor;
+    float currenTemperature;
 
 private:
     const double K = 273.15;
@@ -67,7 +70,7 @@ private:
     Coefficents coefficents;
     float referenceResistance;
     TempCalibration calibration;
-
+    float weightFactor;
 };
 
 #endif // THERMISTOR_H

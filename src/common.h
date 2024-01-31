@@ -33,7 +33,7 @@ public:
         return this->state;
     }
 
-    StateChangeEvent<State>* getSince(unsigned long time) const
+    StateChangeEvent<State> *getSince(unsigned long time) const
     {
         if (this->lastStateChangeTime < time)
         {
@@ -64,9 +64,10 @@ enum ThermistorZ_Placement
 enum ThermistorXY_Placement
 {
     MIDDLE,
-    SIDE
+    SIDE,
+    MIDDLE_LOW_TEMP,
+    MIDDLE_HIGH_TEMP
+
 };
-
-
 
 #endif

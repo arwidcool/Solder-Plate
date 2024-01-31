@@ -28,15 +28,15 @@ TempCalibration calibration_100K_3950 = {25, 100000, 107, 4957, 167, 1000};
 // To measure the resistence turn off the controller completley and measure between GND and the left pin of the connector with the thermistor unplugged
 
 // 2.5k reference = Best accuracy around 138C
-Thermistor thermistor1(THERMISTOR1_PIN, 2570, ThermistorZ_Placement::TOP, ThermistorXY_Placement::MIDDLE);
+Thermistor thermistor1(THERMISTOR1_PIN, 2465 , ThermistorZ_Placement::TOP, ThermistorXY_Placement::MIDDLE);
 Thermistor thermistor2(THERMISTOR2_PIN, 2520, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE);
-Thermistor thermistor3(THERMISTOR3_PIN, 2542, ThermistorZ_Placement::TOP, ThermistorXY_Placement::MIDDLE);
+Thermistor thermistor3(THERMISTOR3_PIN, 9040, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE_LOW_TEMP);
 // 1k reference = Best accuracy around 173c
-Thermistor thermistor4(THERMISTOR4_PIN, 2545, ThermistorZ_Placement::TOP, ThermistorXY_Placement::MIDDLE);
+Thermistor thermistor4(THERMISTOR4_PIN, 573, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE_HIGH_TEMP);
 // 515R reference = Best accuracy around 210C
-Thermistor thermistor5(THERMISTOR5_PIN, 515, ThermistorZ_Placement::TOP, ThermistorXY_Placement::MIDDLE);
+Thermistor thermistor5(THERMISTOR5_PIN, 8111, ThermistorZ_Placement::TOP, ThermistorXY_Placement::MIDDLE_LOW_TEMP);
 // 9k reference = Best accuracy around 90C -> This thermistor is used for the preheat phase if attached
-Thermistor thermistor6(THERMISTOR6_PIN, 9000, ThermistorZ_Placement::TOP, ThermistorXY_Placement::MIDDLE);
+Thermistor thermistor6(THERMISTOR6_PIN, 526, ThermistorZ_Placement::TOP, ThermistorXY_Placement::MIDDLE_HIGH_TEMP);
 
 //---------------------------------------------------------------------------------------------------------------------------------------
 

@@ -1,6 +1,5 @@
 #include "TemperatureController.h"
 
-
 TemperatureController::TemperatureController()
 {
 }
@@ -42,11 +41,29 @@ void TemperatureController::checkPluggedInThermistors()
 
 float TemperatureController::getThermistorTempFast(uint8_t thermistorIndex)
 {
-    
+
     return thermistors[thermistorIndex].getTemperatureFast();
 }
 
+float TemperatureController::getWeightedAverage(float *values, float *weights, uint8_t length)
+{
+    float sum = 0.0;
+    float weightSum = 0.0;
 
+    for (int i = 0; i < length; i++)
+    {
+        sum += values[i] * weights[i];
+        weightSum += weights[i];
+    }
+
+    // Avoid division by zero
+    if (weightSum == 0)
+    {
+        return 0;
+    }
+
+    return sum / weightSum;
+}
 
 /**
  * Calculates and returns the average temperature of the solder plate based on the active thermistors.

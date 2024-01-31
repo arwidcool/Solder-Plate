@@ -39,26 +39,10 @@ void PidController::debug()
 void PidController::loop()
 {
     data->targetTemp = chosenReflowProfile.getTargetTemp();
+    
     data->currentTemp = thermistor1.getTemperature();
-    // debug();
 
     float sysVoltage = analogRef.calculateSystemVoltage();
-
-    // // Serial.print("Sys Voltage: ");
-    // // Serial.println(sysVoltage);
-
-
-    // if (sysVoltage < 10.5)
-    // {
-
-    //     controller.setWindUpLimits(-20, 50);
- 
-
-    // }else{
-    // controller.setWindUpLimits(-100, 185);
-        
-    // }
-
     compute();
     analogWrite(MOSTFET_PIN, data->setPoint);
 }

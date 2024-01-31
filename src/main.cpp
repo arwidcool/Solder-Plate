@@ -61,7 +61,7 @@ void setup()
   tftDisplay.start();
 
   thermTimer.setResolution(StopWatch::Resolution::MILLIS);
-  thermTimer.start();
+
   thermMilisTimer.setResolution(StopWatch::Resolution::MILLIS);
 }
 void loop()
@@ -109,7 +109,8 @@ void loop()
       // Start the PID
       pidController.start();
       thermMilisTimer.start();
-      Serial.println("Time,Therm1,Therm2,Therm3,Therm4");
+      thermTimer.start();
+      Serial.println("Time,Therm1,Therm2,Therm3,Therm4,Therm5,Therm6,,Scaling1,Scaling2,Scaling3,Scaling4,Scaling5,Scaling6,Averaged1,Weighting1,Weighting2,Weighting3");
     }
   }
   state = newState;
@@ -128,18 +129,28 @@ void loop()
     ReflowStep step = chosenReflowProfile.reflowStep();
     // Here we draw the actual temp vs time to the display
 
-    if (thermTimer.elapsed() > 500)
+    if (thermTimer.elapsed() > 1)
     {
 
       Serial.print(thermTimer.elapsed());
       Serial.print(",");
-      Serial.print(thermistor1.getTemperature());
+      float temp1 = thermistor1.getTemperature();
+      float temp2 = thermistor2.getTemperature();
+      float temp3 = thermistor3.getTemperature();
+      float temp4 = thermistor4.getTemperature();
+      float temp5 = thermistor5.getTemperature();
+      float temp6 = thermistor6.getTemperature();
+      Serial.print(temp1);
       Serial.print(",");
-      Serial.print(thermistor2.getTemperature());
+      Serial.print(temp2);
       Serial.print(",");
-      Serial.print(thermistor3.getTemperature());
+      Serial.print(temp3);
       Serial.print(",");
-      Serial.print(thermistor4.getTemperature());
+      Serial.print(temp4);
+      Serial.print(",");
+      Serial.print(temp5);
+      Serial.print(",");
+      Serial.print(temp6);
       Serial.print(",");
       Serial.print(thermistor1.scalingFactor);
       Serial.print(",");
@@ -148,7 +159,33 @@ void loop()
       Serial.print(thermistor3.scalingFactor);
       Serial.print(",");
       Serial.print(thermistor4.scalingFactor);
+      Serial.print(",");
+      Serial.print(thermistor5.scalingFactor);
+      Serial.print(",");
+      Serial.print(thermistor6.scalingFactor);
+      Serial.print(",");
+
+      float values[] = {temp2,temp3,temp4};
+      float weights[] = {thermistor2.getWeightingFactor(),thermistor3.getWeightingFactor(),thermistor4.getWeightingFactor()};
+      uint8_t length = 3;
+      float averaged = TemperatureController::getWeightedAverage(values, weights, length);
+      Serial.print(averaged);
+      Serial.print(",");
+      Serial.print(weights[0]);
+      Serial.print(",");
+      Serial.print(weights[1]);
+      Serial.print(",");
+      Serial.print(weights[2]);
+      Serial.print(",");
       Serial.println();
+      // Serial.print(",");
+      // Serial.print(thermistor1.getWeightingFactor());
+      // Serial.print(",");
+      // Serial.print(thermistor2.getWeightingFactor());
+      // Serial.print(",");
+      // Serial.print(thermistor3.getWeightingFactor());
+      // Serial.print(",");
+      // Serial.print(thermistor4.getWeightingFactor());
     }
 
     if (step.state != newState)

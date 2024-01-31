@@ -97,12 +97,26 @@ void OledDisplay::handleDrawThermistorMenu(OledMenuItem menuItem)
     }
     else if (thermistorIndex == 7)
     {
+        uint8_t decimalPlaces;
         display.setTextSize(1, 2);
         for (int i = 0; i < 6; i++)
         {
             float thermR = thermistors[i].getResistance() / 1000;
             display.setCursor(i < 3 ? 0 : (SCREEN_WIDTH / 2 + 20), 20 * (i % 3));
-            display.println(String(i + 1) + ":" + String(thermR));
+            //A bit more data if it is a small number
+            if (thermR < 100)
+            {
+                decimalPlaces = 2;
+            }
+            else if (thermR < 10)
+            {
+                decimalPlaces = 3;
+            }
+            else
+            {
+                decimalPlaces = 1;
+            }
+            display.println(String(i + 1) + ":" + String(thermR, decimalPlaces));
         }
         centerText(menuItem.title);
         displayIndicators();
@@ -110,7 +124,7 @@ void OledDisplay::handleDrawThermistorMenu(OledMenuItem menuItem)
     else
     {
         int thermistorTemp = thermistors[thermistorIndex].getTemperature();
-        centerText((String(menuItem.title) + ": " + String(thermistorTemp)).c_str());
+        centerText((String(menuItem.title) + ":" + String(thermistorTemp)).c_str());
         displayIndicators();
     }
     display.display();
@@ -308,7 +322,6 @@ void OledDisplay::handleReflowState()
     drawPositionedText(STATE_STR(state), DisplayTextAlignment::CENTER, DisplayTextAlignment::START);
 
     display.setTextSize(1, 2);
-
 
     // Remaining time center left + bottom left
     uint32_t elapsedStep = chosenReflowProfile.getCurrentStepRelativeTime();

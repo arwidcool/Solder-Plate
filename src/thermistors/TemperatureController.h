@@ -15,10 +15,15 @@ public:
     float getPlateTemperature();
     void checkPluggedInThermistors();
     float static getThermistorTempFast(uint8_t thermistorIndex);
+    float static getWeightedAverage(float* values, float* weights, uint8_t length);
     
 private:
+
+
     bool thermistorIsActive[6];
     uint8_t activeThermistorCount =0 ;
+    float weightFactor;
+
 
 
 };

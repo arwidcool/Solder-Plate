@@ -20,6 +20,10 @@
 #define debugC(x)
 #endif
 
+#define START_TEMP 20
+#define LOW_TEMP_THRESHOLD 102
+#define MIDDLE_TEMP_THRESHOLD 120
+#define HIGH_TEMP_THRESHOLD 150
 
 
 

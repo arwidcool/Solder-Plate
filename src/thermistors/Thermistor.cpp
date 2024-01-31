@@ -49,94 +49,200 @@ float Thermistor::getTemperature()
     scalingFactor = thermistorLookup.getFactor(zPlacement, xyPlacment, temp);
     temp = temp * scalingFactor;
 
+    weightFactor = getWeightingFactor();
+
+    currenTemperature = temp;
+
     return temp;
 }
 
 /**
- * Calculates the coefficients for the thermistor based on the given temperature calibration.
- *
- * @param calibration The temperature calibration data.
+ * @brief Returns the weighting factor for the thermistor based on its most accurate temperature range  and current temp.
+ * The range is based on reference resistor values.
+ * This should only be called after getTemperature() has been called.
+ * @return The scaling factor.
  */
-void Thermistor::calculateCoefficents(TempCalibration calibration)
+// float Thermistor::getWeightingFactor()
+// {
+//     switch (xyPlacment)
+//     {
+
+//     // Middle always have weighting factor of 1 and the factor can only increase for the other sensors
+//     case MIDDLE:
+
+//         return 1;
+//         break;
+
+//     case MIDDLE_LOW_TEMP:
+
+//         if (currenTemperature > START_TEMP && currenTemperature < LOW_TEMP_THRESHOLD)
+//         {
+//             return ThermistorLookup::interpolate(currenTemperature, START_TEMP, LOW_TEMP_THRESHOLD, 1, 1.5);
+//         }
+
+//         else if (currenTemperature > LOW_TEMP_THRESHOLD && currenTemperature < MIDDLE_TEMP_THRESHOLD)
+//         {
+//             return ThermistorLookup::interpolate(currenTemperature, LOW_TEMP_THRESHOLD, MIDDLE_TEMP_THRESHOLD, 1.5, 1);
+//         }
+
+//         else if (currenTemperature > MIDDLE_TEMP_THRESHOLD && currenTemperature < HIGH_TEMP_THRESHOLD)
+//         {
+//             return ThermistorLookup::interpolate(currenTemperature, MIDDLE_TEMP_THRESHOLD, HIGH_TEMP_THRESHOLD, 1, 0.1);
+//         }
+//         else if (currenTemperature < START_TEMP)
+//         {
+//             return 1;
+//         }
+//         else
+//         {
+//             return 0.1;
+//         }
+
+
+//         case MIDDLE_HIGH_TEMP:
+
+//             if (currenTemperature > MIDDLE_TEMP_THRESHOLD && currenTemperature < HIGH_TEMP_THRESHOLD)
+//             {
+//                 return ThermistorLookup::interpolate(currenTemperature, MIDDLE_TEMP_THRESHOLD, HIGH_TEMP_THRESHOLD, 1, 1.5);
+//             }
+
+//             else if (currenTemperature > HIGH_TEMP_THRESHOLD)
+//             {
+//                 return 1.5;
+//             }
+//             else if (currenTemperature < MIDDLE_TEMP_THRESHOLD)
+//             {
+//                 return ThermistorLookup::interpolate(currenTemperature, START_TEMP, MIDDLE_TEMP_THRESHOLD, 0.1, 1);
+//             }
+//             else
+//             {
+//                 return 0.1;
+//             }
+//             break;
+
+//         default:
+//             return 1;
+//             break;
+//         }
+//     }
+
+float Thermistor::getWeightingFactor()
 {
+    float start = 1, end = 1;
+    float temp_start = START_TEMP, temp_end = LOW_TEMP_THRESHOLD;
 
-    float lowK = calibration.lowC + K;
-    float midK = calibration.midC + K;
-    float highK = calibration.highC + K;
+    if (xyPlacment == MIDDLE_HIGH_TEMP) {
+        temp_start = MIDDLE_TEMP_THRESHOLD;
+        temp_end = HIGH_TEMP_THRESHOLD;
 
-    float lowLnr = log(calibration.lowR);
-    float midLnr = log(calibration.midR);
-    float highLnr = log(calibration.highR);
+        if (currenTemperature > HIGH_TEMP_THRESHOLD)
+            return 1.5;
+        
+        if (currenTemperature < MIDDLE_TEMP_THRESHOLD)
+            return ThermistorLookup::interpolate(currenTemperature, START_TEMP, MIDDLE_TEMP_THRESHOLD, 0.1, 1);
+    } 
 
-    float ln1 = lowLnr - midLnr;
-    float ln2 = lowLnr - highLnr;
-    float t1 = (1 / lowK) - (1 / midK);
-    float t2 = (1 / lowK) - (1 / highK);
+    if (xyPlacment == MIDDLE_LOW_TEMP || xyPlacment == MIDDLE_HIGH_TEMP) {
+        if (currenTemperature > temp_start && currenTemperature < temp_end)
+            return ThermistorLookup::interpolate(currenTemperature, temp_start, temp_end, start, 1.5);
+        
+        if (currenTemperature > temp_end && currenTemperature < HIGH_TEMP_THRESHOLD)
+            return ThermistorLookup::interpolate(currenTemperature, temp_end, HIGH_TEMP_THRESHOLD, 1.5, 1);
+        
+        if (currenTemperature > HIGH_TEMP_THRESHOLD && currenTemperature < HIGH_TEMP_THRESHOLD)
+            return ThermistorLookup::interpolate(currenTemperature, HIGH_TEMP_THRESHOLD, HIGH_TEMP_THRESHOLD, 1, 0.1);
+    
+        return (currenTemperature < START_TEMP) ? 1 : 0.1;
+    } 
 
-    float c = (t1 - ln1 * t2 / ln2) / ((pow(lowLnr, 3) - pow(midLnr, 3)) - ln1 * (pow(lowLnr, 3) - pow(highLnr, 3)) / ln2);
-    float b = (t1 - c * (pow(lowLnr, 3) - pow(midLnr, 3))) / ln1;
-    float a = 1 / lowK - c * pow(lowLnr, 3) - b * lowLnr;
-
-    coefficents.a = (a);
-    coefficents.b = (b);
-    coefficents.c = (c);
+    return 1;
 }
 
-bool Thermistor::isPluggedIn()
-{
-    // check if the resistnece is INF is so then the thermistor is not plugged in
-    if (getResistance() == INFINITY)
+    /**
+     * Calculates the coefficients for the thermistor based on the given temperature calibration.
+     *
+     * @param calibration The temperature calibration data.
+     */
+    void Thermistor::calculateCoefficents(TempCalibration calibration)
     {
-        return false;
+
+        float lowK = calibration.lowC + K;
+        float midK = calibration.midC + K;
+        float highK = calibration.highC + K;
+
+        float lowLnr = log(calibration.lowR);
+        float midLnr = log(calibration.midR);
+        float highLnr = log(calibration.highR);
+
+        float ln1 = lowLnr - midLnr;
+        float ln2 = lowLnr - highLnr;
+        float t1 = (1 / lowK) - (1 / midK);
+        float t2 = (1 / lowK) - (1 / highK);
+
+        float c = (t1 - ln1 * t2 / ln2) / ((pow(lowLnr, 3) - pow(midLnr, 3)) - ln1 * (pow(lowLnr, 3) - pow(highLnr, 3)) / ln2);
+        float b = (t1 - c * (pow(lowLnr, 3) - pow(midLnr, 3))) / ln1;
+        float a = 1 / lowK - c * pow(lowLnr, 3) - b * lowLnr;
+
+        coefficents.a = (a);
+        coefficents.b = (b);
+        coefficents.c = (c);
     }
-    else
+
+    bool Thermistor::isPluggedIn()
     {
-        return true;
+        // check if the resistnece is INF is so then the thermistor is not plugged in
+        if (getResistance() == INFINITY)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
-}
 
-/**
- * Calculates the scaling factor for the thermistor based on its placement in the 3D space.
- * The scaling factor is used to adjust the temperature readings of the thermistor.
- */
+    /**
+     * Calculates the scaling factor for the thermistor based on its placement in the 3D space.
+     * The scaling factor is used to adjust the temperature readings of the thermistor.
+     */
 
-float Thermistor::getTemperatureFast()
-{
+    float Thermistor::getTemperatureFast()
+    {
 
-    // Get only one reading
-    getResistance();
+        // Get only one reading
+        getResistance();
 
-    float temp = (int)1 / (coefficents.a + coefficents.b * log(sensorResistance) + coefficents.c * (pow(log(sensorResistance), 3))) - K;
+        float temp = (int)1 / (coefficents.a + coefficents.b * log(sensorResistance) + coefficents.c * (pow(log(sensorResistance), 3))) - K;
 
-    // The scaling factor should only be applied when the plate is being heated up -> 60C seems like a good threshold unless you live in the sahara desert with no AC
+        // The scaling factor should only be applied when the plate is being heated up -> 60C seems like a good threshold unless you live in the sahara desert with no AC
 
-    // Its non-linear so it will be more accurate so we will probably need to impliment a refrence table for the scaling factor this is just a rough estimate it will be based on a sensor calibrated on the top middle of the plate
+        // Its non-linear so it will be more accurate so we will probably need to impliment a refrence table for the scaling factor this is just a rough estimate it will be based on a sensor calibrated on the top middle of the plate
 
-    // float scalingFactor = ThermistorLookup::getFactor(thermistorPin, temp);
-    return temp;
-}
+        // float scalingFactor = ThermistorLookup::getFactor(thermistorPin, temp);
+        return temp;
+    }
 
-float Thermistor::getResistance()
-{
+    float Thermistor::getResistance()
+    {
 
-    float systemVoltage = analogRef.calculateSystemVoltage();
+        float systemVoltage = analogRef.calculateSystemVoltage();
 
-    // int raw = analogRead(thermistorPin);
+        // int raw = analogRead(thermistorPin);
 
-    // // Get resistance value
-    // float buffer = raw * systemVoltage;
-    // float vOut = (buffer) / 1023;
+        // // Get resistance value
+        // float buffer = raw * systemVoltage;
+        // float vOut = (buffer) / 1023;
 
-    // // Calculate the resistance of the thermistor with the system voltage accounted for
-    // buffer = (systemVoltage / vOut) - 1;
+        // // Calculate the resistance of the thermistor with the system voltage accounted for
+        // buffer = (systemVoltage / vOut) - 1;
 
-    // // return the resistence
-    // sensorResistance = setRes * buffer;
+        // // return the resistence
+        // sensorResistance = setRes * buffer;
 
-    int sensorValue = analogRead(thermistorPin);                      // Read the analog value (0-1023)
-    float voltage = sensorValue * (systemVoltage / 1023.0);           // Convert to voltage
-    float R_unknown = (setRes * (systemVoltage - voltage)) / voltage; // Calculate the unknown resistor's value
-    sensorResistance = R_unknown;
+        int sensorValue = analogRead(thermistorPin);                      // Read the analog value (0-1023)
+        float voltage = sensorValue * (systemVoltage / 1023.0);           // Convert to voltage
+        float R_unknown = (setRes * (systemVoltage - voltage)) / voltage; // Calculate the unknown resistor's value
+        sensorResistance = R_unknown;
 
-    return sensorResistance;
-}
+        return sensorResistance;
+    }
