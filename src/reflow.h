@@ -4,7 +4,10 @@
 #include <EEPROM.h>
 #include "StopWatch.h"
 #include "thermistors/Thermistor.h"
-#include "displays/oled.h"
+
+
+
+
 
 // STATE MACHINE
 enum ReflowProcessState
@@ -158,7 +161,10 @@ public:
         startTimes[3] = endTimes[2];
         startTimes[4] = endTimes[3];
 
-        startTemps[0] = 20; // USe ambient temp as the starting temp for the first step
+        // We will grab the current PCB temp from the PID as the start temp otherwise the PID will be off
+
+
+          startTemps[0] = 20; // USe ambient temp as the starting temp for the first step
 
         endTemps[0] = steps[0].calcTempAtPercentage(startTemps[0], 1);
         endTemps[1] = steps[1].calcTempAtPercentage(endTemps[0], 1);
