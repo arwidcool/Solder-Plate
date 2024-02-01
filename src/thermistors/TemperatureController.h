@@ -1,8 +1,10 @@
 #ifndef TEMPERATURE_CONTROLLER_H
 #define TEMPERATURE_CONTROLLER_H
 
-#include "Thermistor.h"
-#include "globals.h"
+// #include "Thermistor.h"
+#include "../globals.h"
+
+
 
 extern Thermistor thermistors[6];
 
@@ -20,9 +22,10 @@ public:
 private:
 
 
-    bool thermistorIsActive[6];
-    uint8_t activeThermistorCount =0 ;
+    uint8_t activeThermistorNumbers[6];
+    uint8_t activeThermistorCount;
     float weightFactor;
+
 
 
 

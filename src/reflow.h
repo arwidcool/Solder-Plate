@@ -33,7 +33,10 @@ enum ReflowStepEaseFunction
     EASE_IN_OUT,
     EASE_IN,
     EASE_OUT,
-    HALF_SINE
+    HALF_SINE,
+    SLOW_RAMP_HOLD,
+    MID_RAMP_HOLD,
+    FAST_RAMP_HOLD
 };
 class ReflowStep
 {
@@ -65,6 +68,43 @@ public:
             return startTemp + (this->targetTemp - startTemp) * (sin(percentage * PI / (double)2));
         case HALF_SINE:
             return startTemp + (this->targetTemp - startTemp) * (sin(percentage * PI));
+        case SLOW_RAMP_HOLD:
+
+            if (percentage <= 0.75)
+            {
+                // Ramp up to the target temperature over the first 25% of the time
+                return startTemp + (this->targetTemp - startTemp) * (percentage / 0.75);
+            }
+            else
+            {
+                // Hold at the target temperature for the remaining 75% of the time
+                return this->targetTemp;
+            }
+
+        case MID_RAMP_HOLD:
+
+            if (percentage <= 0.50)
+            {
+                // Ramp up to the target temperature over the first half of the time
+                return startTemp + (this->targetTemp - startTemp) * (percentage / 0.50);
+            }
+            else
+            {
+                // Hold at the target temperature for the remaining half of the time
+                return this->targetTemp;
+            }
+
+        case FAST_RAMP_HOLD:
+            if (percentage <= 0.25)
+            {
+                // Ramp up to the target temperature over the first 75% of the time
+                return startTemp + (this->targetTemp - startTemp) * (percentage / 0.25);
+            }
+            else
+            {
+                // Hold at the target temperature for the remaining 25% of the time
+                return this->targetTemp;
+            }
         }
     }
 };
@@ -112,7 +152,6 @@ public:
         endTimes[3] = endTimes[2] + steps[3].duration;
         endTimes[4] = endTimes[3] + steps[4].duration;
 
-        
         startTimes[0] = 0;
         startTimes[1] = endTimes[0];
         startTimes[2] = endTimes[1];

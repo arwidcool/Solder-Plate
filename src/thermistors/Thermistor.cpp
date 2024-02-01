@@ -62,101 +62,69 @@ float Thermistor::getTemperature()
  * This should only be called after getTemperature() has been called.
  * @return The scaling factor.
  */
-// float Thermistor::getWeightingFactor()
-// {
-//     switch (xyPlacment)
-//     {
-
-//     // Middle always have weighting factor of 1 and the factor can only increase for the other sensors
-//     case MIDDLE:
-
-//         return 1;
-//         break;
-
-//     case MIDDLE_LOW_TEMP:
-
-//         if (currenTemperature > START_TEMP && currenTemperature < LOW_TEMP_THRESHOLD)
-//         {
-//             return ThermistorLookup::interpolate(currenTemperature, START_TEMP, LOW_TEMP_THRESHOLD, 1, 1.5);
-//         }
-
-//         else if (currenTemperature > LOW_TEMP_THRESHOLD && currenTemperature < MIDDLE_TEMP_THRESHOLD)
-//         {
-//             return ThermistorLookup::interpolate(currenTemperature, LOW_TEMP_THRESHOLD, MIDDLE_TEMP_THRESHOLD, 1.5, 1);
-//         }
-
-//         else if (currenTemperature > MIDDLE_TEMP_THRESHOLD && currenTemperature < HIGH_TEMP_THRESHOLD)
-//         {
-//             return ThermistorLookup::interpolate(currenTemperature, MIDDLE_TEMP_THRESHOLD, HIGH_TEMP_THRESHOLD, 1, 0.1);
-//         }
-//         else if (currenTemperature < START_TEMP)
-//         {
-//             return 1;
-//         }
-//         else
-//         {
-//             return 0.1;
-//         }
-
-
-//         case MIDDLE_HIGH_TEMP:
-
-//             if (currenTemperature > MIDDLE_TEMP_THRESHOLD && currenTemperature < HIGH_TEMP_THRESHOLD)
-//             {
-//                 return ThermistorLookup::interpolate(currenTemperature, MIDDLE_TEMP_THRESHOLD, HIGH_TEMP_THRESHOLD, 1, 1.5);
-//             }
-
-//             else if (currenTemperature > HIGH_TEMP_THRESHOLD)
-//             {
-//                 return 1.5;
-//             }
-//             else if (currenTemperature < MIDDLE_TEMP_THRESHOLD)
-//             {
-//                 return ThermistorLookup::interpolate(currenTemperature, START_TEMP, MIDDLE_TEMP_THRESHOLD, 0.1, 1);
-//             }
-//             else
-//             {
-//                 return 0.1;
-//             }
-//             break;
-
-//         default:
-//             return 1;
-//             break;
-//         }
-//     }
-
 float Thermistor::getWeightingFactor()
 {
-    float start = 1, end = 1;
-    float temp_start = START_TEMP, temp_end = LOW_TEMP_THRESHOLD;
+    switch (xyPlacment)
+    {
 
-    if (xyPlacment == MIDDLE_HIGH_TEMP) {
-        temp_start = MIDDLE_TEMP_THRESHOLD;
-        temp_end = HIGH_TEMP_THRESHOLD;
+    // Middle always have weighting factor of 1 and the factor can only increase for the other sensors
+    case MIDDLE:
 
-        if (currenTemperature > HIGH_TEMP_THRESHOLD)
-            return 1.5;
-        
-        if (currenTemperature < MIDDLE_TEMP_THRESHOLD)
-            return ThermistorLookup::interpolate(currenTemperature, START_TEMP, MIDDLE_TEMP_THRESHOLD, 0.1, 1);
-    } 
+        return 1;
+        break;
 
-    if (xyPlacment == MIDDLE_LOW_TEMP || xyPlacment == MIDDLE_HIGH_TEMP) {
-        if (currenTemperature > temp_start && currenTemperature < temp_end)
-            return ThermistorLookup::interpolate(currenTemperature, temp_start, temp_end, start, 1.5);
-        
-        if (currenTemperature > temp_end && currenTemperature < HIGH_TEMP_THRESHOLD)
-            return ThermistorLookup::interpolate(currenTemperature, temp_end, HIGH_TEMP_THRESHOLD, 1.5, 1);
-        
-        if (currenTemperature > HIGH_TEMP_THRESHOLD && currenTemperature < HIGH_TEMP_THRESHOLD)
-            return ThermistorLookup::interpolate(currenTemperature, HIGH_TEMP_THRESHOLD, HIGH_TEMP_THRESHOLD, 1, 0.1);
-    
-        return (currenTemperature < START_TEMP) ? 1 : 0.1;
-    } 
+    case MIDDLE_LOW_TEMP:
 
-    return 1;
-}
+        if (currenTemperature > START_TEMP && currenTemperature < LOW_TEMP_THRESHOLD)
+        {
+            return ThermistorLookup::interpolate(currenTemperature, START_TEMP, LOW_TEMP_THRESHOLD, 1, 1.5);
+        }
+
+        else if (currenTemperature > LOW_TEMP_THRESHOLD && currenTemperature < MIDDLE_TEMP_THRESHOLD)
+        {
+            return ThermistorLookup::interpolate(currenTemperature, LOW_TEMP_THRESHOLD, MIDDLE_TEMP_THRESHOLD, 1.5, 1);
+        }
+
+        else if (currenTemperature > MIDDLE_TEMP_THRESHOLD && currenTemperature < HIGH_TEMP_THRESHOLD)
+        {
+            return ThermistorLookup::interpolate(currenTemperature, MIDDLE_TEMP_THRESHOLD, HIGH_TEMP_THRESHOLD, 1, 0.1);
+        }
+        else if (currenTemperature < START_TEMP)
+        {
+            return 1;
+        }
+        else
+        {
+            return 0.1;
+        }
+
+
+        case MIDDLE_HIGH_TEMP:
+
+            if (currenTemperature > MIDDLE_TEMP_THRESHOLD && currenTemperature < HIGH_TEMP_THRESHOLD)
+            {
+                return ThermistorLookup::interpolate(currenTemperature, MIDDLE_TEMP_THRESHOLD, HIGH_TEMP_THRESHOLD, 1, 1.5);
+            }
+
+            else if (currenTemperature > HIGH_TEMP_THRESHOLD)
+            {
+                return 1.5;
+            }
+            else if (currenTemperature < MIDDLE_TEMP_THRESHOLD)
+            {
+                return ThermistorLookup::interpolate(currenTemperature, START_TEMP, MIDDLE_TEMP_THRESHOLD, 0.1, 1);
+            }
+            else
+            {
+                return 0.1;
+            }
+            break;
+
+        default:
+            return 1;
+            break;
+        }
+    }
 
     /**
      * Calculates the coefficients for the thermistor based on the given temperature calibration.

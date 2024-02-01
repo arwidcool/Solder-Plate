@@ -21,14 +21,10 @@ public:
     void start();
 
     double* getInput();
-
     boolean started = false;
 
 private:
     ArduPID controller;
-    double kp;
-    double ki;
-    double kd;
     PidControllerData *data;
     double integral;
     double previousError;

@@ -4,6 +4,8 @@
 
 
 
+
+
 WrappedState<ReflowProcessState> reflowProcessState = WrappedState<ReflowProcessState>(INITIALIZING);
 
 AnalogRef analogRef(5.0);
@@ -28,15 +30,15 @@ TempCalibration calibration_100K_3950 = {25, 100000, 107, 4957, 167, 1000};
 // To measure the resistence turn off the controller completley and measure between GND and the left pin of the connector with the thermistor unplugged
 
 // 2.5k reference = Best accuracy around 138C
-Thermistor thermistor1(THERMISTOR1_PIN, 2465 , ThermistorZ_Placement::TOP, ThermistorXY_Placement::MIDDLE);
-Thermistor thermistor2(THERMISTOR2_PIN, 2520, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE);
-Thermistor thermistor3(THERMISTOR3_PIN, 9040, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE_LOW_TEMP);
+Thermistor thermistor1(THERMISTOR1_PIN, 2545 , ThermistorZ_Placement::TOP, ThermistorXY_Placement::MIDDLE);
+Thermistor thermistor2(THERMISTOR2_PIN, 2125, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE);
+Thermistor thermistor3(THERMISTOR3_PIN, 9100, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE_LOW_TEMP);
 // 1k reference = Best accuracy around 173c
-Thermistor thermistor4(THERMISTOR4_PIN, 573, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE_HIGH_TEMP);
+Thermistor thermistor4(THERMISTOR4_PIN, 564, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE_HIGH_TEMP);
 // 515R reference = Best accuracy around 210C
-Thermistor thermistor5(THERMISTOR5_PIN, 8111, ThermistorZ_Placement::TOP, ThermistorXY_Placement::MIDDLE_LOW_TEMP);
+Thermistor thermistor5(THERMISTOR5_PIN,5727, ThermistorZ_Placement::TOP, ThermistorXY_Placement::MIDDLE_LOW_TEMP);
 // 9k reference = Best accuracy around 90C -> This thermistor is used for the preheat phase if attached
-Thermistor thermistor6(THERMISTOR6_PIN, 526, ThermistorZ_Placement::TOP, ThermistorXY_Placement::MIDDLE_HIGH_TEMP);
+Thermistor thermistor6(THERMISTOR6_PIN, 467, ThermistorZ_Placement::TOP, ThermistorXY_Placement::MIDDLE_HIGH_TEMP);
 
 //---------------------------------------------------------------------------------------------------------------------------------------
 
@@ -64,15 +66,20 @@ int nReflowProfiles = 3;
 ReflowProfile reflowProfiles[] = {
     // 138c profile Sn42Bi58
     ReflowProfile(new ReflowStep[5]{
-                      ReflowStep(ReflowProcessState::PREHEAT, 100, 100, EASE_OUT),
-                      ReflowStep(ReflowProcessState::SOAK, 90, 155,EASE_IN_OUT),
+                      ReflowStep(ReflowProcessState::PREHEAT, 100, 100, EASE_IN),
+                      ReflowStep(ReflowProcessState::SOAK, 90, 140,EASE_IN_OUT),
                       ReflowStep(ReflowProcessState::REFLOW, 90, 185, HALF_SINE),
                       ReflowStep(ReflowProcessState::COOL, 50, 85, EASE_IN),
                       ReflowStep(ReflowProcessState::DONE, 0, 0)},
                   "138c Sn42Bi58\0"),
 
     ReflowProfile(new ReflowStep[5]{ReflowStep(ReflowProcessState::PREHEAT, 100, 150), ReflowStep(ReflowProcessState::SOAK, 30, 180), ReflowStep(ReflowProcessState::REFLOW, 80, 220, EASE_IN_OUT), ReflowStep(ReflowProcessState::COOL, 30, 183), ReflowStep(ReflowProcessState::DONE, 0, 0)}, "183C Sn63 Pb37 \0"),
-    ReflowProfile(new ReflowStep[5]{ReflowStep(ReflowProcessState::PREHEAT, 5, 150), ReflowStep(ReflowProcessState::SOAK, 5, 180), ReflowStep(ReflowProcessState::REFLOW, 5, 220, EASE_IN_OUT), ReflowStep(ReflowProcessState::COOL, 5, 183), ReflowStep(ReflowProcessState::DONE, 0, 0)}, "debug profi \0"),
+    ReflowProfile(new ReflowStep[5]{ReflowStep(
+                    ReflowProcessState::PREHEAT, 200, 100,MID_RAMP_HOLD), 
+                    ReflowStep(ReflowProcessState::SOAK, 150, 150,FAST_RAMP_HOLD), 
+                    ReflowStep(ReflowProcessState::REFLOW, 150, 220, SLOW_RAMP_HOLD), 
+                    ReflowStep(ReflowProcessState::COOL, 200, 0,LINEAR), 
+                    ReflowStep(ReflowProcessState::DONE, 0, 0)}, "Tuning Profile \0"),
 
 };
 

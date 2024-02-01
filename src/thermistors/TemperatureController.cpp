@@ -15,28 +15,30 @@ TemperatureController::~TemperatureController()
  */
 void TemperatureController::checkPluggedInThermistors()
 {
+    activeThermistorCount = 0;
     for (int i = 0; i < 6; i++)
     {
         bool isPluggedIn = thermistors[i].isPluggedIn();
 
         if (isPluggedIn)
         {
-            thermistorIsActive[i] = true;
+            // We do it before incrementing because the array is zero indexed
+
+            activeThermistorNumbers[activeThermistorCount] = i;
             activeThermistorCount++;
         }
         else
         {
-            thermistorIsActive[i] = false;
         }
 
-        debugC("Thermistor ");
-        debugC(i);
-        debugC(" is plugged in: ");
-        debugC(isPluggedIn == 1 ? "true" : "false");
+        // debugC("Thermistor ");
+        // debugC(i);
+        // debugC(" is plugged in: ");
+        // debugC(isPluggedIn == 1 ? "true" : "false");
     }
 
     debugC("Active thermistor count: ");
-    debugLine(activeThermistorCount);
+    debugC(activeThermistorCount);
 }
 
 float TemperatureController::getThermistorTempFast(uint8_t thermistorIndex)
@@ -71,16 +73,19 @@ float TemperatureController::getWeightedAverage(float *values, float *weights, u
  * @return The average temperature of the solder plate.
  */
 float TemperatureController::getPlateTemperature()
-{
-    float plateAveragedTemp = 0;
 
-    for (int i = 0; i < 6; i++)
+{
+    float activeThermistorTemps[activeThermistorCount];
+    float activeThermistorWeights[activeThermistorCount];
+
+    for (int i = 0; i < activeThermistorCount; i++)
     {
-        if (thermistorIsActive[i])
-        {
-            plateAveragedTemp += thermistors[i].getTemperature();
-        }
+
+        activeThermistorTemps[i] = thermistors[activeThermistorNumbers[i]].getTemperature();
+        activeThermistorWeights[i] = thermistors[activeThermistorNumbers[i]].getWeightingFactor();
     }
 
-    return plateAveragedTemp / activeThermistorCount;
+    float averaged = getWeightedAverage(activeThermistorTemps, activeThermistorWeights, activeThermistorCount);
+
+    return averaged;
 }

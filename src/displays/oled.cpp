@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include "../globals.h"
 #include "./menustatemachine.h"
+#include "./thermistors/TemperatureController.h"
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
 #define OLED_RESET -1 // Reset pin # (or -1 if sharing Arduino reset pin)
@@ -9,6 +10,8 @@
 #define MENUITEM_THERMISTOR_START 150
 #define MENUID_PICK_PROFILE 100
 #define MENUITEM_PROFILE_START 100
+
+extern TemperatureController tempController;
 
 unsigned long lastProcessedReflowState = 0;
 OledDisplay::OledDisplay()
@@ -46,6 +49,7 @@ void OledDisplay::handleButtonStateChange(Pair<ButtonKind, StateChangeEvent<Butt
                     OledMenu *selectedMenu = curMenu->getNextMenu();
                     if (selectedMenu != NULL)
                     {
+                        tempController.checkPluggedInThermistors();
                         curMenu = selectedMenu;
                     }
                 }
@@ -79,7 +83,9 @@ void OledDisplay::handleButtonStateChange(Pair<ButtonKind, StateChangeEvent<Butt
 }
 
 void OledDisplay::handleDrawThermistorMenu(OledMenuItem menuItem)
+
 {
+   
     int thermistorIndex = menuItem.identifier - MENUITEM_THERMISTOR_START;
     // Serial.println("Thermistor index: " + String(thermistorIndex));
     if (thermistorIndex == 6)
@@ -103,7 +109,7 @@ void OledDisplay::handleDrawThermistorMenu(OledMenuItem menuItem)
         {
             float thermR = thermistors[i].getResistance() / 1000;
             display.setCursor(i < 3 ? 0 : (SCREEN_WIDTH / 2 + 20), 20 * (i % 3));
-            //A bit more data if it is a small number
+            // A bit more data if it is a small number
             if (thermR < 100)
             {
                 decimalPlaces = 2;
@@ -215,7 +221,7 @@ void OledDisplay::loop()
         display.setRotation(0);
         display.setTextSize(2);
         drawPositionedText("DONE :)", DisplayTextAlignment::CENTER, DisplayTextAlignment::START);
-        uint8_t curTemp = thermistor1.getTemperature();
+        uint8_t curTemp = tempController.getPlateTemperature();
         display.setTextSize(1, 2);
         drawPositionedText("Temperature", DisplayTextAlignment::START, DisplayTextAlignment::CENTER);
         drawPositionedText((String(curTemp) + " C").c_str(), DisplayTextAlignment::END, DisplayTextAlignment::CENTER);
@@ -236,7 +242,7 @@ void OledDisplay::drawDebug()
 {
     float sysVoltage = analogRef.calculateSystemVoltage();
     float inputVoltage = analogRef.calculateInputVoltage();
-    int thermistor1Temp = thermistor1.getTemperature();
+    int plateTemp = tempController.getPlateTemperature();
     display.clearDisplay();
     display.setTextSize(2);
     display.setTextColor(SSD1306_WHITE);
@@ -245,7 +251,7 @@ void OledDisplay::drawDebug()
     display.setCursor(0, 20);
     display.println("In V:" + String(inputVoltage));
     display.setCursor(0, 40);
-    display.println("C: " + String(thermistor1Temp));
+    display.println("C: " + String(plateTemp));
     display.display();
 }
 void OledDisplay::displayIndicators()
@@ -328,8 +334,11 @@ void OledDisplay::handleReflowState()
     drawPositionedText("Remaining", DisplayTextAlignment::START, DisplayTextAlignment::CENTER);
     drawPositionedText((String(chosenReflowProfile.reflowStep().duration - elapsedStep) + "s").c_str(), DisplayTextAlignment::START, DisplayTextAlignment::END);
 
+    // tempController.getPlateTemperature();
+
     // Current temp center right + bottom right
-    uint8_t curTemp = thermistor1.getTemperature();
+
+    uint8_t curTemp = pidControllerData.currentTemp;
     uint8_t targetTemp = pidControllerData.targetTemp;
     drawPositionedText(("Curr.: " + String(curTemp)).c_str(), DisplayTextAlignment::END, DisplayTextAlignment::CENTER);
     drawPositionedText(("Target: " + String(targetTemp)).c_str(), DisplayTextAlignment::END, DisplayTextAlignment::END);

@@ -311,7 +311,7 @@ void TFT_Display::drawGraphAxisTickLabels()
     // Draw three tick labels on the time axis at 1/4, 1/2 and 3/4 of the way along
     for (int i = 1; i <= 3; i++)
     {
-        uint8_t time = totalTime * i / 4;
+        uint16_t time = totalTime * i / 4;
         char *timeCharPtr = numberToCharPtr(time);
         position = getCenterAlignedBottomTextXY(timeCharPtr, graphXY.x + (graphWidth * i / 4), graphXY.y);
         tft.setCursor(position.x, position.y + tickMarkLength + 1);

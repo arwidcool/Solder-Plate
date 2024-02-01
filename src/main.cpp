@@ -12,10 +12,10 @@
 #include "PID/PidController.h"
 #include "globals.h"
 #include "EEPROMDataManager.h"
-#include "thermistors/TemperatureController.h"
 #include "tools/ExecutionTimer.h"
 #include "StopWatch.h"
 #include "thermistors/Thermistor.h"
+#include "thermistors/TemperatureController.h"
 
 #define MOSTFET_PIN 17
 
@@ -25,6 +25,8 @@ double pwmValue = 255;
 
 ExecutionTimer executionTimer;
 
+TemperatureController tempController;
+
 Buttons buttons = Buttons();
 LEDS leds = LEDS();
 // Declare the PID
@@ -32,7 +34,6 @@ ArduPID PID;
 OledDisplay oled = OledDisplay();
 
 TFT_Display tftDisplay;
-TemperatureController temperatureController;
 
 StopWatch thermTimer = StopWatch();
 StopWatch thermMilisTimer = StopWatch();
@@ -56,7 +57,7 @@ void setup()
 
   reflowProcessState.set(ReflowProcessState::USER_INPUT);
 
-  temperatureController.checkPluggedInThermistors();
+   tempController.checkPluggedInThermistors();
 
   tftDisplay.start();
 
@@ -104,6 +105,7 @@ void loop()
     {
 
       tftDisplay.init(&chosenReflowProfile);
+      tempController.checkPluggedInThermistors();
 
       chosenReflowProfile.start();
       // Start the PID
@@ -123,70 +125,71 @@ void loop()
 
     pidController.loop();
     // #ifdef DEBUG
-    // pidController.debug();
+    pidController.debug();
     //   #endif
+
     tftDisplay.drawRealTemp(pidController.getInput(), chosenReflowProfile.getPercentage());
     ReflowStep step = chosenReflowProfile.reflowStep();
     // Here we draw the actual temp vs time to the display
 
-    if (thermTimer.elapsed() > 1)
-    {
+    // if (thermTimer.elapsed() > 1)
+    // {
 
-      Serial.print(thermTimer.elapsed());
-      Serial.print(",");
-      float temp1 = thermistor1.getTemperature();
-      float temp2 = thermistor2.getTemperature();
-      float temp3 = thermistor3.getTemperature();
-      float temp4 = thermistor4.getTemperature();
-      float temp5 = thermistor5.getTemperature();
-      float temp6 = thermistor6.getTemperature();
-      Serial.print(temp1);
-      Serial.print(",");
-      Serial.print(temp2);
-      Serial.print(",");
-      Serial.print(temp3);
-      Serial.print(",");
-      Serial.print(temp4);
-      Serial.print(",");
-      Serial.print(temp5);
-      Serial.print(",");
-      Serial.print(temp6);
-      Serial.print(",");
-      Serial.print(thermistor1.scalingFactor);
-      Serial.print(",");
-      Serial.print(thermistor2.scalingFactor);
-      Serial.print(",");
-      Serial.print(thermistor3.scalingFactor);
-      Serial.print(",");
-      Serial.print(thermistor4.scalingFactor);
-      Serial.print(",");
-      Serial.print(thermistor5.scalingFactor);
-      Serial.print(",");
-      Serial.print(thermistor6.scalingFactor);
-      Serial.print(",");
+    //   Serial.print(thermTimer.elapsed());
+    //   Serial.print(",");
+    //   float temp1 = thermistor1.getTemperature();
+    //   float temp2 = thermistor2.getTemperature();
+    //   float temp3 = thermistor3.getTemperature();
+    //   float temp4 = thermistor4.getTemperature();
+    //   float temp5 = thermistor5.getTemperature();
+    //   float temp6 = thermistor6.getTemperature();
+    //   Serial.print(temp1);
+    //   Serial.print(",");
+    //   Serial.print(temp2);
+    //   Serial.print(",");
+    //   Serial.print(temp3);
+    //   Serial.print(",");
+    //   Serial.print(temp4);
+    //   Serial.print(",");
+    //   Serial.print(temp5);
+    //   Serial.print(",");
+    //   Serial.print(temp6);
+    //   Serial.print(",");
+    //   Serial.print(thermistor1.scalingFactor);
+    //   Serial.print(",");
+    //   Serial.print(thermistor2.scalingFactor);
+    //   Serial.print(",");
+    //   Serial.print(thermistor3.scalingFactor);
+    //   Serial.print(",");
+    //   Serial.print(thermistor4.scalingFactor);
+    //   Serial.print(",");
+    //   Serial.print(thermistor5.scalingFactor);
+    //   Serial.print(",");
+    //   Serial.print(thermistor6.scalingFactor);
+    //   Serial.print(",");
 
-      float values[] = {temp2,temp3,temp4};
-      float weights[] = {thermistor2.getWeightingFactor(),thermistor3.getWeightingFactor(),thermistor4.getWeightingFactor()};
-      uint8_t length = 3;
-      float averaged = TemperatureController::getWeightedAverage(values, weights, length);
-      Serial.print(averaged);
-      Serial.print(",");
-      Serial.print(weights[0]);
-      Serial.print(",");
-      Serial.print(weights[1]);
-      Serial.print(",");
-      Serial.print(weights[2]);
-      Serial.print(",");
-      Serial.println();
-      // Serial.print(",");
-      // Serial.print(thermistor1.getWeightingFactor());
-      // Serial.print(",");
-      // Serial.print(thermistor2.getWeightingFactor());
-      // Serial.print(",");
-      // Serial.print(thermistor3.getWeightingFactor());
-      // Serial.print(",");
-      // Serial.print(thermistor4.getWeightingFactor());
-    }
+    //   float values[] = {temp2,temp3,temp4};
+    //   float weights[] = {thermistor2.getWeightingFactor(),thermistor3.getWeightingFactor(),thermistor4.getWeightingFactor()};
+    //   uint8_t length = 3;
+    //   float averaged = TemperatureController::getWeightedAverage(values, weights, length);
+    //   Serial.print(averaged);
+    //   Serial.print(",");
+    //   Serial.print(weights[0]);
+    //   Serial.print(",");
+    //   Serial.print(weights[1]);
+    //   Serial.print(",");
+    //   Serial.print(weights[2]);
+    //   Serial.print(",");
+    //   Serial.println();
+    // Serial.print(",");
+    // Serial.print(thermistor1.getWeightingFactor());
+    // Serial.print(",");
+    // Serial.print(thermistor2.getWeightingFactor());
+    // Serial.print(",");
+    // Serial.print(thermistor3.getWeightingFactor());
+    // Serial.print(",");
+    // Serial.print(thermistor4.getWeightingFactor());
+    //}
 
     if (step.state != newState)
     {

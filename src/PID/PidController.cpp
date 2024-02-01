@@ -2,22 +2,22 @@
 #include "globals.h"
 #define MOSTFET_PIN 17
 #include "voltageReference/AnalogRef.h"
+#include "thermistors/TemperatureController.h"
 
 extern AnalogRef analogRef;
+
+extern TemperatureController tempController;
 
 PidController::PidController(PidControllerData *data)
 {
 
     this->data = data;
-    kp = 5;
-    kd = 10;
-    ki = 1;
 
-    controller.begin(&(this->data->currentTemp), &(this->data->setPoint), &(this->data->targetTemp), kp, ki, kd);
+    controller.begin(&(this->data->currentTemp), &(this->data->setPoint), &(this->data->targetTemp), PID_P, PID_I, PID_D);
     controller.reverse();
-    controller.setOutputLimits(0, 255);
-    //controller.setSampleTime(20);
-    controller.setWindUpLimits(-100, 185);
+    controller.setOutputLimits(PID_OUTPUT_MIN, PID_OUTPUT_MAX);
+    controller.setSampleTime(PID_SAMPLE_TIME);
+    controller.setWindUpLimits(PID_WINDUP_MIN, PID_WINDUP_MAX);
 }
 
 double *PidController::compute()
@@ -37,12 +37,15 @@ void PidController::debug()
 }
 
 void PidController::loop()
+
 {
     data->targetTemp = chosenReflowProfile.getTargetTemp();
-    
-    data->currentTemp = thermistor1.getTemperature();
 
-    float sysVoltage = analogRef.calculateSystemVoltage();
+    // data->currentTemp = thermistor1.getTemperature();
+
+    data->currentTemp = tempController.getPlateTemperature();
+
+    // float sysVoltage = analogRef.calculateSystemVoltage();
     compute();
     analogWrite(MOSTFET_PIN, data->setPoint);
 }
@@ -55,17 +58,14 @@ void PidController::stop()
     analogWrite(MOSTFET_PIN, 255); // VERY IMPORTANT, DONT CHANGE!
     controller.reset();
     controller.stop();
-
-
 }
 
 void PidController::start()
 {
     controller.start();
-    
 }
 
-double* PidController::getInput()
+double *PidController::getInput()
 {
     return controller.input;
 }

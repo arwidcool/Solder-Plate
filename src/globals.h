@@ -8,6 +8,8 @@
 #include "./thermistors/ThermistorLookup.h"
 
 
+
+
 //Comment out to enable debug messages
 //#define DEBUG 
 
@@ -26,6 +28,18 @@
 #define HIGH_TEMP_THRESHOLD 150
 
 
+//PID Controller values
+#define PID_P 2
+#define PID_I 2
+#define PID_D 5
+#define PID_WINDUP_MIN -100
+#define PID_WINDUP_MAX 255
+//This gets reversed inside the PID controller
+#define PID_OUTPUT_MIN 0
+#define PID_OUTPUT_MAX 255
+#define PID_SAMPLE_TIME 0.1
+
+
 
 extern WrappedState<ReflowProcessState> reflowProcessState;
 extern AnalogRef analogRef;
@@ -41,6 +55,7 @@ extern ReflowProfile chosenReflowProfile;
 extern uint16_t plateResistanceOhm;
 extern int nReflowProfiles;
 
+
 extern PidControllerData pidControllerData;
 extern PidController pidController;
 extern EEPROMDataManager eepromDataManager;
@@ -50,6 +65,7 @@ extern uint16_t preheat_COLOR;
 extern uint16_t soak_COLOR;
 extern uint16_t cool_COLOR;
 extern ThermistorLookup thermistorLookup;
+
 
 
 
