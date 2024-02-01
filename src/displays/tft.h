@@ -44,6 +44,7 @@ private:
     uint16_t graphHeight = 180;
     uint16_t graphWidth = 255;
     TFT_XY graphXY = {32, 220};
+    TFT_XY graphOrigin = {32, 40};
     uint16_t maxTemp = 0;
     uint8_t minTemp = 20;
 

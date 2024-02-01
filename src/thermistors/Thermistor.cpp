@@ -65,7 +65,6 @@ float Thermistor::getTemperature()
 float Thermistor::getWeightingFactor()
 {
 
-
     // If the thermistor is mounted on PCB we give it a weighting factor of 10
     switch (zPlacement)
     {
@@ -127,6 +126,11 @@ float Thermistor::getWeightingFactor()
         {
             return 0.1;
         }
+        break;
+
+    case SIDE:
+
+        return 0.05;
         break;
 
     default:

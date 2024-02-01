@@ -38,9 +38,7 @@ void TFT_Display::init(ReflowProfile *profile)
     tft.setCursor(xy.x, xy.y);
     tft.println(profile->name);
     getMaxTempFromProfile(profile);
-
     this->profile = profile;
-
     drawTimer.reset();
 
     drawTimer.setResolution(StopWatch::MILLIS);
@@ -54,18 +52,10 @@ void TFT_Display::drawRealTemp(double *temp, float percentage)
 
     uint32_t timeSinceLastDraw = drawTimer.elapsed();
 
-    // Serial.print("Time since last draw:");
-    // Serial.println(timeSinceLastDraw);
-
     if (timeSinceLastDraw >= 930)
     {
 
         float temperature = static_cast<float>(*temp);
-
-        // Serial.print("Time:");
-        // Serial.print(percentage);
-        // Serial.print(" Temp:");
-        // Serial.println(temperature);
 
         uint16_t eplased = drawTimer.elapsed();
 
@@ -75,8 +65,8 @@ void TFT_Display::drawRealTemp(double *temp, float percentage)
         uint16_t y = tempYonGraph(temperature);
         // Draw the pixel
 
-        //tft.drawPixel(x, y, ST77XX_RED);
-        
+        // tft.drawPixel(x, y, ST77XX_RED);
+
         tft.drawLine(prevousTempXY.x, prevousTempXY.y, x, y, ST77XX_RED);
 
         prevousTempXY.x = x;
@@ -84,7 +74,6 @@ void TFT_Display::drawRealTemp(double *temp, float percentage)
         drawTimer.reset();
         drawTimer.start();
     }
-    
 }
 
 void TFT_Display::clear()
@@ -272,7 +261,7 @@ void TFT_Display::drawGraphAxisTickLabels()
     TFT_XY position;
 
     // Always starts at 20c
-    position = getRightAlignedTextXY("20", graphXY.x, graphXY.y);
+    position = getRightAlignedTextXY("0", graphXY.x, graphXY.y);
     tft.setCursor(position.x - tickMarkLength, position.y);
     tft.println("20");
 
@@ -286,7 +275,7 @@ void TFT_Display::drawGraphAxisTickLabels()
     // Draw three tick labels on the temp axis at 1/4, 1/2 and 3/4 of the way along
     for (int i = 1; i <= 3; i++)
     {
-        uint8_t temp = (maxTemp - minTemp) * i / 4;
+        uint8_t temp = ((maxTemp ) * i / 4)+minTemp;
         char *tempCharPtr = numberToCharPtr(temp);
         position = getRightAlignedTextXY(tempCharPtr, graphXY.x, graphXY.y - (graphHeight * i / 4));
         tft.setCursor(position.x - tickMarkLength, position.y);
@@ -324,27 +313,29 @@ void TFT_Display::drawGraphReflowStagesBackground()
 {
     uint16_t colors[4] = {preheat_COLOR, soak_COLOR, reflow_COLOR, cool_COLOR};
     // Draw the background for the reflow stages
-    uint16_t x= graphXY.x + 1;
-    uint16_t y= graphXY.y;
+    uint16_t x = graphXY.x + 1;
+    uint16_t y = graphXY.y;
     uint16_t totalDuration = profile->endTimes[4];
-    for (int i=0; i<4; i++) {
+    for (int i = 0; i < 4; i++)
+    {
         uint16_t y = graphXY.y - graphHeight;
         uint16_t height = graphHeight;
         float duration = profile->endTimes[i];
         float percAtEndStep = duration / totalDuration;
         float newX = percentageToX(percAtEndStep);
-        Serial.println(String(i) + " - duration: "+ String(duration) + " |Perc: "+ String(percAtEndStep)+ " - x:" + String(x) + " y:" + String(y) + " newX:" + String(newX) + " height:" + String(height) + " color:" + String(colors[i]));
-        tft.drawRect(x, y, newX-x, graphHeight, colors[i]);
+        Serial.println(String(i) + " - duration: " + String(duration) + " |Perc: " + String(percAtEndStep) + " - x:" + String(x) + " y:" + String(y) + " newX:" + String(newX) + " height:" + String(height) + " color:" + String(colors[i]));
+        tft.drawRect(x, y, newX - x, graphHeight, colors[i]);
         x = newX;
-        
     }
 }
 
-
-void TFT_Display::drawReflowTargetTempLine() {
+void TFT_Display::drawReflowTargetTempLine()
+{
     uint16_t y = tempYonGraph(chosenReflowProfile.startTemps[0]);
     uint16_t x = percentageToX(0);
-    for (float i=0.00; i<=1; i+=0.01) {
+
+    for (float i = 0.00; i <= 1; i += 0.01)
+    {
         float temp = profile->getTargetTempFromPercentage(i);
         uint16_t y2 = tempYonGraph(temp);
         uint16_t x2 = percentageToX(i);
@@ -358,8 +349,8 @@ void TFT_Display::drawReflowTargetTempLine() {
 uint16_t TFT_Display::tempYonGraph(float temp)
 {
 
-    // Calculate the y position of the temperature on the graph based on the min and max temperatures and the min and max y of the graph the higher the temperature the lower the y values goes
 
+    // Calculate the y position based on the current temperature on the graph taking account for the Y start position and the height of the graph the y start is at the end of the graph
     float y = graphXY.y - (graphHeight * ((temp - minTemp) / (maxTemp - minTemp)));
 
     return y;
@@ -367,7 +358,6 @@ uint16_t TFT_Display::tempYonGraph(float temp)
 
 uint16_t TFT_Display::tempYonGraph(float *temp)
 {
-
     float y = graphXY.y - (graphHeight * ((*temp - minTemp) / (maxTemp - minTemp)));
     return y;
 }

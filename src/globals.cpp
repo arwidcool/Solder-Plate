@@ -62,7 +62,7 @@ uint16_t cool_COLOR = 0x00a8;
 
 // These are the reflow profiles that you can choose from, you can add more if you want (up to 5) but you will have to change the nReflowProfiles variable to the number of profiles you have
 
-int nReflowProfiles = 3;
+int nReflowProfiles = 4;
 
 ReflowProfile reflowProfiles[] = {
     // 138c profile Sn42Bi58
@@ -74,13 +74,32 @@ ReflowProfile reflowProfiles[] = {
                       ReflowStep(ReflowProcessState::DONE, 0, 0)},
                   "138c Sn42Bi58\0"),
 
-    ReflowProfile(new ReflowStep[5]{ReflowStep(ReflowProcessState::PREHEAT, 100, 150), ReflowStep(ReflowProcessState::SOAK, 30, 180), ReflowStep(ReflowProcessState::REFLOW, 80, 220, EASE_IN_OUT), ReflowStep(ReflowProcessState::COOL, 30, 183), ReflowStep(ReflowProcessState::DONE, 0, 0)}, "183C Sn63 Pb37 \0"),
+
+// The profile target says to get to 100c in 30 seconds but our hotplate can not do that so we extended the time to 120 seconds and combine the 150 and 183c steps into one step
+// With a 12V PSU it also takes a while to reach these high temps so we increase the times a bit, experemintation is needed for different boards.
+    ReflowProfile(new ReflowStep[5]{ReflowStep(ReflowProcessState::PREHEAT, 120, 100,EASE_OUT), 
+                      ReflowStep(ReflowProcessState::SOAK, 150, 183,EASE_IN), 
+                      ReflowStep(ReflowProcessState::REFLOW, 110, 235, EASE_OUT), 
+                      ReflowStep(ReflowProcessState::COOL, 30, 80,EASE_OUT), 
+                      ReflowStep(ReflowProcessState::DONE, 0, 0)},
+                    "183C Sn63 Pb37 \0"),
+
+
+    ReflowProfile(new ReflowStep[5]{ReflowStep(ReflowProcessState::PREHEAT, 120, 77,LINEAR), 
+                      ReflowStep(ReflowProcessState::SOAK, 180, 135,LINEAR), 
+                      ReflowStep(ReflowProcessState::REFLOW, 110, 211, LINEAR), 
+                      ReflowStep(ReflowProcessState::COOL, 30, 80,EASE_OUT), 
+                      ReflowStep(ReflowProcessState::DONE, 0, 0)},
+                    "RAMP HOLD 235c\0"),
+
+
     ReflowProfile(new ReflowStep[5]{ReflowStep(
                     ReflowProcessState::PREHEAT, 200, 100,MID_RAMP_HOLD), 
                     ReflowStep(ReflowProcessState::SOAK, 150, 150,FAST_RAMP_HOLD), 
                     ReflowStep(ReflowProcessState::REFLOW, 150, 220, SLOW_RAMP_HOLD), 
                     ReflowStep(ReflowProcessState::COOL, 200, 0,LINEAR), 
-                    ReflowStep(ReflowProcessState::DONE, 0, 0)}, "Tuning Profile \0"),
+                    ReflowStep(ReflowProcessState::DONE, 0, 0)},
+                     "Tuning Profile \0"),
 
 };
 
