@@ -37,8 +37,8 @@ void TemperatureController::checkPluggedInThermistors()
         // debugC(isPluggedIn == 1 ? "true" : "false");
     }
 
-    debugC("Active thermistor count: ");
-    debugC(activeThermistorCount);
+    //debugC("Active thermistor count: ");
+   // debugC(activeThermistorCount);
 }
 
 float TemperatureController::getThermistorTempFast(uint8_t thermistorIndex)

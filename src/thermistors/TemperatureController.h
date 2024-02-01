@@ -1,8 +1,9 @@
 #ifndef TEMPERATURE_CONTROLLER_H
 #define TEMPERATURE_CONTROLLER_H
 
-// #include "Thermistor.h"
-#include "../globals.h"
+
+#include "Thermistor.h"
+
 
 
 
