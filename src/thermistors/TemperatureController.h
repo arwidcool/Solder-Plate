@@ -6,7 +6,7 @@
 
 
 
-extern Thermistor thermistors[6];
+
 
 class TemperatureController
 {

@@ -1,13 +1,11 @@
-#ifndef __reflow_h__
-#define __reflow_h__
+#ifndef _REFLOW_PROCESSSTATE_H_
+#define _REFLOW_PROCESSSTATE_H_
 #include "./common.h"
 #include <EEPROM.h>
 #include "StopWatch.h"
-#include "thermistors/Thermistor.h"
+#include "PID/PidController.h"
 
-
-
-
+extern PidController pidController;
 
 // STATE MACHINE
 enum ReflowProcessState
@@ -41,6 +39,7 @@ enum ReflowStepEaseFunction
     MID_RAMP_HOLD,
     FAST_RAMP_HOLD
 };
+
 class ReflowStep
 {
 public:
@@ -111,11 +110,16 @@ public:
         }
     }
 };
+#endif
+
+#ifndef __reflow_h__
+#define __reflow_h__
 
 #define PROFILE_SERIALIZED_SIZE 40
 #define PROFILE_SERIALIZED_NAME_SIZE 20
 #define STEPINDEX(step) (step.state - PREHEAT)
 #define TOMILLIS(x) (((uint32_t)x) * (uint32_t)1000)
+
 class ReflowProfile
 {
 public:
@@ -140,11 +144,13 @@ public:
     uint8_t endTemps[5] = {0};
     uint8_t startTemps[5] = {0};
     StopWatch timer;
+    uint8_t plateTemp = 0;
 
-    void start()
+    void start(uint8_t plateTemp)
     {
         timer = StopWatch(StopWatch::MILLIS);
         timer.start();
+        this->plateTemp = plateTemp;
     }
 
     void calculateValues()
@@ -163,8 +169,15 @@ public:
 
         // We will grab the current PCB temp from the PID as the start temp otherwise the PID will be off
 
+        if (plateTemp > 30 && plateTemp < 60)
+        {
+            startTemps[0] = plateTemp; // USe ambient temp as the starting temp for the first step
+        }
 
-          startTemps[0] = 20; // USe ambient temp as the starting temp for the first step
+        else
+        {
+            startTemps[0] = 20;
+        }
 
         endTemps[0] = steps[0].calcTempAtPercentage(startTemps[0], 1);
         endTemps[1] = steps[1].calcTempAtPercentage(endTemps[0], 1);

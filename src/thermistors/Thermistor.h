@@ -5,6 +5,8 @@
 #include <voltageReference/AnalogRef.h>
 #include <common.h>
 
+
+
 struct Coefficents
 {
     float a;

@@ -1,6 +1,7 @@
 #include "./globals.h"
 #include "./EEPROMDataManager.h"
 #include "Adafruit_ST7789.h"
+#include "thermistors/TemperatureController.h"
 
 
 
@@ -30,7 +31,7 @@ TempCalibration calibration_100K_3950 = {25, 100000, 107, 4957, 167, 1000};
 // To measure the resistence turn off the controller completley and measure between GND and the left pin of the connector with the thermistor unplugged
 
 // 2.5k reference = Best accuracy around 138C
-Thermistor thermistor1(THERMISTOR1_PIN, 2545 , ThermistorZ_Placement::TOP, ThermistorXY_Placement::MIDDLE);
+Thermistor thermistor1(THERMISTOR1_PIN, 2545 , ThermistorZ_Placement::ON_PCB, ThermistorXY_Placement::MIDDLE);
 Thermistor thermistor2(THERMISTOR2_PIN, 2125, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE);
 Thermistor thermistor3(THERMISTOR3_PIN, 9100, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE_LOW_TEMP);
 // 1k reference = Best accuracy around 173c
@@ -66,9 +67,9 @@ int nReflowProfiles = 3;
 ReflowProfile reflowProfiles[] = {
     // 138c profile Sn42Bi58
     ReflowProfile(new ReflowStep[5]{
-                      ReflowStep(ReflowProcessState::PREHEAT, 100, 100, EASE_IN),
+                      ReflowStep(ReflowProcessState::PREHEAT, 100, 100, EASE_OUT),
                       ReflowStep(ReflowProcessState::SOAK, 90, 140,EASE_IN_OUT),
-                      ReflowStep(ReflowProcessState::REFLOW, 90, 185, HALF_SINE),
+                      ReflowStep(ReflowProcessState::REFLOW, 90, 170, HALF_SINE),
                       ReflowStep(ReflowProcessState::COOL, 50, 85, EASE_IN),
                       ReflowStep(ReflowProcessState::DONE, 0, 0)},
                   "138c Sn42Bi58\0"),
@@ -94,3 +95,4 @@ EEPROMDataManager eepromDataManager = EEPROMDataManager();
 
 PidControllerData pidControllerData = {0 /*currentTemp*/, 60 /*TargetTemp*/, 255 /*PWM*/};
 PidController pidController = PidController(&pidControllerData);
+;

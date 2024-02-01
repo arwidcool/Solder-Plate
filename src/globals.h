@@ -1,11 +1,18 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
+
 #include "./common.h"
 #include "./thermistors/Thermistor.h"
+#include "./thermistors/ThermistorLookup.h"
+
 #include "./reflow.h"
 #include "./EEPROMDataManager.h"
 #include "./PID/PidController.h"
-#include "./thermistors/ThermistorLookup.h"
+
+#include "./thermistors/TemperatureController.h"
+
+
+
 
 
 
@@ -29,11 +36,14 @@
 
 
 //PID Controller values
-#define PID_P 2
-#define PID_I 2
-#define PID_D 5
-#define PID_WINDUP_MIN -100
-#define PID_WINDUP_MAX 255
+#define PID_P .3
+#define PID_I 1
+#define PID_D .2
+
+#define PID_WINDUP_MIN 60
+#define PID_WINDUP_MAX -20
+
+
 //This gets reversed inside the PID controller
 #define PID_OUTPUT_MIN 0
 #define PID_OUTPUT_MAX 255
@@ -64,7 +74,12 @@ extern uint16_t reflow_COLOR;
 extern uint16_t preheat_COLOR;
 extern uint16_t soak_COLOR;
 extern uint16_t cool_COLOR;
+
 extern ThermistorLookup thermistorLookup;
+
+
+
+
 
 
 

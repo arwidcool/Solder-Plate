@@ -1,6 +1,7 @@
 #ifndef __basestatechange_h__
 #define __basestatechange_h__
 #include <Arduino.h>
+
 template <typename State>
 class StateChangeEvent
 {
@@ -58,7 +59,9 @@ public:
 enum ThermistorZ_Placement
 {
     TOP,
-    BOTTOM
+    BOTTOM,
+    ON_PCB
+
 };
 
 enum ThermistorXY_Placement
@@ -66,7 +69,7 @@ enum ThermistorXY_Placement
     MIDDLE,
     SIDE,
     MIDDLE_LOW_TEMP,
-    MIDDLE_HIGH_TEMP
+    MIDDLE_HIGH_TEMP,
 
 };
 

@@ -170,10 +170,8 @@ const LookupEntry lookupSide[] = {
 const LookupEntry noScaling[]{
 
     {0, 1},
-
     {100, 1},
-
-    {200, 1}
+    {300, 1}
 
 };
 

@@ -66,6 +66,11 @@ const LookupEntry *ThermistorLookup::getTable(ThermistorZ_Placement zPlacement, 
             tableSize = sizeof(lookupSide) / sizeof(LookupEntry);
             return lookupSide;
 
+            case ON_PCB:
+
+            return noScaling;
+
+
         }
     case BOTTOM:
 
@@ -80,16 +85,15 @@ const LookupEntry *ThermistorLookup::getTable(ThermistorZ_Placement zPlacement, 
             tableSize = sizeof(lookupSide) / sizeof(LookupEntry);
             return lookupSide;
 
-            case MIDDLE_LOW_TEMP:
+        case MIDDLE_LOW_TEMP:
 
             tableSize = sizeof(lookupBottomMiddle) / sizeof(LookupEntry);
             return lookupBottomMiddle;
 
-            case MIDDLE_HIGH_TEMP:
+        case MIDDLE_HIGH_TEMP:
 
             tableSize = sizeof(lookupBottomMiddle) / sizeof(LookupEntry);
             return lookupBottomMiddle;
-
         }
     }
 }

@@ -4,7 +4,6 @@
 #include <Arduino.h>
 #include <ArduPID.h>
 
-
 struct PidControllerData { double currentTemp; double setPoint; double targetTemp;};
 
 class PidController

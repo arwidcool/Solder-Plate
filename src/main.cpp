@@ -15,7 +15,7 @@
 #include "tools/ExecutionTimer.h"
 #include "StopWatch.h"
 #include "thermistors/Thermistor.h"
-#include "thermistors/TemperatureController.h"
+
 
 #define MOSTFET_PIN 17
 
@@ -25,7 +25,8 @@ double pwmValue = 255;
 
 ExecutionTimer executionTimer;
 
-TemperatureController tempController;
+TemperatureController tempController ;
+
 
 Buttons buttons = Buttons();
 LEDS leds = LEDS();
@@ -107,12 +108,12 @@ void loop()
       tftDisplay.init(&chosenReflowProfile);
       tempController.checkPluggedInThermistors();
 
-      chosenReflowProfile.start();
+      chosenReflowProfile.start(tempController.getPlateTemperature());
       // Start the PID
       pidController.start();
       thermMilisTimer.start();
       thermTimer.start();
-      Serial.println("Time,Therm1,Therm2,Therm3,Therm4,Therm5,Therm6,,Scaling1,Scaling2,Scaling3,Scaling4,Scaling5,Scaling6,Averaged1,Weighting1,Weighting2,Weighting3");
+      //Serial.println("Time,Therm1,Therm2,Therm3,Therm4,Therm5,Therm6,,Scaling1,Scaling2,Scaling3,Scaling4,Scaling5,Scaling6,Averaged1,Weighting1,Weighting2,Weighting3");
     }
   }
   state = newState;

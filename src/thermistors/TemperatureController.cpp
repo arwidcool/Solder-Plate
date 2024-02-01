@@ -1,5 +1,8 @@
 #include "TemperatureController.h"
 
+extern Thermistor thermistors[6];
+
+
 TemperatureController::TemperatureController()
 {
 }
@@ -37,8 +40,8 @@ void TemperatureController::checkPluggedInThermistors()
         // debugC(isPluggedIn == 1 ? "true" : "false");
     }
 
-    debugC("Active thermistor count: ");
-    debugC(activeThermistorCount);
+    Serial.print("Active thermistor count: ");
+    Serial.println(activeThermistorCount);
 }
 
 float TemperatureController::getThermistorTempFast(uint8_t thermistorIndex)
