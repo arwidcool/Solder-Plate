@@ -5,28 +5,23 @@ This repository contains the source code and design files for a Solder Plate Con
 
 ## Features
 - Precise temperature control for soldering SMD components. with support of **up to 6 thermistors**.
+- Cheap and widely available MCU- Atmega4809 and low BOM cost
 - Custom PCB design with 2 version: Single area control (Completed) and 4 independent heating zones control(In works)
-- User-friendly interface for easy operation utalizing a 2.0 Inch tft of reflow profile target and actual reflow temp and 0.96 OLED for menu and reflow profile current steps with extra information
+- Detacbale hotplate allows for use of new heatplate designs including larger ones
 - Programming via USB
 - PlatformIO integration for streamlined development.
 - wifi via esp8266-12f module (with wifi version - In Development).
 - Based on Reflow Hotplate by DerSpatz with some improvements
-
-## Feature List 
 - Oled for menu navigation, debbuging and thermistor info
 - TFT for reflow profile target and actual temp
 - 4 buttons for menu nativation
 - Current sense IC for current monitoring
 - 3 indicator LED's. They work for both menu and REFLOW profiles (Blinking while on the current stage and solid once profile stage is complete)
 - Buzzer for complete notification
-- USB for programming
-- WIFI module for web interface (In development)
 - Buck- Converter for input voltage allowing up to 24V in
 - 24V+ rated input voltage stage components allowing theoretcally up to 24V to be used (not yet tested)
 - Optional fan for cooling stage (Not yet implimted)
-- Detacbale hotplate allows for use of new heatplate designs including larger ones
-- Included files for a case and guard for the detachable plate 
-
+- Included files for a case and guard for the detachable plate terminal guard
 
 
 ![Screenshot](/Renders/Controller%201mos%202.JPG)
