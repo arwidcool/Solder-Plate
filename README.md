@@ -42,7 +42,9 @@ This repository contains the source code and design files for a Solder Plate Con
 
 ### Hardware Setup
 
-1. **PCB Fabrication:** Fabricate the PCB using the provided gerber files. You can use these to order the naked PCB from services like JLCPCB
+*** MAKE SURE YOU ORDER THE HOTPLATE IN BLACK. IT WILL NOT DISCOLOR AND HOLDS UP A LOT BETTER TO HEAT CYCLES ***
+
+1. **PCB Fabrication:** Fabricate the PCB using the provided gerber files. You can use these to order the naked PCB from services like JLCPCB. 
 2. **Component Assembly:** Solder the components onto the PCB as per the schematic or choose a SMT assembly service like the ones from JLCPCB
 3. **Power Supply Connection:** Choose a suitable power supply. 12V 5A tested, 24v 5A compatible. Use of more then 5A requires a appropriate FUSE to be chosen and solder on place of F1
 
@@ -89,7 +91,31 @@ JCM from the Discord explained the process pretty good:
    8. Press Go
 
 
+3. **Setting up the controller**
+   1. Order 100K NTC Glass thermistors  Use for dev was : 100K Ohm Resistor NTC 3950->  https://www.aliexpress.com/item/32862228715.html?spm=a2g0o.order_list.order_list_main.11.1f0a1802Lw8YGL
+   2. Using either the potentiometer or soldering the resistor beside it choose the resistor reference value (2.5Kohm is standard)
+   3. You can modify the thermistor settings in Global.ccp file, it is all explained in there
+   4. Attach the sensors to the hotplate using High tem Kapton Tape
+   5. Reccomended is 3 sensors on the bottom middle of plate all with 3 different refernece resistor values for accuracy across all temperature ranges and 1 thermistor held by a pair of helping hangs placed so the head touches somewhere on the PCB to be refllowed
+   By default this is set as thermistor 1:
 
+   Here are the defualt thermistor settings: 
+   Thermistor thermistor1(THERMISTOR1_PIN, 2545 , ThermistorZ_Placement::ON_PCB, ThermistorXY_Placement::MIDDLE); -> 2545Kohm set refrence
+   Thermistor thermistor2(THERMISTOR2_PIN, 2125, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE); - > 2125Kohm set refrence
+   Thermistor thermistor3(THERMISTOR3_PIN, 9100, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE_LOW_TEMP); -> 9100Kohm set refrence
+   Thermistor thermistor4(THERMISTOR4_PIN, 564, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE_HIGH_TEMP);564Kohm set refrence
+
+   These settings are measured between a GND point anywhere on the board and the LEFT pin of the connector with the thermistor UNPLUGGED
+
+   you can measure and set those to the preset values or modify the values in globals.ccp to match your thermistors.
+
+   If a thermistor is set to bottom a automatic scaling factor for the difference difference in plate temp is set that was aquired through lots of datalogging and computations
+
+   If a thermistor is set to SIDE there is no scaling factor and will throw off the reading acorss the center of the plate (overall will be lower)
+
+   When using the Thermistor with placement "ON_PCB" That thermistor has a weighting factor of 10 and has the biggest effect on the read temperature.
+
+   The normal weighting factor is between 0.1 and 1.5 for the others.
 
 ### Software Installation
 
