@@ -57,22 +57,36 @@ The MCU can be programmed with JTAG2UPDI (https://github.com/ElTangas/jtag2updi)
 
 JCM from the Discord explained the process pretty good:
 
-Download/Clone this project: https://github.com/ElTangas/jtag2updi and rename the folder "source" to "jtag2updi" (otherwise the Arduino IDE won't like it)
-Open jtag2updi/jtag2updi.ino in your Arduino IDE
-Configure the flasher options for your Arduino Nano and flash it
-Connect D6 of your Arduino Nano over the 4.7kOhm resistor to the UPDI pin of the board and 5V to 5V and GND to 0V
-Add the MegaCoreX hardware package to the Ardunio IDE (see https://github.com/MCUdude/MegaCoreX#how-to-install)
-Install the Adafruit_GFX, Adafruit_SSD1306, DallasTemperature and Debounce2 libraries with the Library Manager (you might not need all of them depending on which firmware you plan to use)
-Download and open the ino you want to upload to the ATMEGA4809 (https://github.com/DerSpatz/PCB-reflow-solder-heat-plate/blob/main/Firmware/pcb_reflow_fw/pcb_reflow_fw.ino)
-Select the options for the programmer (Board: ATmega4809, Clock: Internal 16 MHz, BOD: 2.6V or 2.7V, EEPROM: retained, Pinout: 48 pin standard, Reset pin: Reset, Bootloader:Optiboot:Uart0(Defualt pins)) and select the port of your Ardunio Nano as Port
-Make sure the programmer selected is SerialUPDI
-Select Burn Bootloader and see if it runs through
-Temporarily disable auto reset for the Arduino Nano: https://playground.arduino.cc/Main/DisablingAutoResetOnSerialConnection/ (not sure if it's needed for the Nano, it was for my Mega) - Not needed for arduino nano
-Select Sketch > Upload using Programmer (normal Upload will not work)
+- Download/Clone this project: https://github.com/ElTangas/jtag2updi and rename the folder "source" to "jtag2updi" (otherwise the Arduino IDE won't like it)
+- Open jtag2updi/jtag2updi.ino in your Arduino IDE
+- Configure the flasher options for your Arduino Nano and flash it
+- Connect D6 of your Arduino Nano over the 4.7kOhm resistor to the UPDI pin of the board and 5V to 5V and GND to 0V
+- Add the MegaCoreX hardware package to the Ardunio IDE (see https://github.com/MCUdude/MegaCoreX#how-to-install)
+- Install the Adafruit_GFX, Adafruit_SSD1306, DallasTemperature and Debounce2 libraries with the Library Manager (you might not need all of them depending on which firmware you plan to use)
+- Download and open the ino you want to upload to the ATMEGA4809 (https://github.com/DerSpatz/PCB-reflow-solder-heat-plate/blob/main/Firmware/pcb_reflow_fw/pcb_reflow_fw.ino)
+- Select the options for the programmer (Board: ATmega4809, Clock: Internal 16 MHz, BOD: 2.6V or 2.7V, EEPROM: retained, Pinout: 48 pin standard, Reset pin: Reset, Bootloader:Optiboot:Uart0(Defualt pins)) and select the port of your Ardunio Nano as Port
+- Make sure the programmer selected is SerialUPDI
+- Select Burn Bootloader and see if it runs through
 
 
-2. **MicroUSB Programming:**
-   - After flashing the bootloader, the ATmega4809 can be programmed via the microUSB connection using PlatformIO
+2. **MicroUSB Programming And Firmware Upload:**
+
+   - Using Platformio:
+   1. After flashing the bootloader, the ATmega4809 can be programmed via the microUSB connection using PlatformIO by building the project and upload
+
+   // Use a AVR programmer or the jtag2updi modified arduino nano/uno menitoned above
+   - Using AVRDude
+   1. Folow instructions on : https://github.com/ElTangas/jtag2updi?tab=readme-ov-file#using-with-avrdude
+   - Using AVRDUDESS (AVRDUDE with GUI interface) -- This section many not be completley finished
+   1. Download and install AVRDUDE 6.3 :https://download-mirror.savannah.gnu.org/releases/avrdude/
+   2. Download AVRDUDESS : https://github.com/ZakKemble/AVRDUDESS
+   3. Download the custom Avrdude config: https://svn.savannah.gnu.org/viewvc/*checkout*/avrdude/trunk/avrdude/avrdude.conf.in?revision=1422
+   4. Select the custom avrdude.conf from Option ->  avrdude.conf - > choose where you downloaded the custom conf file
+   5. Choose the programmer as jtag2updi 
+   6. Choose the COMPORT where the jtag2updi modified arduino is connected to
+   7. Choose the Flash binary under the precomplied binary directory -> set to Write
+   8. Press Go
+
 
 ### Software Installation
 
@@ -92,8 +106,8 @@ To open a PlatformIO project in VSCode with the PlatformIO extension, follow the
 
 ### Usage
 
-Power On: Connect the hotplate to the power source.
-Set Temperature: Use the interface to choose the desired reflow profile
+Power On: Connect the controller with a 12V 5A(Tested working) or 24V 5A PSU (Untested)
+Set Profile: Navigate the menu and choose the desired reflow profile
 Start Soldering: Place your PCB and components on the hotplate and start the profile
 
 ### Customization

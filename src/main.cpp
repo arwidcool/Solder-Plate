@@ -66,6 +66,8 @@ void setup()
   thermTimer.setResolution(StopWatch::Resolution::MILLIS);
 
   thermMilisTimer.setResolution(StopWatch::Resolution::MILLIS);
+
+  Serial.println("Setup done");
 }
 void loop()
 {
