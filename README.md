@@ -35,15 +35,16 @@ This repository contains the source code and design files for a Solder Plate Con
 ### Prerequisites
 
 - PlatformIO Core or PlatformIO IDE.
-- ATmega4809 microcontroller.
+- ATmega4809 microcontroller and all the BOM components
 - Basic soldering tools and electronic assembly skills.
-- Access to a PCB manufacturing service.
+- Access to a PCB manufacturing service or soldering equipment (solder paste, hot air gun, tweezers)
+- Some basic technical skills
 
 ### Hardware Setup
 
-1. **PCB Fabrication:** Fabricate the PCB using the provided design files.
-2. **Component Assembly:** Solder the components onto the PCB as per the schematic.
-3. **Power Supply Connection:** Connect a suitable power supply. 12V 5A tested, 24v 5A compatible. Use of more then 5A requires a appropriate FUSE to be chosen and solder on place of F1
+1. **PCB Fabrication:** Fabricate the PCB using the provided gerber files. You can use these to order the naked PCB from services like JLCPCB
+2. **Component Assembly:** Solder the components onto the PCB as per the schematic or choose a SMT assembly service like the ones from JLCPCB
+3. **Power Supply Connection:** Choose a suitable power supply. 12V 5A tested, 24v 5A compatible. Use of more then 5A requires a appropriate FUSE to be chosen and solder on place of F1
 
 ### Preparing the ATmega4809
 
@@ -65,7 +66,7 @@ JCM from the Discord explained the process pretty good:
 - Install the Adafruit_GFX, Adafruit_SSD1306, DallasTemperature and Debounce2 libraries with the Library Manager (you might not need all of them depending on which firmware you plan to use)
 - Download and open the ino you want to upload to the ATMEGA4809 (https://github.com/DerSpatz/PCB-reflow-solder-heat-plate/blob/main/Firmware/pcb_reflow_fw/pcb_reflow_fw.ino)
 - Select the options for the programmer (Board: ATmega4809, Clock: Internal 16 MHz, BOD: 2.6V or 2.7V, EEPROM: retained, Pinout: 48 pin standard, Reset pin: Reset, Bootloader:Optiboot:Uart0(Defualt pins)) and select the port of your Ardunio Nano as Port
-- Make sure the programmer selected is SerialUPDI
+- Make sure the programmer selected is SerialUPDI or JTAG2UPDI
 - Select Burn Bootloader and see if it runs through
 
 
@@ -73,10 +74,10 @@ JCM from the Discord explained the process pretty good:
 
    - Using Platformio:
    1. After flashing the bootloader, the ATmega4809 can be programmed via the microUSB connection using PlatformIO by building the project and upload
-
    // Use a AVR programmer or the jtag2updi modified arduino nano/uno menitoned above
    - Using AVRDude
    1. Folow instructions on : https://github.com/ElTangas/jtag2updi?tab=readme-ov-file#using-with-avrdude
+   2. Example : avrdude -c jtag2updi -P com7 -p t1614
    - Using AVRDUDESS (AVRDUDE with GUI interface) -- This section many not be completley finished
    1. Download and install AVRDUDE 6.3 :https://download-mirror.savannah.gnu.org/releases/avrdude/
    2. Download AVRDUDESS : https://github.com/ZakKemble/AVRDUDESS
@@ -86,6 +87,8 @@ JCM from the Discord explained the process pretty good:
    6. Choose the COMPORT where the jtag2updi modified arduino is connected to
    7. Choose the Flash binary under the precomplied binary directory -> set to Write
    8. Press Go
+
+
 
 
 ### Software Installation
