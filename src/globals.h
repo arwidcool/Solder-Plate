@@ -36,12 +36,12 @@
 
 
 //PID Controller values
-#define PID_P .05
-#define PID_I .02
-#define PID_D .1
+#define PID_P 60
+#define PID_I 5
+#define PID_D 100
 
 #define PID_WINDUP_MIN -100
-#define PID_WINDUP_MAX 255
+#define PID_WINDUP_MAX 200
 
 ////////////////////////////////////////
 //The actual PWM of the mosfet is 0 for max and 255 for off

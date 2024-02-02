@@ -11,6 +11,8 @@ enum DisplayTextAlignment {
     CENTER,
     END
 };
+
+
 class OledDisplay {
     public:
         OledDisplay();

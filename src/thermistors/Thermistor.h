@@ -63,7 +63,8 @@ public:
     ThermistorZ_Placement zPlacement;
     float scalingFactor;
     float currenTemperature;
-
+    float weightFactor;
+    
 private:
     const double K = 273.15;
     float sensorResistance;
@@ -72,7 +73,7 @@ private:
     Coefficents coefficents;
     float referenceResistance;
     TempCalibration calibration;
-    float weightFactor;
+
 };
 
 #endif // THERMISTOR_H

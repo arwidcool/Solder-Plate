@@ -1,5 +1,8 @@
 #include "tft.h"
 
+
+
+
 // LCD display pins
 #define TFT_CS 7
 #define TFT_RST 12
@@ -323,7 +326,7 @@ void TFT_Display::drawGraphReflowStagesBackground()
         float duration = profile->endTimes[i];
         float percAtEndStep = duration / totalDuration;
         float newX = percentageToX(percAtEndStep);
-        Serial.println(String(i) + " - duration: " + String(duration) + " |Perc: " + String(percAtEndStep) + " - x:" + String(x) + " y:" + String(y) + " newX:" + String(newX) + " height:" + String(height) + " color:" + String(colors[i]));
+      //  debugLine.println(String(i) + " - duration: " + String(duration) + " |Perc: " + String(percAtEndStep) + " - x:" + String(x) + " y:" + String(y) + " newX:" + String(newX) + " height:" + String(height) + " color:" + String(colors[i]));
         tft.drawRect(x, y, newX - x, graphHeight, colors[i]);
         x = newX;
     }
@@ -339,7 +342,7 @@ void TFT_Display::drawReflowTargetTempLine()
         float temp = profile->getTargetTempFromPercentage(i);
         uint16_t y2 = tempYonGraph(temp);
         uint16_t x2 = percentageToX(i);
-        // Serial.println(String(i) + " - temp: "+ String(temp) + " - x:" + String(x) + " y:" + String(y) + " x2:" + String(x2) + " y2:" + String(y2));
+        // debugLine.println(String(i) + " - temp: "+ String(temp) + " - x:" + String(x) + " y:" + String(y) + " x2:" + String(x2) + " y2:" + String(y2));
         tft.drawLine(x, y, x2, y2, ST77XX_WHITE);
         x = x2;
         y = y2;

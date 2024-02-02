@@ -193,37 +193,16 @@ float Thermistor::getTemperatureFast()
     // Get only one reading
     getResistance();
 
-    float temp = (int)1 / (coefficents.a + coefficents.b * log(sensorResistance) + coefficents.c * (pow(log(sensorResistance), 3))) - K;
-
-    // The scaling factor should only be applied when the plate is being heated up -> 60C seems like a good threshold unless you live in the sahara desert with no AC
-
-    // Its non-linear so it will be more accurate so we will probably need to impliment a refrence table for the scaling factor this is just a rough estimate it will be based on a sensor calibrated on the top middle of the plate
-
-    // float scalingFactor = ThermistorLookup::getFactor(thermistorPin, temp);
-    return temp;
+    return (int)1 / (coefficents.a + coefficents.b * log(sensorResistance) + coefficents.c * (pow(log(sensorResistance), 3))) - K;
 }
 
 float Thermistor::getResistance()
 {
-
-    float systemVoltage = analogRef.calculateSystemVoltage();
-
-    // int raw = analogRead(thermistorPin);
-
-    // // Get resistance value
-    // float buffer = raw * systemVoltage;
-    // float vOut = (buffer) / 1023;
-
-    // // Calculate the resistance of the thermistor with the system voltage accounted for
-    // buffer = (systemVoltage / vOut) - 1;
-
-    // // return the resistence
-    // sensorResistance = setRes * buffer;
+    float systemVoltage = analogRef.calculateSystemVoltage(); // Get the system voltage
 
     int sensorValue = analogRead(thermistorPin);                      // Read the analog value (0-1023)
     float voltage = sensorValue * (systemVoltage / 1023.0);           // Convert to voltage
-    float R_unknown = (setRes * (systemVoltage - voltage)) / voltage; // Calculate the unknown resistor's value
-    sensorResistance = R_unknown;
+    sensorResistance = (setRes * (systemVoltage - voltage)) / voltage; // Calculate the unknown resistor's value
 
     return sensorResistance;
 }

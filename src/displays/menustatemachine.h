@@ -4,6 +4,16 @@
 #include "../common.h"
 #include <Arduino.h>
 
+
+#ifdef DEBUG_OLED
+#define debugLine(x)  Serial.println(x)
+#define debugC(x) Serial.print(x)
+#else
+#define debugLine(x)
+#define debugC(x)
+#endif
+
+
 class OledMenuItem
 {
 public:
@@ -49,7 +59,7 @@ public:
             memcpy(this->elements[i].title, elements[i].title, strlen(elements[i].title) + 1);
             this->elements[i].identifier = elements[i].identifier;
 
-            Serial.println(String(this->elements[i].title) + " " + String(elements[i].title));
+            debugLine(String(this->elements[i].title) + " " + String(elements[i].title));
         }
         this->elementsLength = length;
     }
@@ -68,7 +78,7 @@ public:
         {
             if (childrenMatrix[i][0] == curItem)
             {
-                Serial.println(String(childrenMatrix[i][0]) + " " + String(childrenMatrix[i][1]));
+                debugLine(String(childrenMatrix[i][0]) + " " + String(childrenMatrix[i][1]));
                 return children[childrenMatrix[i][1]];
             }
         }
@@ -80,7 +90,7 @@ public:
     {
         curItem++;
         curItem = curItem % elementsLength;
-        Serial.println(String(elements[curItem].title) + " - " + String(curItem));
+        debugLine(String(elements[curItem].title) + " - " + String(curItem));
         return elements[curItem];
     }
 
@@ -92,7 +102,7 @@ public:
         {
             curItem = elementsLength - 1;
         }
-        Serial.println(String(elements[curItem].title) + " - " + String(curItem));
+        debugLine(String(elements[curItem].title) + " - " + String(curItem));
 
         return elements[curItem];
     }

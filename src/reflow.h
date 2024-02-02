@@ -83,6 +83,31 @@ public:
                 // Hold at the target temperature for the remaining half of the time
                 return this->targetTemp;
             }
+
+        case FAST_RAMP_HOLD:
+
+            // Ramp up to the target temperature over the first 25% of the time
+            if (percentage <= 0.25)
+            {
+                return startTemp + (this->targetTemp - startTemp) * (percentage / 0.25);
+            }
+            else
+            {
+                // Hold at the target temperature for the remaining 75% of the time
+                return this->targetTemp;
+            }
+        case SLOW_RAMP_HOLD:
+
+            // Ramp up to the target temperature over the first 75% of the time
+            if (percentage <= 0.75)
+            {
+                return startTemp + (this->targetTemp - startTemp) * (percentage / 0.75);
+            }
+            else
+            {
+                // Hold at the target temperature for the remaining 25% of the time
+                return this->targetTemp;
+            }
         }
     }
 };
@@ -145,8 +170,7 @@ public:
 
         // We will grab the current PCB temp from the PID as the start temp otherwise the PID will be off
 
-            startTemps[0] = 20;
-    
+        startTemps[0] = 20;
 
         endTemps[0] = steps[0].calcTempAtPercentage(startTemps[0], 1);
         endTemps[1] = steps[1].calcTempAtPercentage(endTemps[0], 1);

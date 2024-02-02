@@ -11,6 +11,7 @@ ThermistorLookup::~ThermistorLookup()
 float ThermistorLookup::getFactor(ThermistorZ_Placement zPlacement, ThermistorXY_Placement xyPlacment, uint8_t temperature)
 {
     const LookupEntry *lookupTable = getTable(zPlacement, xyPlacment);
+
     int numEntries = tableSize;
 
     if (lookupTable == noScaling)
@@ -39,7 +40,6 @@ float ThermistorLookup::getFactor(ThermistorZ_Placement zPlacement, ThermistorXY
                 float v0 = lookupTable[i].value;
                 uint8_t t1 = lookupTable[i + 1].temperature;
                 float v1 = lookupTable[i + 1].value;
-
                 float slope = (v1 - v0) / (t1 - t0);
                 return v0 + slope * (temperature - t0);
             }
@@ -63,8 +63,8 @@ const LookupEntry *ThermistorLookup::getTable(ThermistorZ_Placement zPlacement, 
             return noScaling;
         case SIDE:
 
-            tableSize = sizeof(lookupSide) / sizeof(LookupEntry);
-            return lookupSide;
+            tableSize = sizeof(noScaling) / sizeof(LookupEntry);
+            return noScaling;
 
             case ON_PCB:
 
@@ -82,8 +82,8 @@ const LookupEntry *ThermistorLookup::getTable(ThermistorZ_Placement zPlacement, 
             return lookupBottomMiddle;
         case SIDE:
 
-            tableSize = sizeof(lookupSide) / sizeof(LookupEntry);
-            return lookupSide;
+            tableSize = sizeof(lookupBottomMiddle) / sizeof(LookupEntry);
+            return lookupBottomMiddle;
 
         case MIDDLE_LOW_TEMP:
 

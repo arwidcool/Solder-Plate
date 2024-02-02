@@ -78,7 +78,7 @@ ReflowProfile reflowProfiles[] = {
 // The profile target says to get to 100c in 30 seconds but our hotplate can not do that so we extended the time to 120 seconds and combine the 150 and 183c steps into one step
 // With a 12V PSU it also takes a while to reach these high temps so we increase the times a bit, experemintation is needed for different boards.
     ReflowProfile(new ReflowStep[5]{ReflowStep(ReflowProcessState::PREHEAT, 120, 100,EASE_OUT), 
-                      ReflowStep(ReflowProcessState::SOAK, 150, 183,EASE_IN), 
+                      ReflowStep(ReflowProcessState::SOAK, 160, 183,EASE_IN), 
                       ReflowStep(ReflowProcessState::REFLOW, 110, 235, EASE_OUT), 
                       ReflowStep(ReflowProcessState::COOL, 30, 80,EASE_OUT), 
                       ReflowStep(ReflowProcessState::DONE, 0, 0)},

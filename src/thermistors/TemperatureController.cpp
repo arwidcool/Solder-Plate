@@ -40,8 +40,8 @@ void TemperatureController::checkPluggedInThermistors()
         // debugC(isPluggedIn == 1 ? "true" : "false");
     }
 
-    Serial.print("Active thermistor count: ");
-    Serial.println(activeThermistorCount);
+   // Serial.print("Active thermistor count: ");
+  //  Serial.println(activeThermistorCount);
 }
 
 float TemperatureController::getThermistorTempFast(uint8_t thermistorIndex)

@@ -37,11 +37,11 @@ void OledDisplay::handleButtonStateChange(Pair<ButtonKind, StateChangeEvent<Butt
                     {
                         chosenReflowProfile = reflowProfiles[profileIndex];
                         reflowProcessState.set(PREHEAT);
-                        Serial.println("Chosen profile: " + String(chosenReflowProfile.name));
+                        // debugLine.println("Chosen profile: " + String(chosenReflowProfile.name));
                     }
                     else
                     {
-                        Serial.println("Invalid profile index: " + String(profileIndex));
+                        // debugLine.println("Invalid profile index: " + String(profileIndex));
                     }
                 }
                 else
@@ -88,7 +88,7 @@ void OledDisplay::handleDrawThermistorMenu(OledMenuItem menuItem)
 {
    
     int thermistorIndex = menuItem.identifier - MENUITEM_THERMISTOR_START;
-    // Serial.println("Thermistor index: " + String(thermistorIndex));
+    // debugLine.println("Thermistor index: " + String(thermistorIndex));
     if (thermistorIndex == 6)
     {
         // Showing all thermistors values in a row
@@ -189,11 +189,11 @@ void OledDisplay::setup()
     bool initialized = display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
     if (!initialized)
     {
-        Serial.println("OLED Display failed to initialize");
+        // debugLine.println("OLED Display failed to initialize");
     }
     else
     {
-        Serial.println("OLED Display initialized");
+        // debugLine.println("OLED Display initialized");
     }
     display.setRotation(0);
     display.setTextColor(SSD1306_WHITE); // Defaults to white
