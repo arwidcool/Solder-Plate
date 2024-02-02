@@ -3,8 +3,6 @@
 This repository contains the source code and design files for a Solder Plate Controller and detachable hotplate. Processor used is ATmega4809 and is based on the work of DerSpatz: https://github.com/DerSpatz/PCB-reflow-solder-heat-plate
 
 
-![Screenshot](/Renders/Controller%201mos%202.JPG)
-
 ## Features
 - Precise temperature control for soldering SMD components. with support of **up to 6 thermistors**.
 - Custom PCB design with 2 version: Single area control (Completed) and 4 independent heating zones control(In works)
@@ -14,7 +12,30 @@ This repository contains the source code and design files for a Solder Plate Con
 - wifi via esp8266-12f module (with wifi version - In Development).
 - Based on Reflow Hotplate by DerSpatz with some improvements
 
+## Feature List 
+- Oled for menu navigation, debbuging and thermistor info
+- TFT for reflow profile target and actual temp
+- 4 buttons for menu nativation
+- Current sense IC for current monitoring
+- 3 indicator LED's. They work for both menu and REFLOW profiles (Blinking while on the current stage and solid once profile stage is complete)
+- Buzzer for complete notification
+- USB for programming
+- WIFI module for web interface (In development)
+- Buck- Converter for input voltage allowing up to 24V in
+- 24V+ rated input voltage stage components allowing theoretcally up to 24V to be used (not yet tested)
+- Optional fan for cooling stage (Not yet implimted)
+- Detacbale hotplate allows for use of new heatplate designs including larger ones
+- Included files for a case and guard for the detachable plate 
+
+
+
+![Screenshot](/Renders/Controller%201mos%202.JPG)
+![Screenshot](/Renders/plate%201%20zone.JPG)
+
+
+
 ## Getting Started
+
 
 ### Prerequisites
 
