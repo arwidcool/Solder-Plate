@@ -99,14 +99,22 @@ JCM from the Discord explained the process pretty good:
    5. Reccomended is 3 sensors on the bottom middle of plate all with 3 different refernece resistor values for accuracy across all temperature ranges and 1 thermistor held by a pair of helping hangs placed so the head touches somewhere on the PCB to be refllowed
    By default this is set as thermistor 1:
 
-   Here are the defualt thermistor settings: 
+   *** IMPORTANT: Thermistors 1 is ONLY available on the hotplate. Thermistor 6 is only available on the controller via connector 5**
 
-   - Thermistor thermistor1(THERMISTOR1_PIN, 2545 , ThermistorZ_Placement::ON_PCB, ThermistorXY_Placement::MIDDLE); -> 2545Kohm set refrence
-   - Thermistor thermistor2(THERMISTOR2_PIN, 2125, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE); - > 2125Kohm set refrence
-   - Thermistor thermistor3(THERMISTOR3_PIN, 9100, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE_LOW_TEMP); -> 9100Kohm set refrence
-   - Thermistor thermistor4(THERMISTOR4_PIN, 564, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE_HIGH_TEMP);-> 564Kohm set refrence
 
-   The set resistence is measured between a GND point anywhere on the board and the LEFT pin of the connector with the thermistor UNPLUGGED
+   You can solder the thermistors directly on the hotplatte or use them with the connector. Please update the thermistor settings to the way you have them set-up.
+
+   Here are the defualt thermistor settings, The assume that the thermistors are soldered on the plate for 1,2,3: 
+   Thermistors 6 on the connector number 5, touching the PCB to be soldered.
+
+   - Thermistor thermistor1(THERMISTOR2_PIN, 2125, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE); //- > 2125Kohm set refrence
+   - Thermistor thermistor2(THERMISTOR3_PIN, 9100, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE_LOW_TEMP);// -> 9100Kohm set refrence
+   - Thermistor thermistor3(THERMISTOR4_PIN, 564, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE_HIGH_TEMP);//-> 564Kohm set refrence
+   - Thermistor thermistor6(THERMISTOR1_PIN, 2545 , ThermistorZ_Placement::ON_PCB, ThermistorXY_Placement::MIDDLE);// -> 2545Kohm set refrence -> This thermistor is set directly touching the PCB to be soldered
+
+   If you wish to only use the connectors use 2,3,4 and update the Globals .cpp to match your settings
+      
+   The set resistence is measured between a GND point anywhere on the board and the LEFT pin of the connector with the thermistor UNPLUGGED and the MODULE POWERED OFF!!!!
 
    you can measure and set those to the preset values or modify the values in globals.ccp to match your thermistors.
 
