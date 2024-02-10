@@ -53,7 +53,7 @@ Before programming the ATmega4809, it needs to be flashed with a default bootloa
 
 1. **Bootloader Flashing:**
 
-Same process as DerSpatz Solder plate (Direct quote):
+Same process as DerSpatz Solder plate with some changes to the bootloader settingffs:
 
 The MCU can be programmed with JTAG2UPDI (https://github.com/ElTangas/jtag2updi). For programming, you need an Arduino with ATMEGA328p (Uno or Nano), some wires, a 4.7k resistor and a 10µF capacitor or 120 Ohm resistor to disable the auto-reset.
 
@@ -66,7 +66,7 @@ JCM from the Discord explained the process pretty good:
 - Add the MegaCoreX hardware package to the Ardunio IDE (see https://github.com/MCUdude/MegaCoreX#how-to-install)
 - Install the Adafruit_GFX, Adafruit_SSD1306, DallasTemperature and Debounce2 libraries with the Library Manager (you might not need all of them depending on which firmware you plan to use)
 - Download and open the ino you want to upload to the ATMEGA4809 (https://github.com/DerSpatz/PCB-reflow-solder-heat-plate/blob/main/Firmware/pcb_reflow_fw/pcb_reflow_fw.ino)
-- Select the options for the programmer (Board: ATmega4809, Clock: Internal 16 MHz, BOD: 2.6V or 2.7V, EEPROM: retained, Pinout: 48 pin standard, Reset pin: Reset, Bootloader:Optiboot:Uart0(Defualt pins)) and select the port of your Ardunio Nano as Port
+- Select the options for the programmer **(Board: ATmega4809, Clock: Internal 16 MHz, BOD: 2.6V or 2.7V, EEPROM: retained, Pinout: 48 pin standard, Reset pin: Reset, Bootloader:Optiboot:Uart0(Defualt pins))** and select the port of your Ardunio Nano as Port
 - Make sure the programmer selected is SerialUPDI or JTAG2UPDI
 - Select Burn Bootloader and see if it runs through
 
