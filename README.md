@@ -24,8 +24,8 @@ This repository contains the source code and design files for a Solder Plate Con
 - Included files for a case and guard for the detachable plate terminal guard
 
 
-![Screenshot](/Renders/Controller%201mos.JPG)
-![Screenshot](/Renders/plate%201%20zone.JPG)
+![Screenshot](/Renders/1 zone side.png)
+![Screenshot](/1 zone plate side.png)
 
 
 
@@ -95,7 +95,7 @@ JCM from the Discord explained the process pretty good:
    1. Order 100K NTC Glass thermistors  Use for dev was : 100K Ohm Resistor NTC 3950->  https://www.aliexpress.com/item/32862228715.html?spm=a2g0o.order_list.order_list_main.11.1f0a1802Lw8YGL
    2. Using either the potentiometer or soldering the resistor beside it choose the resistor reference value (2.5Kohm is standard)
    3. You can modify the thermistor settings in Global.ccp file, it is all explained in there
-   4. Attach the sensors to the hotplate using High tem Kapton Tape
+   4. Attach the sensors to the hotplate using High temp Kapton Tape
    5. Reccomended is 3 sensors on the bottom middle of plate all with 3 different refernece resistor values for accuracy across all temperature ranges and 1 thermistor held by a pair of helping hangs placed so the head touches somewhere on the PCB to be refllowed
    By default this is set as thermistor 1:
 
@@ -106,7 +106,7 @@ JCM from the Discord explained the process pretty good:
    - Thermistor thermistor3(THERMISTOR3_PIN, 9100, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE_LOW_TEMP); -> 9100Kohm set refrence
    - Thermistor thermistor4(THERMISTOR4_PIN, 564, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE_HIGH_TEMP);-> 564Kohm set refrence
 
-   These settings are measured between a GND point anywhere on the board and the LEFT pin of the connector with the thermistor UNPLUGGED
+   The set resistence is measured between a GND point anywhere on the board and the LEFT pin of the connector with the thermistor UNPLUGGED
 
    you can measure and set those to the preset values or modify the values in globals.ccp to match your thermistors.
 
