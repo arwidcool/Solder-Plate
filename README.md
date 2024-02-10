@@ -73,14 +73,14 @@ JCM from the Discord explained the process pretty good:
 
 2. **MicroUSB Programming And Firmware Upload:**
 
-   - Using Platformio:
+   - **Using Platformio:**
    1. After flashing the bootloader, the ATmega4809 can be programmed via the microUSB connection using PlatformIO by building the project and upload
   
-   - Using AVRDude
+   - **Using AVRDude:**
    1. Folow instructions on : https://github.com/ElTangas/jtag2updi?tab=readme-ov-file#using-with-avrdude
    2. Example : avrdude -c jtag2updi -P com7 -p t1614
   
-   - Using AVRDUDESS (AVRDUDE with GUI interface) -- This section many not be completley finished
+   - **Using AVRDUDESS (AVRDUDE with GUI interface) -- This section many not be completley finished:**
    1. Download and install AVRDUDE 6.3 :https://download-mirror.savannah.gnu.org/releases/avrdude/
    2. Download AVRDUDESS : https://github.com/ZakKemble/AVRDUDESS
    3. Download the custom Avrdude config: https://svn.savannah.gnu.org/viewvc/*checkout*/avrdude/trunk/avrdude/avrdude.conf.in?revision=1422
