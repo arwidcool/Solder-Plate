@@ -25,6 +25,7 @@ This repository contains the source code and design files for a Solder Plate Con
 
 ![Screenshot](/Renders/1_zone_side.png)
 ![Screenshot](/Renders/1_zone_plate_side.png)
+![Screenshot](/Renders/Case_with_plate.png)
 
 
 
