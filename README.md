@@ -24,8 +24,8 @@ This repository contains the source code and design files for a Solder Plate Con
 - Included files for a case and guard for the detachable plate terminal guard
 
 
-![Screenshot](/Renders/1 zone side.png)
-![Screenshot](/1 zone plate side.png)
+![Screenshot](/Renders/1_zone_side.png)
+![Screenshot](/Renders/1_zone_plate_side.png)
 
 
 
