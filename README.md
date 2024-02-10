@@ -1,28 +1,27 @@
 # Solder Plate Controller with Detachable Hotplate
 
-This repository contains the source code and design files for a Solder Plate Controller and detachable hotplate. Processor used is ATmega4809 and is based on the work of DerSpatz: https://github.com/DerSpatz/PCB-reflow-solder-heat-plate
 
+This repository contains the source code and design files for a Solder Plate Controller and detachable hotplate. The processor used is the ATmega4809 and is based on the work of DerSpatz. https://github.com/DerSpatz/PCB-reflow-solder-heat-plate
 
 ## Features
 - Precise temperature control for soldering SMD components. with support of **up to 6 thermistors**.
 - Cheap and widely available MCU- Atmega4809 and low BOM cost
-- Custom PCB design with 2 version: Single area control (Completed) and 4 independent heating zones control(In works)
-- Detacbale hotplate allows for use of new heatplate designs including larger ones
+- Custom PCB design with 2 versions: single area control (Completed) and 4 independent heating zones control(In works)
+- Detacabale hotplate allows for use of new heatplate designs including larger ones
 - Programming via USB
 - PlatformIO integration for streamlined development.
 - wifi via esp8266-12f module (with wifi version - In Development).
 - Based on Reflow Hotplate by DerSpatz with some improvements
-- Oled for menu navigation, debbuging and thermistor info
+- Oled for menu navigation, debugging, and thermistor info
 - TFT for reflow profile target and actual temp
-- 4 buttons for menu nativation
+- 4 buttons for menu navigation
 - Current sense IC for current monitoring
-- 3 indicator LED's. They work for both menu and REFLOW profiles (Blinking while on the current stage and solid once profile stage is complete)
+- 3 indicator LED's. They work for both menu and REFLOW profiles (blinking while on the current stage and solid once the profile stage is complete).
 - Buzzer for complete notification
-- Buck- Converter for input voltage allowing up to 24V in
-- 24V+ rated input voltage stage components allowing theoretcally up to 24V to be used (not yet tested)
-- Optional fan for cooling stage (Not yet implimted)
-- Included files for a case and guard for the detachable plate terminal guard
-
+- Buck- Converter for input voltage, allowing up to 24V in
+- 24V+ rated input voltage stage components allowing theoretically up to 24V to be used (not yet tested)
+- Optional fan for cooling stage (not yet installed)
+= Included are files for a case and a guard for the detachable plate terminal guard.
 
 ![Screenshot](/Renders/1_zone_side.png)
 ![Screenshot](/Renders/1_zone_plate_side.png)
