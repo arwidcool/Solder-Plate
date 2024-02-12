@@ -19,7 +19,7 @@ This repository contains the source code and design files for a Solder Plate Con
 - 3 indicator LED's. They work for both menu and REFLOW profiles (blinking while on the current stage and solid once the profile stage is complete).
 - Buzzer for complete notification
 - Buck- Converter for input voltage, allowing up to 24V in
-- 24V+ rated input voltage stage components allowing  up to 24V to be used Depending on powersupply trip option the "max" pwm needs to be lowered to not trip power suppply safety)
+- 24V+ rated input voltage stage components allowing  up to 24V to be used (Depending on powersupply trip option the "max" pwm needs to be lowered to not trip power suppply safety)
 - Optional fan for cooling stage (not yet installed)
 = Included are files for a case and a guard for the detachable plate terminal guard.
 
