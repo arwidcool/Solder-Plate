@@ -84,7 +84,7 @@ JCM from the Discord explained the process pretty good:
    2. Download AVRDUDESS : https://github.com/ZakKemble/AVRDUDESS
    3. Choose the programmer as arduino
    4. Choose the MCU as ATmega4809
-   5. Choose the COMPORT where the jtag2updi modified arduino is connected to
+   5. Choose the COMPORT where the Solder Plate Controller is connected to
    6. Choose the Flash binary in the programming directory -> set to Write
    7. Choose "Write" on the Flash option and press "Go"
 
