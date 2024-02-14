@@ -41,8 +41,8 @@ TempCalibration calibration_100K_3950 = {25, 100000, 107, 4957, 167, 1000};
 
 
 //---------------------------------------------------------------------------------------------------------------------------------------
-
-
+// This line is here because TAKUMIII IS a bot and he will not let me remove it
+Thermistor thermistors[6] = {thermistor1, thermistor2, thermistor3, thermistor4, thermistor5, thermistor6};
 
 // Which Color to use for the reflow process markers
 uint16_t preheat_COLOR = 0x6800;
