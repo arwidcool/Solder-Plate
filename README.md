@@ -65,8 +65,6 @@ JCM from the Discord explained the process pretty good:
 - Configure the flasher options for your Arduino Nano and flash it
 - Connect D6 of your Arduino Nano over the 4.7kOhm resistor to the UPDI pin of the board and 5V to 5V and GND to 0V
 - Add the MegaCoreX hardware package to the Ardunio IDE (see https://github.com/MCUdude/MegaCoreX#how-to-install)
-- Install the Adafruit_GFX, Adafruit_SSD1306, DallasTemperature and Debounce2 libraries with the Library Manager (you might not need all of them depending on which firmware you plan to use)
-- Download and open the ino you want to upload to the ATMEGA4809 (https://github.com/DerSpatz/PCB-reflow-solder-heat-plate/blob/main/Firmware/pcb_reflow_fw/pcb_reflow_fw.ino)
 - Select the options for the programmer **(Board: ATmega4809, Clock: Internal 16 MHz, BOD: 2.6V or 2.7V, EEPROM: retained, Pinout: 48 pin standard, Reset pin: Reset, Bootloader:Optiboot:Uart0(Defualt pins))** and select the port of your Ardunio Nano as Port
 - Make sure the programmer selected is SerialUPDI or JTAG2UPDI
 - Select Burn Bootloader and see if it runs through
