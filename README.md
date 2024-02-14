@@ -19,7 +19,7 @@ This repository contains the source code and design files for a Solder Plate Con
 - 3 indicator LED's. They work for both menu and REFLOW profiles (blinking while on the current stage and solid once the profile stage is complete).
 - Buzzer for complete notification
 - Buck- Converter for input voltage, allowing up to 24V in
-- 24V+ rated input voltage stage components allowing theoretically up to 24V to be used (not yet tested)
+- 24V+ rated input voltage stage components allowing  up to 24V to be used (Depending on powersupply trip option the "max" pwm needs to be lowered to not trip power suppply safety)
 - Optional fan for cooling stage (not yet installed)
 = Included are files for a case and a guard for the detachable plate terminal guard.
 
@@ -65,8 +65,6 @@ JCM from the Discord explained the process pretty good:
 - Configure the flasher options for your Arduino Nano and flash it
 - Connect D6 of your Arduino Nano over the 4.7kOhm resistor to the UPDI pin of the board and 5V to 5V and GND to 0V
 - Add the MegaCoreX hardware package to the Ardunio IDE (see https://github.com/MCUdude/MegaCoreX#how-to-install)
-- Install the Adafruit_GFX, Adafruit_SSD1306, DallasTemperature and Debounce2 libraries with the Library Manager (you might not need all of them depending on which firmware you plan to use)
-- Download and open the ino you want to upload to the ATMEGA4809 (https://github.com/DerSpatz/PCB-reflow-solder-heat-plate/blob/main/Firmware/pcb_reflow_fw/pcb_reflow_fw.ino)
 - Select the options for the programmer **(Board: ATmega4809, Clock: Internal 16 MHz, BOD: 2.6V or 2.7V, EEPROM: retained, Pinout: 48 pin standard, Reset pin: Reset, Bootloader:Optiboot:Uart0(Defualt pins))** and select the port of your Ardunio Nano as Port
 - Make sure the programmer selected is SerialUPDI or JTAG2UPDI
 - Select Burn Bootloader and see if it runs through
@@ -146,7 +144,7 @@ To open a PlatformIO project in VSCode with the PlatformIO extension, follow the
 
 ### Usage
 
-Power On: Connect the controller with a 12V 5A(Tested working) or 24V 5A PSU (Untested)
+Power On: Connect the controller with a 12V 5A(Tested working) or 24V 5A PSU (Tested working with max PWM maybe reduced)
 Set Profile: Navigate the menu and choose the desired reflow profile
 Start Soldering: Place your PCB and components on the hotplate and start the profile
 
