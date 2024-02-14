@@ -32,6 +32,7 @@ TempCalibration calibration_100K_3950 = {25, 100000, 107, 4957, 167, 1000};
 
 // 2.5k reference = Best accuracy around 138C
 
+
     Thermistor thermistor1(THERMISTOR2_PIN, 2125, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE); //- > 2125Kohm set refrence
     Thermistor thermistor2(THERMISTOR3_PIN, 9100, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE_LOW_TEMP);// -> 9100Kohm set refrence//// 9k reference = Best accuracy around 90C -> This thermistor is used for the preheat phase if attached
     Thermistor thermistor3(THERMISTOR4_PIN, 564, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE_HIGH_TEMP);//-> 564Kohm set refrence // 564R reference = Best accuracy around 210C
@@ -42,11 +43,6 @@ TempCalibration calibration_100K_3950 = {25, 100000, 107, 4957, 167, 1000};
     Thermistor thermistor5(THERMISTOR5_PIN,5727, ThermistorZ_Placement::TOP, ThermistorXY_Placement::MIDDLE_LOW_TEMP);
 
 
-
-//---------------------------------------------------------------------------------------------------------------------------------------
-
-// Put all thermistors in an array
-Thermistor thermistors[6] = {thermistor1, thermistor2, thermistor3, thermistor4, thermistor5, thermistor6};
 
 //---------------------------------------------------------------------------------------------------------------------------------------
 

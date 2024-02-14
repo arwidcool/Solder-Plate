@@ -82,14 +82,15 @@ JCM from the Discord explained the process pretty good:
    2. Example : avrdude -c jtag2updi -P com7 -p t1614
   
    - **Using AVRDUDESS (AVRDUDE with GUI interface) -- This section many not be completley finished:**
-   1. Download and install AVRDUDE 6.3 :https://download-mirror.savannah.gnu.org/releases/avrdude/
+   1. Download and install AVRDUDE https://download-mirror.savannah.gnu.org/releases/avrdude/
    2. Download AVRDUDESS : https://github.com/ZakKemble/AVRDUDESS
-   3. Download the custom Avrdude config: https://svn.savannah.gnu.org/viewvc/*checkout*/avrdude/trunk/avrdude/avrdude.conf.in?revision=1422
-   4. Select the custom avrdude.conf from Option ->  avrdude.conf - > choose where you downloaded the custom conf file
-   5. Choose the programmer as jtag2updi 
-   6. Choose the COMPORT where the jtag2updi modified arduino is connected to
-   7. Choose the Flash binary under the precomplied binary directory -> set to Write
-   8. Press Go
+   3. Choose the programmer as arduino
+   4. Choose the MCU as ATmega4809
+   5. Choose the COMPORT where the jtag2updi modified arduino is connected to
+   6. Choose the Flash binary in the programming directory -> set to Write
+   7. PChoose "Write" on the Flash option and press "Go"
+
+![Screenshot](/Programming/Programming.JPG)
 
 
 3. **Setting up the controller**
