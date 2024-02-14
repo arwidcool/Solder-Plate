@@ -86,7 +86,7 @@ JCM from the Discord explained the process pretty good:
    4. Choose the MCU as ATmega4809
    5. Choose the COMPORT where the jtag2updi modified arduino is connected to
    6. Choose the Flash binary in the programming directory -> set to Write
-   7. PChoose "Write" on the Flash option and press "Go"
+   7. Choose "Write" on the Flash option and press "Go"
 
 ![Screenshot](/Programming/Programming.JPG)
 
