@@ -37,7 +37,7 @@
 
 
 //PID Controller values
-#define PID_P 60
+#define PID_P 3
 #define PID_I 5
 #define PID_D 100
 
@@ -47,12 +47,12 @@
 ////////////////////////////////////////
 //The actual PWM of the mosfet is 0 for max and 255 for off
 //This gets inverted after the setpoint is grabbed from the PID controller in the main loop
-#define PID_OUTPUT_MIN 255
-#define PID_OUTPUT_MAX 0
+#define PID_OUTPUT_MIN 0    
+#define PID_OUTPUT_MAX 130
 //////////////////////////////////////
 
 
-#define PID_SAMPLE_TIME 0.1
+#define PID_SAMPLE_TIME 20
 
 
 
