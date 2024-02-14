@@ -59,7 +59,7 @@ void setup()
 
   reflowProcessState.set(ReflowProcessState::USER_INPUT);
 
-   tempController.checkPluggedInThermistors();
+  tempController.checkPluggedInThermistors();
 
   tftDisplay.start();
 
