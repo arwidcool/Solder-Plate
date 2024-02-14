@@ -144,7 +144,7 @@ To open a PlatformIO project in VSCode with the PlatformIO extension, follow the
 
 ### Usage
 
-Power On: Connect the controller with a 12V 5A(Tested working) or 24V 5A PSU (Tested working with max PWM maybe reduced)
+Power On: Connect the controller with a 12V 5A(Tested working) or 24V 5A PSU (Untested)
 Set Profile: Navigate the menu and choose the desired reflow profile
 Start Soldering: Place your PCB and components on the hotplate and start the profile
 
