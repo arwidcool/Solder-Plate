@@ -348,10 +348,14 @@ void OledDisplay::handleReflowState()
 
     // SysV topright
     // #ifdef DEBUG
-    display.setCursor(25, 15);
+    display.setCursor(15, 15);
     display.setTextSize(1, 1);
     display.print(analogRef.calculateInputVoltage());
     // #endif
+    int current = currentSensor.mA_DC();
+    display.setCursor(75, 15);
+    display.setTextSize(1, 1);
+    display.print(current);
 
     display.display();
 }

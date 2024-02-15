@@ -15,7 +15,7 @@
 #include "tools/ExecutionTimer.h"
 #include "StopWatch.h"
 #include "thermistors/Thermistor.h"
-
+#include "Current/CurrentMonitor.h"
 
 #define MOSTFET_PIN 17
 
@@ -25,8 +25,9 @@ double pwmValue = 255;
 
 ExecutionTimer executionTimer;
 
-TemperatureController tempController ;
+CurrentMonitor currentMonitor = CurrentMonitor();
 
+TemperatureController tempController;
 
 Buttons buttons = Buttons();
 LEDS leds = LEDS();
@@ -47,7 +48,7 @@ void setup()
 
   Serial.begin(38400);
 
-  //Serial.println("Starting OLED");
+  // Serial.println("Starting OLED");
 
   // Set PWM frequency to 64 kHz
   analogWriteFrequency(64);
@@ -68,6 +69,8 @@ void setup()
   thermMilisTimer.setResolution(StopWatch::Resolution::MILLIS);
 
   Serial.println("Setup done");
+
+  // currentMonitor.calculateMaxPwm();
 }
 void loop()
 {
@@ -116,7 +119,7 @@ void loop()
       pidController.start();
       thermMilisTimer.start();
       thermTimer.start();
-      //Serial.println("Time,Therm1,Therm2,Therm3,Therm4,Therm5,Therm6,,Scaling1,Scaling2,Scaling3,Scaling4,Scaling5,Scaling6,Averaged1,Weighting1,Weighting2,Weighting3");
+      // Serial.println("Time,Therm1,Therm2,Therm3,Therm4,Therm5,Therm6,,Scaling1,Scaling2,Scaling3,Scaling4,Scaling5,Scaling6,Averaged1,Weighting1,Weighting2,Weighting3");
     }
   }
   state = newState;
@@ -128,8 +131,13 @@ void loop()
   {
 
     pidController.loop();
-    // #ifdef DEBUG
     pidController.debug();
+    float amps = currentMonitor.getSystemCurrentAmps();
+    Serial.println("Current: " + String(amps));
+    float inVoltage = analogRef.calculateInputVoltage();
+    Serial.println("Voltage: " + String(inVoltage));
+    // #ifdef DEBUG
+
     //   #endif
 
     tftDisplay.drawRealTemp(pidController.getInput(), chosenReflowProfile.getPercentage());

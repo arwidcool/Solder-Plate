@@ -14,7 +14,7 @@ PidController::PidController(PidControllerData *data)
     this->data = data;
 
     controller.begin(&(this->data->currentTemp), &(this->data->setPoint), &(this->data->targetTemp), PID_P, PID_I, PID_D);
-  //  controller.reverse();
+    //  controller.reverse();
     controller.setOutputLimits(PID_OUTPUT_MIN, PID_OUTPUT_MAX);
     controller.setSampleTime(PID_SAMPLE_TIME);
     controller.setWindUpLimits(PID_WINDUP_MIN, PID_WINDUP_MAX);
@@ -46,11 +46,13 @@ void PidController::loop()
     data->currentTemp = tempController.getPlateTemperature();
 
     // float sysVoltage = analogRef.calculateSystemVoltage();
+
+    float inVoltage = analogRef.calculateInputVoltage();
     compute();
 
-    //Reverseal of the PWM value is needed because the PID controller is set to work with a normal direction, Creates fopr a better PID control
-    //255= off, 0=full power
-    analogWrite(MOSTFET_PIN, 255- data->setPoint);
+    // Reverseal of the PWM value is needed because the PID controller is set to work with a normal direction, Creates for a better PID control
+    // 255= off, 0=full power
+    analogWrite(MOSTFET_PIN, 255 - data->setPoint);
 }
 
 void PidController::stop()

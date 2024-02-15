@@ -10,7 +10,7 @@
 #include "./PID/PidController.h"
 
 #include "./thermistors/TemperatureController.h"
-
+#include "ACS712.h"
 
 
 
@@ -39,7 +39,7 @@
 //PID Controller values
 #define PID_P 3
 #define PID_I 5
-#define PID_D 100
+#define PID_D 10
 
 #define PID_WINDUP_MIN -100
 #define PID_WINDUP_MAX 200
@@ -48,11 +48,14 @@
 //The actual PWM of the mosfet is 0 for max and 255 for off
 //This gets inverted after the setpoint is grabbed from the PID controller in the main loop
 #define PID_OUTPUT_MIN 0    
-#define PID_OUTPUT_MAX 130
+
+//Adjust the MAX PWM value according to your power supply some power supplies can cut off if the current is too high
+#define PID_OUTPUT_MAX 140
 //////////////////////////////////////
 
+#define PID_SAMPLE_TIME 200
 
-#define PID_SAMPLE_TIME 20
+#define ACS712_PIN 29
 
 
 
@@ -83,6 +86,7 @@ extern uint16_t cool_COLOR;
 
 extern ThermistorLookup thermistorLookup;
 
+extern ACS712 currentSensor;
 
 
 
