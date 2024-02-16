@@ -98,6 +98,8 @@ JCM from the Discord explained the process pretty good:
    4. Attach the sensors to the hotplate using High temp Kapton Tape
    5. Reccomended is 3 sensors on the bottom middle of plate all with 3 different refernece resistor values for accuracy across all temperature ranges and 1 thermistor held by a pair of helping hangs placed so the head touches somewhere on the PCB to be refllowed
    By default this is set as thermistor 1:
+   6. Link to 2.0 inch TFT -> https://www.aliexpress.com/item/1005002363748586.html?spm=a2g0o.order_list.order_list_main.5.165d1802Amz1I7  (8 pin version) -> 7 Pin version can also be used 
+   7. Link to 0.96 OLED -> https://www.aliexpress.com/item/32957309383.html?spm=a2g0o.order_list.order_list_main.17.662c1802iqqiSE  (Choose OLD design SSD1306)
 
    *** IMPORTANT: Thermistors 1 is ONLY available on the hotplate. Thermistor 6 is only available on the controller via connector 5**
 
@@ -107,10 +109,10 @@ JCM from the Discord explained the process pretty good:
    Here are the defualt thermistor settings, The assume that the thermistors are soldered on the plate for 1,2,3: 
    Thermistors 6 on the connector number 5, touching the PCB to be soldered.
 
-   - Thermistor thermistor1(THERMISTOR2_PIN, 2125, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE); //- > 2125Kohm set refrence
-   - Thermistor thermistor2(THERMISTOR3_PIN, 9100, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE_LOW_TEMP);// -> 9100Kohm set refrence
-   - Thermistor thermistor3(THERMISTOR4_PIN, 564, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE_HIGH_TEMP);//-> 564Kohm set refrence
-   - Thermistor thermistor6(THERMISTOR1_PIN, 2545 , ThermistorZ_Placement::ON_PCB, ThermistorXY_Placement::MIDDLE);// -> 2545Kohm set refrence -> This thermistor is set directly touching the PCB to be soldered
+   Thermistor thermistor1(THERMISTOR1_PIN, 2545, ThermistorZ_Placement::ON_PCB, ThermistorXY_Placement::MIDDLE);          // -> 2545ohm set refrence -> This thermistor is set directly touching the PCB to be soldered
+   Thermistor thermistor2(THERMISTOR2_PIN, 9100, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE_LOW_TEMP);          //- > 9100 ohm set refrence Best accuracy around 90C -> This thermistor is used for the lower end of the temp scale  
+   Thermistor thermistor3(THERMISTOR3_PIN, 2040, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE); // -> 2.5Kohm best middleground
+   Thermistor thermistor4(THERMISTOR4_PIN, 564, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE_HIGH_TEMP); //-> 564Kohm set refrence // 564R reference = Best accuracy around 210C
 
    If you wish to only use the connectors use 2,3,4 and update the Globals .cpp to match your settings
       
