@@ -288,7 +288,7 @@ void OledDisplay::drawPositionedText(const char *txt, DisplayTextAlignment horiz
 void OledDisplay::handleUserInputState()
 {
     display.clearDisplay();
-    display.setRotation(0);
+    display.setRotation(2);             //Menu screen 0= no rotation, 1=90degree 2:180 degree 3=270degree
     display.setTextSize(2);
 
     OledMenuItem menuItem = curMenu->getCurItem();
@@ -321,7 +321,7 @@ void OledDisplay::handleUserInputState()
 void OledDisplay::handleReflowState()
 {
     display.clearDisplay();
-    display.setRotation(0);
+    display.setRotation(2);             //Menu level 2 screens 0= no rotation, 1=90degree 2:180 degree 3=270degree
     display.setCursor(0, 0);
     display.setTextSize(2);
     ReflowProcessState state = reflowProcessState.get();

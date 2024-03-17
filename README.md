@@ -62,12 +62,12 @@ JCM from the Discord explained the process pretty good:
 
 - Download/Clone this project: https://github.com/ElTangas/jtag2updi and rename the folder "source" to "jtag2updi" (otherwise the Arduino IDE won't like it)
 - Open jtag2updi/jtag2updi.ino in your Arduino IDE
-- Configure the flasher options for your Arduino Nano and flash it
+- Configure the flasher options for your Arduino Nano and flash it (if you are using an arduino clone with CH340 chip you may need to change the driver for an earlier version)
 - Connect D6 of your Arduino Nano over the 4.7kOhm resistor to the UPDI pin of the board and 5V to 5V and GND to 0V
 - Add the MegaCoreX hardware package to the Ardunio IDE (see https://github.com/MCUdude/MegaCoreX#how-to-install)
 - Select the options for the programmer **(Board: ATmega4809, Clock: Internal 16 MHz, BOD: 2.6V or 2.7V, EEPROM: retained, Pinout: 48 pin standard, Reset pin: Reset, Bootloader:Optiboot:Uart0(Defualt pins))** and select the port of your Ardunio Nano as Port
 - Make sure the programmer selected is SerialUPDI or JTAG2UPDI
-- Select Burn Bootloader and see if it runs through
+- Select Burn Bootloader and see if it runs through (dont forget to add the 10uF capacitor or 120Ohm resistor between RST and GND on the "programmer" arduino)
 
 
 2. **MicroUSB Programming And Firmware Upload:**

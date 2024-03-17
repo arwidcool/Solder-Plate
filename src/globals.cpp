@@ -22,7 +22,7 @@ TempCalibration calibration_100K_3950 = {25, 100000, 107, 4957, 167, 1000};
 
 // This is where you set your potentiometer  values  and positioning for the 6 thermistors
 
-// You can tweak them from the datasheet to best fit your thermistor but we reccoemnd using the default values and setting the potentiometer to these values
+// You can tweak them from the datasheet to best fit your thermistor but we reccomend using the default values and setting the potentiometer to these values
 //  Does not have to be perfect just set it close to this value and record the measured value and put it for the thermistors
 // To measure the resistence turn off the controller completley and measure between GND and the left pin of the connector with the thermistor unplugged
 
@@ -42,6 +42,9 @@ Thermistor thermistors[6] = {thermistor1, thermistor2, thermistor3, thermistor4,
 
 //Define the current sensor 20A version
 ACS712 currentSensor = ACS712(ACS712_PIN, 5.0, 1023,100);
+
+//Define the current sensor 30A version
+//ACS712 currentSensor = ACS712(ACS712_PIN, 5.0, 1023,100);
 
 // Which Color to use for the reflow process markers
 uint16_t preheat_COLOR = 0x6800;
