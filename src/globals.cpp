@@ -11,7 +11,8 @@ AnalogRef analogRef(5.0);
 ThermistorLookup thermistorLookup = ThermistorLookup();
 
 // Calibration data for 100K thermistors ->https://datasheet.lcsc.com/lcsc/1810161311_Nanjing-Shiheng-Elec-MF58-104F3950_C123399.pdf ->Glass thermistor NTC 3950 100K
-TempCalibration calibration_100K_3950 = {25, 100000, 107, 4957, 167, 1000};
+// TempCalibration calibration_100K_3950 = {25, 100000, 107, 4957, 167, 1000};
+TempCalibration calibration_100K_3950 = {25, 10000, 86, 1032, 169, 118};
 // Initalize the 3950 100K thermistors with ACTUAL reference resistor measurnment(Measured between Left pin and GND when the board is powered off) using the default calibration data for 100K thermistor
 
 // You can also make a custom calibration data for your thermistor and use that instead of the default one pass it as shown below --> keep the naming of the thermistor the same as the one you are replacing
@@ -41,10 +42,10 @@ Thermistor thermistor6(THERMISTOR6_PIN, 5727, ThermistorZ_Placement::TOP, Thermi
 Thermistor thermistors[6] = {thermistor1, thermistor2, thermistor3, thermistor4, thermistor5, thermistor6};
 
 //Define the current sensor 20A version
-ACS712 currentSensor = ACS712(ACS712_PIN, 5.0, 1023,100);
-
-//Define the current sensor 30A version
 //ACS712 currentSensor = ACS712(ACS712_PIN, 5.0, 1023,100);
+
+//Define the current sensor 30A version     
+ACS712 currentSensor = ACS712(ACS712_PIN, 5.0, 1023,66);        //5.0 is system voltage, 1023 is 0-1023 bits ADC steps, 66 is mV/Amp
 
 // Which Color to use for the reflow process markers
 uint16_t preheat_COLOR = 0x6800;
@@ -68,11 +69,39 @@ ReflowProfile reflowProfiles[] = {
 
     // The profile target says to get to 100c in 30 seconds but our hotplate can not do that so we extended the time to 120 seconds and combine the 150 and 183c steps into one step
     // With a 12V PSU it also takes a while to reach these high temps so we increase the times a bit, experemintation is needed for different boards.
-    ReflowProfile(new ReflowStep[5]{ReflowStep(ReflowProcessState::PREHEAT, 120, 100, EASE_OUT), ReflowStep(ReflowProcessState::SOAK, 160, 183, EASE_IN), ReflowStep(ReflowProcessState::REFLOW, 110, 235, EASE_OUT), ReflowStep(ReflowProcessState::COOL, 30, 80, EASE_OUT), ReflowStep(ReflowProcessState::DONE, 0, 0)}, "183C Sn63 Pb37 \0"),
 
-    ReflowProfile(new ReflowStep[5]{ReflowStep(ReflowProcessState::PREHEAT, 120, 77, LINEAR), ReflowStep(ReflowProcessState::SOAK, 180, 135, LINEAR), ReflowStep(ReflowProcessState::REFLOW, 110, 211, LINEAR), ReflowStep(ReflowProcessState::COOL, 30, 80, EASE_OUT), ReflowStep(ReflowProcessState::DONE, 0, 0)}, "RAMP HOLD 235c\0"),
+    // profile 183C Sn63Pb37
+    ReflowProfile(new ReflowStep[5]{
+                      ReflowStep(ReflowProcessState::PREHEAT, 120, 100, EASE_OUT), 
+                      ReflowStep(ReflowProcessState::SOAK, 160, 183, EASE_IN), 
+                      ReflowStep(ReflowProcessState::REFLOW, 110, 235, EASE_OUT), 
+                      ReflowStep(ReflowProcessState::COOL, 30, 80, EASE_OUT), 
+                      ReflowStep(ReflowProcessState::DONE, 0, 0)}, 
+                  "183C Sn63 Pb37 \0"),
 
-    ReflowProfile(new ReflowStep[5]{ReflowStep(ReflowProcessState::PREHEAT, 200, 100, MID_RAMP_HOLD), ReflowStep(ReflowProcessState::SOAK, 150, 150, FAST_RAMP_HOLD), ReflowStep(ReflowProcessState::REFLOW, 150, 220, SLOW_RAMP_HOLD), ReflowStep(ReflowProcessState::COOL, 200, 0, LINEAR), ReflowStep(ReflowProcessState::DONE, 0, 0)}, "Tuning Profile \0"),
+    ReflowProfile(new ReflowStep[5]{
+                      ReflowStep(ReflowProcessState::PREHEAT, 120, 77, LINEAR), 
+                      ReflowStep(ReflowProcessState::SOAK, 180, 135, LINEAR), 
+                      ReflowStep(ReflowProcessState::REFLOW, 110, 211, LINEAR), 
+                      ReflowStep(ReflowProcessState::COOL, 30, 80, EASE_OUT), 
+                      ReflowStep(ReflowProcessState::DONE, 0, 0)}, 
+                  "RAMP HOLD 235c\0"),
+
+    ReflowProfile(new ReflowStep[5]{
+                      ReflowStep(ReflowProcessState::PREHEAT, 200, 100, MID_RAMP_HOLD), 
+                      ReflowStep(ReflowProcessState::SOAK, 150, 150, FAST_RAMP_HOLD), 
+                      ReflowStep(ReflowProcessState::REFLOW, 150, 220, SLOW_RAMP_HOLD), 
+                      ReflowStep(ReflowProcessState::COOL, 200, 0, LINEAR), 
+                      ReflowStep(ReflowProcessState::DONE, 0, 0)}, 
+                  "Tuning Profile \0"),
+
+    ReflowProfile(new ReflowStep[5]{
+                      ReflowStep(ReflowProcessState::PREHEAT, 200 /*Secounds*/, 100 /*Temperature C*/, MID_RAMP_HOLD), 
+                      ReflowStep(ReflowProcessState::SOAK, 150 /*Secounds*/, 150 /*Temperature C*/, FAST_RAMP_HOLD), 
+                      ReflowStep(ReflowProcessState::REFLOW, 300 /*Secounds*/, 220 /*Temperature C*/, SLOW_RAMP_HOLD), 
+                      ReflowStep(ReflowProcessState::COOL, 200 /*Secounds*/, 0 /*Temperature C*/, LINEAR), 
+                      ReflowStep(ReflowProcessState::DONE, 0 /*Secounds*/, 0 /*Temperature C*/)}, 
+                  "Desoldering HOLD \0"),
 
 };
 
