@@ -50,7 +50,7 @@
 #define PID_OUTPUT_MIN 0    
 
 //Adjust the MAX PWM value according to your power supply some power supplies can cut off if the current is too high
-#define PID_OUTPUT_MAX 140
+#define PID_OUTPUT_MAX 120
 //////////////////////////////////////
 
 #define PID_SAMPLE_TIME 200
