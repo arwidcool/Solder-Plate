@@ -27,24 +27,25 @@ TempCalibration calibration_100K_3950 = {25, 100000, 107, 4957, 167, 1000};
 // To measure the resistence turn off the controller completley and measure between GND and the left pin of the connector with the thermistor unplugged
 
 // 2.5k reference = Best accuracy around 138C
-Thermistor thermistor1(THERMISTOR1_PIN, 2564, ThermistorZ_Placement::ON_PCB, ThermistorXY_Placement::MIDDLE);            // -> 2545Kohm set refrence -> This thermistor is set directly touching the PCB to be soldered
-Thermistor thermistor2(THERMISTOR2_PIN, 2155, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE_LOW_TEMP);    //- > 2125Kohm set refrence
-Thermistor thermistor3(THERMISTOR3_PIN, 9115, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE);             // -> 9100Kohm set refrence //// 9k reference = Best accuracy around 90C -> This thermistor is used for the preheat phase if attached
-Thermistor thermistor4(THERMISTOR4_PIN, 573, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE_HIGH_TEMP);    //->   564Kohm set refrence // 564R reference = Best accuracy around 210C
+Thermistor thermistor1(THERMISTOR1_PIN, 2564, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE);            // -> 2545Kohm set refrence -> This thermistor is set directly touching the PCB to be soldered
+Thermistor thermistor2(THERMISTOR2_PIN, 2170, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE_LOW_TEMP);    //- > 2125Kohm set refrence
+Thermistor thermistor3(THERMISTOR3_PIN, 9145, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE);             // -> 9100Kohm set refrence //// 9k reference = Best accuracy around 90C -> This thermistor is used for the preheat phase if attached
+Thermistor thermistor4(THERMISTOR4_PIN, 546, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE_HIGH_TEMP);    //->   564Kohm set refrence // 564R reference = Best accuracy around 210C
 
 // Unused by defualt, keep unplugged
-Thermistor thermistor5(THERMISTOR5_PIN, 574, ThermistorZ_Placement::BOTTOM, ThermistorXY_Placement::MIDDLE_HIGH_TEMP);    // was 564
-Thermistor thermistor6(THERMISTOR6_PIN, 5787, ThermistorZ_Placement::TOP,    ThermistorXY_Placement::MIDDLE_LOW_TEMP);    // was 5727
+Thermistor thermistor5(THERMISTOR5_PIN, 2512, ThermistorZ_Placement::ON_PCB, ThermistorXY_Placement::MIDDLE_HIGH_TEMP);    // was 564
+Thermistor thermistor6(THERMISTOR6_PIN, 5790, ThermistorZ_Placement::TOP,    ThermistorXY_Placement::MIDDLE_LOW_TEMP);    // was 5727
 
 //---------------------------------------------------------------------------------------------------------------------------------------
 // This line is here because TAKUMIII IS a bot and he will not let me remove it
 Thermistor thermistors[6] = {thermistor1, thermistor2, thermistor3, thermistor4, thermistor5, thermistor6};
 
 //Define the current sensor 20A version
-//ACS712 currentSensor = ACS712(ACS712_PIN, 5.0, 1023,100);
+ACS712 currentSensor = ACS712(ACS712_PIN, 5.0, 1023,100);
 
 //Define the current sensor 30A version     
-ACS712 currentSensor = ACS712(ACS712_PIN, 5.0 /*system voltage*/, 1023 /*ADC steps 1024*/,66 /*mV/Amp*/);
+// ACS712 currentSensor = ACS712(ACS712_PIN, 5.0 /*system voltage*/, 1023 /*ADC steps 1024*/, 66 /*mV/Amp*/);
+// ACS712 currentSensor = ACS712(ACS712_PIN, 5.0, 1023,66);
 
 // Which Color to use for the reflow process markers
 uint16_t preheat_COLOR = 0x6800;
